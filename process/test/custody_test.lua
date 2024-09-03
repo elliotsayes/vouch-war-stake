@@ -22,7 +22,8 @@ _G.Processes = {
   [WAR_TOKEN_PROCESS] = require 'token' (WAR_TOKEN_PROCESS),
   [AO_TOKEN_PROCESS] = require 'token' (AO_TOKEN_PROCESS),
   ['<SomeOtherToken>'] = require 'token' ('SomeOtherToken'),
-  ["<Voucher>"] = require 'test.mocked-env.processes.voucher_mock' ("<Voucher>"),
+  ['<Voucher>'] = require 'test.mocked-env.processes.voucher_mock' ('<Voucher>'),
+  ['<Trigger>'] = require 'test.mocked-env.processes.trigger_mock' ('<Trigger>'),
 }
 
 _G.Handlers = require "handlers"
@@ -85,7 +86,7 @@ describe("staking", function()
 
   it("should add wAR stake", function()
     local stakeTime = 12345000
-    local stakeDuration = 1234000
+    local stakeDuration = tostring(1234000)
     ao.send({
       Target = ao.id,
       From = _G.WAR_TOKEN_PROCESS,
@@ -94,7 +95,7 @@ describe("staking", function()
         Action = 'Credit-Notice',
         Sender = 'TEST1',
         Quantity = '1000000000000',
-        ['X-Stake-Duration'] = tostring(stakeDuration),
+        ['X-Stake-Duration'] = stakeDuration,
       }
     })
     local withdrawTime = stakeTime + 1234000
