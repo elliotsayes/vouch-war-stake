@@ -70,6 +70,7 @@ describe("staking", function()
 
   it("should add refund stake", function()
     local stakeTime = 12345
+    local stakeDuration = 2 * 24 * 60 * 60 * 1000
     ao.send({
       Target = ao.id,
       From = "<SomeOtherToken>",
@@ -78,7 +79,7 @@ describe("staking", function()
         Action = 'Credit-Notice',
         Sender = 'TEST1',
         Quantity = '1000000000000',
-        ['X-Stake-Duration'] = '1234000',
+        ['X-Stake-Duration'] = tostring(stakeDuration),
       }
     })
     assert.are.same(_G.STAKED_TOKENS, {})
@@ -86,7 +87,7 @@ describe("staking", function()
 
   it("should add wAR stake", function()
     local stakeTime = 12345000
-    local stakeDuration = tostring(1234000)
+    local stakeDuration = 2 * 24 * 60 * 60 * 1000
     ao.send({
       Target = ao.id,
       From = _G.WAR_TOKEN_PROCESS,
@@ -95,16 +96,16 @@ describe("staking", function()
         Action = 'Credit-Notice',
         Sender = 'TEST1',
         Quantity = '1000000000000',
-        ['X-Stake-Duration'] = stakeDuration,
+        ['X-Stake-Duration'] = tostring(stakeDuration),
       }
     })
-    local withdrawTime = stakeTime + 1234000
+    local withdrawTime = stakeTime + stakeDuration
     assert.are.same(_G.STAKED_TOKENS, { {
       TokenId = 'xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10',
       Sender = 'TEST1',
       Amount = '1000000000000',
       StakeTime = stakeTime,
-      StakeDuration = stakeDuration,
+      StakeDuration = tostring(stakeDuration),
       WithdrawTime = withdrawTime,
     } })
   end)

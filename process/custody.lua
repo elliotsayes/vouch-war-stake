@@ -91,8 +91,14 @@ function HandleStake(msg)
   local tokenId = msg.From
   local quantity = msg.Tags.Quantity
   local stakeDuration = msg.Tags['X-Stake-Duration']
-  if ValidateQuantity(quantity) and ValidateStakeDuration(stakeDuration) then
-    print("Invalid amount or duration for staking from " .. sender)
+  if not ValidateQuantity(quantity) then
+    print("Invalid quantity for staking from " .. sender)
+    RefundTokens(msg)
+    return
+  end
+
+  if not ValidateStakeDuration(stakeDuration) then
+    print("Invalid duration for staking from " .. sender)
     RefundTokens(msg)
     return
   end
