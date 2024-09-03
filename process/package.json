@@ -1,8 +1,7 @@
 {
-  "name": "ao-test-mocks",
+  "name": "vouch-war-stake",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "directories": {
     "test": "test"
   },
