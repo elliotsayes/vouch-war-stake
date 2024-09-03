@@ -6,9 +6,13 @@
     "test": "test"
   },
   "scripts": {
-    "test": "bash ./scripts/test.sh"
+    "test": "bash ./scripts/test.sh",
+    "deploy-dev": "WALLET_JSON=\"$(cat ../.secret/deploy_dev.json)\" npx aoform apply"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "aoform": "^1.0.4"
+  }
 }
