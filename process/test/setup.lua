@@ -13,8 +13,8 @@ local function mockedRequire(moduleName)
     return originalRequire("test.mocked-env.ao.handlers")
   end
 
-  if moduleName == "aocred" then
-    return originalRequire("test.mocked-env.processes.aocred")
+  if moduleName == "token" then
+    return originalRequire("test.mocked-env.processes.token")
   end
 
   if moduleName == ".bint" then
