@@ -3,8 +3,8 @@
 -- ALLOW_THIRD_PARTY_STAKE = true
 -- WITHDRAW_TO_THIRD_PARTY = true
 
-MIN_STAKE_AMOUNT = 10 ^ 9                      -- 0.001 wAR
-MAX_STAKE_AMOUNT = 10 ^ 15                     -- 1000 wAR
+MIN_STAKE_QUANTITY = 10 ^ 9                    -- 0.001 wAR
+MAX_STAKE_QUANTITY = 10 ^ 15                   -- 1000 wAR
 
 MIN_STAKE_DURATION = 1 * 24 * 60 * 60 * 1000   -- 1 day
 MAX_STAKE_DURATION = 365 * 24 * 60 * 60 * 1000 -- 1 year
@@ -18,19 +18,19 @@ STAKED_TOKENS = STAKED_TOKENS or {
   -- {
   --   Sender = "<Address>",
   --   TokenId = "<TokenId>",
-  --   Amount = "<Amount>",
+  --   Quantity = "<Quantity>",
   --   StakeTime = "<StakeTime>",
   --   StakeDuration = "<StakeDuration>",
   --   WithdrawTime = "<StakeTime>",
   -- }
 }
 
-function ValidateQuantity(amount)
-  local amountNum = tonumber(amount)
-  if amountNum == nil then
+function ValidateQuantity(quantity)
+  local quantityNum = tonumber(quantity)
+  if quantityNum == nil then
     return false
   end
-  return amountNum >= MIN_STAKE_AMOUNT and amountNum <= MAX_STAKE_AMOUNT
+  return quantityNum >= MIN_STAKE_QUANTITY and quantityNum <= MAX_STAKE_QUANTITY
 end
 
 function ValidateStakeDuration(duration)
@@ -66,12 +66,12 @@ function WithdrawExpriedStakes(msg)
       end
 
       print("Withdrawing expired stake from " .. stake.Sender .. ", withdrawing "
-        .. stake.Amount .. " of " .. stake.TokenId .. " tokens to " .. recipient)
+        .. stake.Quantity .. " of " .. stake.TokenId .. " tokens to " .. recipient)
       ao.send({
         Target = stake.TokenId,
         Tags = {
           Action = "Transfer",
-          Quantity = stake.Amount,
+          Quantity = stake.Quantity,
           Recipient = stake.Sender,
         },
       })
@@ -110,7 +110,7 @@ function HandleStake(msg)
   table.insert(STAKED_TOKENS, {
     Sender = sender,
     TokenId = tokenId,
-    Amount = quantity,
+    Quantity = quantity,
     StakeTime = stakeTime,
     StakeDuration = stakeDuration,
     WithdrawTime = withdrawTime,
