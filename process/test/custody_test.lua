@@ -53,6 +53,9 @@ local resetGlobals = function()
   _G.WITHDRAW_TO_BENEFICIARY = true
 end
 
+local stakeTime = 12345000
+local stakeDuration = 2 * 24 * 60 * 60 * 1000
+local withdrawTime = stakeTime + stakeDuration
 
 describe("staking", function()
   setup(function()
@@ -68,9 +71,7 @@ describe("staking", function()
     assert.are.same(_G.STAKED_TOKENS, {})
   end)
 
-  it("should add refund stake", function()
-    local stakeTime = 12345
-    local stakeDuration = 2 * 24 * 60 * 60 * 1000
+  it("should add refund stake for other token", function()
     ao.send({
       Target = ao.id,
       From = "<SomeOtherToken>",
@@ -86,8 +87,6 @@ describe("staking", function()
   end)
 
   it("should add wAR stake", function()
-    local stakeTime = 12345000
-    local stakeDuration = 2 * 24 * 60 * 60 * 1000
     ao.send({
       Target = ao.id,
       From = _G.WAR_TOKEN_PROCESS,
@@ -99,14 +98,37 @@ describe("staking", function()
         ['X-Stake-Duration'] = tostring(stakeDuration),
       }
     })
-    local withdrawTime = stakeTime + stakeDuration
     assert.are.same(_G.STAKED_TOKENS, { {
       TokenId = 'xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10',
       Sender = 'TEST1',
-      Amount = '1000000000000',
+      Quantity = '1000000000000',
       StakeTime = stakeTime,
       StakeDuration = tostring(stakeDuration),
       WithdrawTime = withdrawTime,
     } })
+  end)
+
+  it("should not withdraw before stake duration is over", function()
+    ao.send({
+      Target = ao.id,
+      From = "<Trigger>",
+      Timestamp = withdrawTime - 1,
+      Tags = {
+        Action = 'Cron',
+      }
+    })
+    assert.are.same(#_G.STAKED_TOKENS, 1)
+  end)
+
+  it("should withdraw after stake duration is over", function()
+    ao.send({
+      Target = ao.id,
+      From = "<Trigger>",
+      Timestamp = withdrawTime + 1,
+      Tags = {
+        Action = 'Cron',
+      }
+    })
+    assert.are.same(_G.STAKED_TOKENS, {})
   end)
 end)
