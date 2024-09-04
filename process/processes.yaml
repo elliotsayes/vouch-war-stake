@@ -6,3 +6,11 @@
   tags:
     - name: Name
       value: Vouch-WAR-Stake-Dev
+- name: trigger
+  file: trigger.lua
+  prerun: loadDbAdmin.lua
+  scheduler: "TZ7o7SIZ06ZEJ14lXwVtng1EtSx60QkPy-kh-kdAXog"
+  module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
+  tags:
+    - name: Name
+      value: Vouch-WAR-Stake-Trigger-Dev
