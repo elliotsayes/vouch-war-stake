@@ -131,8 +131,9 @@ function HandleStake(msg)
     ao.send({
       Target = TRIGGER_PROCESS,
       Tags = {
-        Action = "Trigger-Request",
-        ["Trigger-Time"] = tostring(withdrawTime)
+        Action = "Register-Trigger",
+        ["Trigger-Timestamp"] = tostring(withdrawTime),
+        -- ["Trigger-Confirm"] = "0",
       },
     })
   end

@@ -13,7 +13,6 @@ end
 
 _G.Owner = '123MyOwner321'
 _G.MainProcessId = '123xyzMySelfabc321'
-_G.AoCredProcessId = 'AoCred-123xyz'
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 AO_TOKEN_PROCESS = "m3PaWzK4PTG9lAaqYQPaPdOcXdO8hYqi5Fe9NWqXd0w"
@@ -34,7 +33,7 @@ _G.ao = require "ao" (_G.MainProcessId) -- make global so that the main process 
 _G.ao.env = {
   Process = {
     Tags = {
-      ["Name"] = "GreeterProcess",
+      ["Name"] = "CustodyProcess",
       -- ... add other tags that would be passed in when the process is spawned
     }
   }

@@ -8,7 +8,7 @@ local function newmodule(selfId)
   token.mockBalance = "100"
 
   function token.handle(msg)
-    print("[Token" .. selfId .. "]")
+    print("[Token " .. selfId .. "]")
   end
 
   return token
