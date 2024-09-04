@@ -127,13 +127,15 @@ function HandleStake(msg)
     },
   })
 
-  ao.send({
-    Target = TRIGGER_PROCESS,
-    Tags = {
-      Action = "Trigger-Request",
-      ["Trigger-Time"] = tostring(withdrawTime)
-    },
-  })
+  if TRIGGER_PROCESS ~= nil then
+    ao.send({
+      Target = TRIGGER_PROCESS,
+      Tags = {
+        Action = "Trigger-Request",
+        ["Trigger-Time"] = tostring(withdrawTime)
+      },
+    })
+  end
 end
 
 function HandleDistribute(msg)
