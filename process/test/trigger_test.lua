@@ -45,7 +45,7 @@ local startTimestamp = 1725605394430
 local testDuration = 1000
 local triggerTimestamp = startTimestamp + testDuration
 
-describe("staking", function()
+describe("trigger", function()
   setup(function()
     resetGlobals()
   end)
