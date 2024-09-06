@@ -75,7 +75,8 @@ function CreateTrigger(msg)
 
   print("Trigger created")
 
-  local confirm = tonumber(msg.Tags["Trigger-Confirm"]) > 0
+  local confirmValue = tonumber(msg.Tags["Trigger-Confirm"])
+  local confirm = confirmValue and confirmValue > 0
   if confirm then
     print("Confirming trigger")
     local target = otherTarget or sender
@@ -95,17 +96,21 @@ function ReadAndUpdateNewTriggers(msg)
   local stmt = TRIGGER_DB:prepare([[
     SELECT Id, Sender, OtherTarget FROM Triggers WHERE TriggerTimestamp <= ? AND TriggerComplete = 0;
   ]], timestamp)
+
+  local rowCount = 0
   local triggers = {}
   for row in stmt:nrows() do
+    rowCount = rowCount + 1
     local trigger = {
-      Id = row.Id,
+      Ids = { row.Id },
       Target = row.OtherTarget or row.Sender,
     }
 
     -- Insert if not the target is not already in the list
     local found = false
-    for _, existingTrigger in ipairs(triggers) do
-      if existingTrigger.Target == trigger.Target then
+    for _, existingTriggers in ipairs(triggers) do
+      if existingTriggers.Target == trigger.Target then
+        table.insert(existingTriggers.Ids, row.Id)
         found = true
         break
       end
@@ -114,8 +119,9 @@ function ReadAndUpdateNewTriggers(msg)
       table.insert(triggers, trigger)
     end
   end
-  print("Found " .. #triggers .. " new triggers")
   stmt:finalize()
+
+  print("Found " .. rowCount .. " triggers for " .. #triggers .. " targets")
 
   -- Update all triggers using the same query filter
   local stmt = TRIGGER_DB:prepare([[
@@ -124,8 +130,7 @@ function ReadAndUpdateNewTriggers(msg)
   stmt:step()
   local res = stmt:finalize()
   if res ~= sqlite3.OK then
-    print("Error updating triggers")
-    return
+    error("Error updating triggers")
   end
 
   return triggers
@@ -138,7 +143,7 @@ function SendCronToTargets(triggers)
       Target = trigger.Target,
       Tags = {
         Action = "Cron",
-        ["Trigger-Id"] = trigger.Id,
+        ["Trigger-Ids"] = table.concat(trigger.Ids, ","),
       },
     })
   end
@@ -154,12 +159,14 @@ Handlers.add(
 
 Handlers.add(
   "CronTick",
-  Handlers.utils.hasMatchingTag("Action", "Cron"),
   function(msg)
-    local triggers = ReadAndUpdateNewTriggers(msg)
-    if triggers ~= nil and #triggers > 0 then
-      print("Sending cron to" .. #triggers .. " targets")
-      SendCronToTargets(triggers)
+    return msg.Cron == true
+  end,
+  function(msg)
+    print("[Cron] Check for trigger targets")
+    local targets = ReadAndUpdateNewTriggers(msg)
+    if targets ~= nil and #targets > 0 then
+      SendCronToTargets(targets)
     end
   end
 )
