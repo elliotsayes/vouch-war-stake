@@ -7,7 +7,7 @@ function Init(db)
       WalletId TEXT PRIMARY KEY NOT NULL,
       TimestampCreated INTEGER NOT NULL,
       TimestampModified INTEGER NOT NULL,
-      ProcessId TEXT UNIQUE NOT NULL,
+      ProcessId TEXT UNIQUE,
       TotalConfidenceValue INTEGER NOT NULL DEFAULT 0
     );
   ]]
@@ -140,13 +140,7 @@ function ParseDuration(tokenId, duration)
   return true, durationNum
 end
 
-function ParseStake(msg)
-  local sender = msg.Tags.Sender
-  -- if not ValidateArweaveId(sender) then
-  --   print("Invalid sender address")
-  --   return false, nil
-  -- end
-
+function ParseStake(msg, walletId)
   local tokenId = msg.Tags.TokenId
   if not ValidateArweaveId(tokenId) or TOKEN_WHITELIST[tokenId] == nil then
     print("Invalid token id")
@@ -167,7 +161,7 @@ function ParseStake(msg)
 
   return true, {
     Timestamp = msg.Timestamp,
-    Sender = sender,
+    WalletId = walletId,
     TokenId = tokenId,
     Quantity = quantity,
     Duration = duration,
@@ -191,52 +185,145 @@ function CalculateConfidence(stake)
   return true, confidenceValue
 end
 
-function RecordStake(stake, confidenceValue)
-  -- Check if wallet exists
+function WalletExists(walletId)
   local stmt = VOUCH_DB:prepare([[
-  SELECT WalletId FROM Wallet WHERE WalletId = ?;
-]])
-  stmt:bind_values(stake.Sender)
-  local isNewWallet = true
-  for _ in stmt:nrows() do
-    isNewWallet = false
-  end
-  stmt:finalize()
-
-  if isNewWallet then
-    stmt = VOUCH_DB:prepare([[
-  INSERT INTO Wallet (WalletId, TimestampCreated, TimestampModified, ProcessId, TotalConfidenceValue)
-  VALUES (?, ?, ?, ?, ?)
-]])
-    stmt:bind_values(stake.Sender, stake.Timestamp, stake.Timestamp, "VOUCH", confidenceValue)
-  else
-    stmt = VOUCH_DB:prepare([[
-  UPDATE Wallet
-  SET TotalConfidenceValue = TotalConfidenceValue + ?
+  SELECT WalletId
+  FROM Wallet
   WHERE WalletId = ?;
 ]])
-    stmt:bind_values(confidenceValue, stake.Sender)
-  end
+  stmt:bind_values(walletId)
+  local res = stmt:step()
+  stmt:finalize()
+
+  return res == sqlite3.ROW
+end
+
+function RecordWalletPrototype(walletId, timestamp)
+  local stmt = VOUCH_DB:prepare([[
+  INSERT INTO Wallet (WalletId, TimestampCreated, TimestampModified)
+  VALUES (?, ?, ?)
+]])
+  stmt:bind_values(walletId, timestamp, timestamp)
   stmt:step()
-  res = stmt:finalize()
+  local res = stmt:finalize()
+
+  if res ~= sqlite3.OK then
+    error("Error creating Wallet: " .. VOUCH_DB:errmsg())
+  end
+end
+
+function RecordWalletProcess(walletId, timestamp, processId)
+  local stmt = VOUCH_DB:prepare([[
+  UPDATE Wallet
+  SET ProcessId = ?, TimestampModified = ?
+  WHERE WalletId = ?;
+]])
+  stmt:bind_values(processId, timestamp, walletId)
+  stmt:step()
+  local res = stmt:finalize()
 
   if res ~= sqlite3.OK then
     error("Error updating Wallet: " .. VOUCH_DB:errmsg())
   end
+end
 
-  stmt = VOUCH_DB:prepare([[
+CUSTODY_SRC_MSG = "<TODO>"
+
+function CreateCustodyProcess(walletId)
+  local msg = ao.spawn(ao._module, {})
+  local res = msg.receive()
+  if res == nil then
+    error("Failed to create custody process")
+  end
+
+  local custodyProcessId = res.ProcessId
+
+  msg = ao.send({
+    Target = custodyProcessId,
+    Tags = {
+      Action = "Eval",
+    },
+    Data = [[
+BENEFICIARY_ADDRESS = "]] .. walletId .. [["
+ALLOW_THIRD_PARTY_STAKE = true
+WITHDRAW_TO_THIRD_PARTY = true
+ao.addAssignable("CUSTODY_SRC_MSG", {
+  Id = "]] .. CUSTODY_SRC_MSG .. [["
+})
+]]
+  })
+  res = msg.receive()
+  if res == nil then
+    error("Failed to assign CUSTODY_SRC_MSG")
+  end
+
+  Assign({
+    Message = CUSTODY_SRC_MSG,
+    Processes = {
+      custodyProcessId,
+    }
+  })
+
+  return custodyProcessId
+end
+
+Handlers.add(
+  "Custody.Create",
+  Handlers.utils.hasMatchingTag("Action", "Custody.Create"),
+  function(msg)
+    local walletId = msg.From
+    if not WalletExists(walletId) then
+      -- We insert already, because `CreateCustodyProcess` will suspend the process,
+      -- and we need to make sure it isn't created multiple times
+      RecordWalletPrototype(walletId, msg.Timestamp)
+      local processId = CreateCustodyProcess(walletId)
+      RecordWalletProcess(walletId, msg.Timestamp, processId)
+    else
+      print("Wallet already exists")
+    end
+  end
+)
+
+function CountStakeHistory(stake)
+  local stmt = VOUCH_DB:prepare([[
+  SELECT COUNT(*)
+  FROM StakeHistory
+  WHERE WalletId = ?;
+]])
+  stmt:bind_values(stake.WalletId)
+  local res = stmt:step()
+  local count = stmt:get_value(0)
+  stmt:finalize()
+
+  return count
+end
+
+function RecordStake(stake, confidence)
+  local stmt = VOUCH_DB:prepare([[
   INSERT INTO StakeHistory (WalletId, Timestamp, Quantity, StakeDuration, ConfidenceValue)
   VALUES (?, ?, ?, ?, ?);
 ]])
-  stmt:bind_values(stake.Sender, stake.Timestamp, stake.Quantity, stake.Duration, confidenceValue)
+  stmt:bind_values(stake.WalletId, stake.Timestamp, stake.Quantity, stake.Duration, confidence)
   stmt:step()
   local res = stmt:finalize()
   if res ~= sqlite3.OK then
     error("Error adding to StakeHistory: " .. VOUCH_DB:errmsg())
   end
 
+  local stmt = VOUCH_DB:prepare([[
+UPDATE Wallet
+SET TotalConfidenceValue = TotalConfidenceValue + ?
+WHERE WalletId = ?;
+]])
+  stmt:bind_values(confidence, stake.WalletId)
+  stmt:step()
+  local res = stmt:finalize()
+
+  if res ~= sqlite3.OK then
+    error("Error updating Wallet: " .. VOUCH_DB:errmsg())
+  end
+
   print("Stake created")
-  return isNewWallet
 end
 
 function SendVouch(stake, confidence)
@@ -246,21 +333,48 @@ function SendVouch(stake, confidence)
     Target = VOUCH_PROCESS,
     Tags = {
       ['Data-Protocol'] = 'Vouch',
-      ['Vouch-For'] = stake.Sender,
+      ['Vouch-For'] = stake.WalletId,
       ['Method'] = 'WAR-Stake',
       ['Confidence-Value'] = confidenceStr,
     },
   })
 end
 
+function GetProcessWalletId(msg)
+  -- check the wallet table
+  local stmt = VOUCH_DB:prepare([[
+  SELECT WalletId
+  FROM Wallet
+  WHERE ProcessId = ?;
+]])
+  stmt:bind_values(msg.From)
+  local res = stmt:step()
+  local walletId = stmt:get_value(0)
+  stmt:finalize()
+
+  return walletId
+end
+
 Handlers.add(
   "Stake-Notice",
   Handlers.utils.hasMatchingTag("Action", "Stake-Notice"),
   function(msg)
-    local isStakeValid, stake = ParseStake(msg)
+    local walletId = GetProcessWalletId(msg)
+    if walletId == nil then
+      print("Stake-Notice not from child process, ignoring")
+      return
+    end
+
+    local isStakeValid, stake = ParseStake(msg, walletId)
     if not isStakeValid then
       return
     end
+
+    -- local stakeCount = CountStakeHistory(stake)
+    -- if stakeCount > 0 then
+    --   print("Warning: Updating stake is currently unsupported")
+    --   return
+    -- end
 
     local isConfidenceValid, confidence = CalculateConfidence(stake)
     if not isConfidenceValid then
@@ -268,12 +382,7 @@ Handlers.add(
       return
     end
 
-    local isFirstStake = RecordStake(stake, confidence)
-    if isFirstStake then
-      SendVouch(stake, confidence)
-    else
-      print("Warning: Updating stake is currently unsupported")
-      -- error("Updating stake is currently unsupported")
-    end
+    RecordStake(stake, confidence)
+    SendVouch(stake, confidence)
   end
 )

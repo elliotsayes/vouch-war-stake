@@ -42,7 +42,8 @@ local resetGlobals = function()
   -- according to initialization in process.lual
 end
 
-local testSender = "<Dummy>"
+local testWallet = "<MyWallet>"
+local testCustodyProcess = "<Dummy>"
 local warTokenId = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 local testQuantity1 = 100000000000  -- 0.1wAR
 local testDuration1 = 365 * 24 * 60 * 60 * 1000
@@ -67,13 +68,19 @@ describe("vouching", function()
     assert.equal(0, historyCount)
   end)
 
+  it("should spawn a child", function()
+    _G.RecordWalletPrototype(testWallet, 0)
+    _G.RecordWalletProcess(testWallet, 1, testCustodyProcess)
+  end)
+
   it("should add a vouch", function()
     -- Simulate a vouch message
     ao.send({
       Target = _G.MainProcessId,
+      From = testCustodyProcess,
       Tags = {
         Action = "Stake-Notice",
-        Sender = testSender,
+        Sender = testWallet,
         TokenId = warTokenId,
         Quantity = tostring(testQuantity1),
         ["Stake-Duration"] = tostring(testDuration1),
@@ -93,9 +100,10 @@ describe("vouching", function()
     -- Simulate a vouch message
     ao.send({
       Target = _G.MainProcessId,
+      From = testCustodyProcess,
       Tags = {
         Action = "Stake-Notice",
-        Sender = testSender,
+        Sender = testWallet,
         TokenId = warTokenId,
         Quantity = tostring(testQuantity2),
         ["Stake-Duration"] = tostring(testDuration2),
