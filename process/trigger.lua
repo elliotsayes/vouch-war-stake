@@ -131,7 +131,7 @@ function ReadAndUpdateNewTriggers(msg)
   return triggers
 end
 
-function SendCronToTargets(msg, triggers)
+function SendCronToTargets(triggers)
   for _, trigger in ipairs(triggers) do
     print("Triggering " .. trigger.Target)
     ao.send({
@@ -157,6 +157,9 @@ Handlers.add(
   Handlers.utils.hasMatchingTag("Action", "Cron"),
   function(msg)
     local triggers = ReadAndUpdateNewTriggers(msg)
-    SendCronToTargets(msg, triggers)
+    if triggers ~= nil and #triggers > 0 then
+      print("Sending cron to" .. #triggers .. " targets")
+      SendCronToTargets(triggers)
+    end
   end
 )
