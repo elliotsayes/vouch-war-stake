@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "bash ./scripts/test.sh",
-    "deploy-dev": "WALLET_JSON=\"$(cat ../.secret/deploy_dev.json)\" npx aoform apply",
+    "deploy-dev": "WALLET_JSON=\"$(cat ../.secret/deploy_dev.json)\" aoform apply",
     "aos-dev": "func() { aos ${1} --wallet ../.secret/deploy_dev.json ; }; func"
   },
   "keywords": [],
