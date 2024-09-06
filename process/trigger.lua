@@ -63,13 +63,14 @@ function CreateTrigger(msg)
   end
 
   local stmt = TRIGGER_DB:prepare([[
-    INSERT INTO Triggers (TimestampCreated, Sender, TriggerTimestamp, OtherTarget)
-    VALUES (?, ?, ?, ?);
-  ]], timestamp, sender, triggerTimestampNumber, otherTarget)
+  INSERT INTO Triggers (TimestampCreated, Sender, TriggerTimestamp, OtherTarget)
+  VALUES (?, ?, ?, ?);
+]])
+  stmt:bind_values(timestamp, sender, triggerTimestampNumber, otherTarget)
   stmt:step()
   local res = stmt:finalize()
   if res ~= sqlite3.OK then
-    print("Error creating trigger")
+    print("Error creating trigger: " .. TRIGGER_DB:errmsg())
     return
   end
 
@@ -95,7 +96,8 @@ function ReadAndUpdateNewTriggers(msg)
   local timestamp = msg.Timestamp
   local stmt = TRIGGER_DB:prepare([[
     SELECT Id, Sender, OtherTarget FROM Triggers WHERE TriggerTimestamp <= ? AND TriggerComplete = 0;
-  ]], timestamp)
+  ]])
+  stmt:bind_values(timestamp)
 
   local rowCount = 0
   local triggers = {}
@@ -126,11 +128,12 @@ function ReadAndUpdateNewTriggers(msg)
   -- Update all triggers using the same query filter
   local stmt = TRIGGER_DB:prepare([[
     UPDATE Triggers SET TriggerComplete = 1, TimestampTriggered = ? WHERE TriggerTimestamp <= ? AND TriggerComplete = 0;
-  ]], timestamp, timestamp)
+  ]])
+  stmt:bind_values(timestamp, timestamp)
   stmt:step()
   local res = stmt:finalize()
   if res ~= sqlite3.OK then
-    error("Error updating triggers")
+    error("Error updating triggers: " .. TRIGGER_DB:errmsg())
   end
 
   return triggers
@@ -153,6 +156,7 @@ Handlers.add(
   "Register-Trigger",
   Handlers.utils.hasMatchingTag("Action", "Register-Trigger"),
   function(msg)
+    print("[Register-Trigger(" .. msg.Timestamp .. ")]")
     CreateTrigger(msg)
   end
 )
@@ -163,7 +167,7 @@ Handlers.add(
     return msg.Cron == true
   end,
   function(msg)
-    print("[Cron] Check for trigger targets")
+    print("[Cron(" .. msg.Timestamp .. ")] Check for trigger targets")
     local targets = ReadAndUpdateNewTriggers(msg)
     if targets ~= nil and #targets > 0 then
       SendCronToTargets(targets)
