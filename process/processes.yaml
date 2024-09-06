@@ -14,3 +14,5 @@
   tags:
     - name: Name
       value: Vouch-WAR-Stake-Trigger-Dev
+    - name: Cron-Interval
+      value: 1-minute
