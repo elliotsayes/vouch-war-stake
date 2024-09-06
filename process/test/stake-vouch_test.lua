@@ -44,9 +44,9 @@ end
 
 local testSender = "<Dummy>"
 local warTokenId = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
-local testQuantity1 = 10000000000  -- 0.01wAR
+local testQuantity1 = 100000000000  -- 0.1wAR
 local testDuration1 = 365 * 24 * 60 * 60 * 1000
-local testQuantity2 = 100000000000 -- 0.10wAR
+local testQuantity2 = 1000000000000 -- 1.0wAR
 local testDuration2 = 365 * 24 * 60 * 60 * 1000
 
 describe("vouching", function()
@@ -86,7 +86,7 @@ describe("vouching", function()
     assert.equal(1, historyCount)
 
     local wallets = _G.VOUCH_DB_ADMIN:exec("SELECT * FROM Wallet")
-    assert.near(0.01, wallets[1].TotalConfidenceValue, 0.001)
+    assert.near(0.1, wallets[1].TotalConfidenceValue, 0.001)
   end)
 
   it("should add another vouch", function()
@@ -108,6 +108,6 @@ describe("vouching", function()
     assert.equal(2, historyCount)
 
     local wallets = _G.VOUCH_DB_ADMIN:exec("SELECT * FROM Wallet")
-    assert.near(0.11, wallets[1].TotalConfidenceValue, 0.001)
+    assert.near(1.1, wallets[1].TotalConfidenceValue, 0.001)
   end)
 end)
