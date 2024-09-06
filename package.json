@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@permaweb/aoconnect": "^0.0.59",
+    "@tanstack/react-query": "^5.55.0",
     "arweave-wallet-kit": "github:elliotsayes/arweave-wallet-kit#npm/add-apis",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
