@@ -59,6 +59,8 @@ local withdrawTime = stakeTime + stakeDuration
 describe("staking", function()
   setup(function()
     resetGlobals()
+    _G.VOUCHER_PROCESS = "<Voucher>"
+    _G.TRIGGER_PROCESS = "<Trigger>"
   end)
 
   teardown(function()

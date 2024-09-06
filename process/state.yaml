@@ -1,6 +1,9 @@
 stake-vouch:
   processId: 6eVxtBDD2FuHl2Yahuh6IHE3NeoajDok90EOEec5E_A
-  hash: 855a86f667f411c67d0e0e75ca209010c83dd178c9df6621925537c817c8fd28
+  hash: 01d880152fff0fec03fb13598b93e75bc034d54df34bd695426addfe08ac6ff6
 trigger:
   processId: 18Y61-yqGymzNckHvb9hpLMH-AyFbQtsdf_5PCi82v8
   hash: 9a266cfe8d242b5dff836564ad7ff00abd13ba5f07ee682a036bcda202411db0
+vouchdao-dev:
+  processId: OGr6vtKUJzEW5CdLIrIV8dtOEzfc3crYoHqPKGDhBtY
+  hash: 781c22686ca2792a204f209a89fe6511fc9567a4c0ef9a6386e3e491ffa6ec14

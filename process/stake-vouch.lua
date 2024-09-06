@@ -34,7 +34,7 @@ if not VOUCH_DB_INIT then
   VOUCH_DB_INIT = true
 end
 
-VOUCH_PROCESS = "<VOUCH_PROCESS>"
+VOUCH_PROCESS = "OGr6vtKUJzEW5CdLIrIV8dtOEzfc3crYoHqPKGDhBtY"
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 WAR_ORACLE_PROCESS = "<WAR_ORACLE_PROCESS>"
@@ -384,5 +384,39 @@ Handlers.add(
 
     RecordStake(stake, confidence)
     SendVouch(stake, confidence)
+  end
+)
+
+Handlers.add(
+  "Vouch.CalculateConfidence",
+  Handlers.utils.hasMatchingTag("Action", "Vouch.CalculateConfidence"),
+  function(msg)
+    print("Vouch.CalculateConfidence")
+
+    local isValidStake, stake = ParseStake(msg, msg.From)
+    if not isValidStake then
+      msg.reply({
+        Tags = {
+          ['Confidence-Result'] = "Failure",
+          ['Confidence-Value'] = "0",
+        }
+      })
+    end
+    local isValidConfidence, confidence = CalculateConfidence(stake)
+    if not isValidConfidence then
+      msg.reply({
+        Tags = {
+          ['Confidence-Result'] = "Failure",
+          ['Confidence-Value'] = "0",
+        }
+      })
+    end
+
+    msg.reply({
+      Tags = {
+        ['Confidence-Result'] = "Success",
+        ['Confidence-Value'] = tostring(confidence),
+      }
+    })
   end
 )
