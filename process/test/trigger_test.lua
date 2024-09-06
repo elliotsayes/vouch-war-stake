@@ -75,6 +75,23 @@ describe("staking", function()
     assert.equal(triggerTimestamp, rows[1].TriggerTimestamp)
   end)
 
+  it("should recieve another trigger", function()
+    ao.send({
+      Target = ao.id,
+      From = "<Dummy>",
+      Timestamp = startTimestamp,
+      Tags = {
+        Action = "Register-Trigger",
+        ["Trigger-Timestamp"] = tostring(triggerTimestamp + 1),
+        -- ["Trigger-Confirm"] = "0",
+      },
+    })
+    local rows = _G.TRIGGER_DB_ADMIN:exec("SELECT * FROM Triggers")
+    assert.equal(2, #rows)
+    assert.equal(triggerTimestamp, rows[1].TriggerTimestamp)
+    assert.equal(triggerTimestamp + 1, rows[2].TriggerTimestamp)
+  end)
+
   it("should not trigger before", function()
     local beforeTriggerTimestamp = triggerTimestamp - 1
     ao.send({
@@ -85,14 +102,14 @@ describe("staking", function()
     })
 
     local triggersPending = _G.TRIGGER_DB_ADMIN:exec("SELECT * FROM Triggers WHERE TriggerComplete = 0")
-    assert.equal(1, #triggersPending)
+    assert.equal(2, #triggersPending)
 
     local triggersComplete = _G.TRIGGER_DB_ADMIN:exec("SELECT * FROM Triggers WHERE TriggerComplete = 1")
     assert.equal(0, #triggersComplete)
   end)
 
   it("should trigger after", function()
-    local afterTriggerTimestamp = triggerTimestamp + 1
+    local afterTriggerTimestamp = triggerTimestamp + 2
     ao.send({
       Target = ao.id,
       From = ao.id,
@@ -104,6 +121,6 @@ describe("staking", function()
     assert.equal(0, #triggersPending)
 
     local triggersComplete = _G.TRIGGER_DB_ADMIN:exec("SELECT * FROM Triggers WHERE TriggerComplete = 1")
-    assert.equal(1, #triggersComplete)
+    assert.equal(2, #triggersComplete)
   end)
 end)
