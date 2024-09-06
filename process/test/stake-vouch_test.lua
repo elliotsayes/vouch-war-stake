@@ -84,7 +84,7 @@ describe("vouching", function()
         Sender = testWallet,
         TokenId = warTokenId,
         Quantity = tostring(testQuantity1),
-        ["Stake-Duration"] = tostring(testDuration1),
+        ["Duration"] = tostring(testDuration1),
       }
     })
 
@@ -107,7 +107,7 @@ describe("vouching", function()
         Sender = testWallet,
         TokenId = warTokenId,
         Quantity = tostring(testQuantity2),
-        ["Stake-Duration"] = tostring(testDuration2),
+        ["Duration"] = tostring(testDuration2),
       }
     })
 

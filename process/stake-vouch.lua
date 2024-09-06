@@ -87,11 +87,6 @@ function UpdateTokenValues()
   TOKEN_WHITELIST[WAR_TOKEN_PROCESS].ValueUsd = price
 end
 
--- Sender = sender,
--- TokenId = tokenId,
--- Quantity = quantity,
--- ["Stake-Duration"] = stakeDuration,
-
 function ValidateArweaveId(address)
   if type(address) ~= "string" then
     return false
@@ -153,7 +148,7 @@ function ParseStake(msg, walletId)
     return false, nil
   end
 
-  local isValidDuration, duration = ParseDuration(tokenId, msg.Tags["Stake-Duration"])
+  local isValidDuration, duration = ParseDuration(tokenId, msg.Tags.Duration)
   if not isValidDuration then
     print("Invalid duration")
     return false, nil
@@ -401,6 +396,7 @@ Handlers.add(
           ['Confidence-Value'] = "0",
         }
       })
+      return
     end
     local isValidConfidence, confidence = CalculateConfidence(stake)
     if not isValidConfidence then
@@ -410,6 +406,7 @@ Handlers.add(
           ['Confidence-Value'] = "0",
         }
       })
+      return
     end
 
     msg.reply({
