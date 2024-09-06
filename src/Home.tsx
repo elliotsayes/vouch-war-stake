@@ -1,4 +1,4 @@
-import { TestMessage } from "./components/TestMessage";
+import { VouchState } from "./components/VouchState";
 import "./Home.css";
 import { ConnectButton, useConnection } from "arweave-wallet-kit";
 
@@ -10,7 +10,7 @@ export function Home() {
       <div>
         <ConnectButton />
       </div>
-      {connected ? <TestMessage /> : <div>Connect to Arweave to continue</div>}
+      {connected ? <VouchState /> : <div>Connect to Arweave to continue</div>}
     </>
   );
 }

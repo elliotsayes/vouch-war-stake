@@ -1,0 +1,67 @@
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { useActiveAddress } from "arweave-wallet-kit";
+import {
+  vouchConfidenceQuery,
+  vouchStateQuery,
+} from "../contract/vouchWarStake";
+import { useState } from "react";
+
+export function VouchState() {
+  const activeAddress = useActiveAddress();
+
+  // 1^10^10 => 1^10^15
+  const [quantity, setQuantity] = useState(0);
+  // 1Day(ms) to 1Year(ms)
+  const [duration, setDuration] = useState(0);
+
+  const voucherState = useQuery(vouchStateQuery(activeAddress!));
+  const voucherConfidence = useQuery(
+    queryOptions({
+      ...vouchConfidenceQuery(quantity, duration),
+    })
+  );
+
+  return (
+    <div>
+      <div>
+        {voucherState.isLoading && <div>Loading...</div>}
+        {voucherState.isError && <div>Error: {voucherState.error.message}</div>}
+        {voucherState.isSuccess && <div>{voucherState.data}</div>}
+      </div>
+      <div>
+        {voucherConfidence.isLoading && <div>Loading...</div>}
+        {voucherConfidence.isError && (
+          <div>Error: {voucherConfidence.error.message}</div>
+        )}
+        {voucherConfidence.isSuccess && (
+          <div>US${voucherConfidence.data.confidence.toFixed(2)}</div>
+        )}
+      </div>
+      <div>
+        <input
+          type="range"
+          value={quantity}
+          onChange={(e) => setQuantity(parseInt(e.target.value))}
+          min={Math.pow(10, 10)}
+          max={Math.pow(10, 15)}
+        />
+        <input
+          type="range"
+          value={duration}
+          onChange={(e) => setDuration(parseInt(e.target.value))}
+          min={24 * 60 * 60 * 1000}
+          max={365 * 24 * 60 * 60 * 1000}
+        />
+        {
+          // Display inputs value as number
+        }
+        <div>Quantity: {quantity / Math.pow(10, 12)}</div>
+        <div>
+          Duration:{" "}
+          {Intl.NumberFormat().format(duration / (24 * 60 * 60 * 1000))} days
+        </div>
+        <div>Until: {new Date(Date.now() + duration).toISOString()}</div>
+      </div>
+    </div>
+  );
+}
