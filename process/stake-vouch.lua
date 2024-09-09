@@ -35,6 +35,7 @@ if not VOUCH_DB_INIT then
 end
 
 VOUCH_PROCESS = "mIXsPDpV3ITGrXjowrTlAfjuFWmHd7ixBglJazDvfTs"
+PRICE_PROCESS = "GhzqFey5suK6apvvWKzDYgmB69Jol62BRfC1ayEraeQ"
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 WAR_ORACLE_PROCESS = "<WAR_ORACLE_PROCESS>"
@@ -53,7 +54,17 @@ TOKEN_WHITELIST = {
   },
 }
 
-function ParsePrice(price)
+function ParsePrice(msg)
+  if msg.Tags.Currency ~= "USD" then
+    print("Not USD")
+    return false, nil
+  end
+  if msg.Tags.TokenId ~= WAR_TOKEN_PROCESS then
+    print("Not WAR")
+    return false, nil
+  end
+
+  local price = msg.Tags.Price
   local priceNum = tonumber(price)
   if priceNum == nil then
     return false, nil
@@ -63,28 +74,6 @@ function ParsePrice(price)
   end
 
   return true, priceNum
-end
-
-function UpdateTokenValues()
-  local req = ao.send({
-    Target = WAR_ORACLE_PROCESS,
-    Tags = {
-      Action = 'GetPrice',
-      Ticker = 'AR',
-      Currency = 'USD',
-    }
-  })
-  local res = req.receive()
-  if res == nil then
-    error("Failed to get price")
-    return
-  end
-  local isValidPrice, price = ParsePrice(res.Tags.Price)
-  if not isValidPrice then
-    error("Invalid price: " .. (res.Tags.Price or "<nil>"))
-    return
-  end
-  TOKEN_WHITELIST[WAR_TOKEN_PROCESS].ValueUsd = price
 end
 
 function ValidateArweaveId(address)
@@ -415,5 +404,25 @@ Handlers.add(
         ['Confidence-Value'] = tostring(confidence),
       }
     })
+  end
+)
+
+Handlers.add(
+  "Price-Update",
+  Handlers.utils.hasMatchingTag("Action", "Price-Update"),
+  function(msg)
+    if msg.From ~= PRICE_PROCESS then
+      print("Invalid Price-Update source: " .. msg.From)
+      return
+    end
+
+    local isValidPrice, price = ParsePrice(msg)
+    if not isValidPrice then
+      print("Invalid price")
+      return
+    end
+
+    print("Updating price of " .. WAR_TOKEN_PROCESS .. " to " .. price)
+    TOKEN_WHITELIST[WAR_TOKEN_PROCESS].ValueUsd = price
   end
 )

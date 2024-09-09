@@ -30,3 +30,14 @@
       value: Vouch-WAR-Stake-VouchDao-Dev
     - name: Authority
       value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
+- name: arweave-price
+  file: arweave-price.lua
+  scheduler: "TZ7o7SIZ06ZEJ14lXwVtng1EtSx60QkPy-kh-kdAXog"
+  module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
+  tags:
+    - name: Name
+      value: Vouch-WAR-Stake-ArweavePrice-Dev
+    - name: Authority
+      value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
+    - name: Cron-Interval
+      value: 5-minute
