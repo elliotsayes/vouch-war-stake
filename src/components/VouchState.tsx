@@ -7,6 +7,7 @@ import {
 } from "../contract/vouchWarStake";
 import { useState } from "react";
 import useAoSigner from "../hooks/useAoSigner";
+import { vouchDaoVouchesQuery } from "../contract/vouchDao";
 
 export function VouchState() {
   const { aoSigner } = useAoSigner();
@@ -17,6 +18,8 @@ export function VouchState() {
   const [quantity, setQuantity] = useState(0);
   // 1Day(ms) to 1Year(ms)
   const [duration, setDuration] = useState(0);
+
+  const vouchDaoVouches = useQuery(vouchDaoVouchesQuery(activeAddress!));
 
   const voucherState = useQuery(vouchStateQuery(activeAddress!));
   const voucherConfidence = useQuery(
@@ -79,6 +82,37 @@ export function VouchState() {
               <div>Balance: {voucherState.data[0].TotalConfidenceValue}</div>
             </>
           ))}
+      </div>
+      <div>
+        {
+          // Display vouchDaoVouches
+          vouchDaoVouches.isSuccess &&
+            ("ID" in vouchDaoVouches.data ? (
+              <>{vouchDaoVouches.data.Status}</>
+            ) : (
+              <>
+                {vouchDaoVouches.data["Vouches-For"]}
+                {vouchDaoVouches.data["Total-Value"]}
+                {Object.entries(vouchDaoVouches.data.Vouchers).map(
+                  ([voucher, record]) => (
+                    <div key={voucher}>
+                      {voucher}
+                      {Object.entries(record).map(([key, val]) => (
+                        <span
+                          key={key}
+                          style={{
+                            border: "1px solid black",
+                          }}
+                        >
+                          {key}: {val as string}
+                        </span>
+                      ))}
+                    </div>
+                  )
+                )}
+              </>
+            ))
+        }
       </div>
     </div>
   );
