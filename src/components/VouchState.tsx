@@ -1,12 +1,16 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { useActiveAddress } from "arweave-wallet-kit";
 import {
+  createCustodyMutation,
   vouchConfidenceQuery,
   vouchStateQuery,
 } from "../contract/vouchWarStake";
 import { useState } from "react";
+import useAoSigner from "../hooks/useAoSigner";
 
 export function VouchState() {
+  const { aoSigner } = useAoSigner();
+
   const activeAddress = useActiveAddress();
 
   // 1^10^10 => 1^10^15
@@ -21,12 +25,13 @@ export function VouchState() {
     })
   );
 
+  const createCustody = useMutation(createCustodyMutation(aoSigner!));
+
   return (
     <div>
       <div>
         {voucherState.isLoading && <div>Loading...</div>}
         {voucherState.isError && <div>Error: {voucherState.error.message}</div>}
-        {voucherState.isSuccess && <div>{voucherState.data}</div>}
       </div>
       <div>
         {voucherConfidence.isLoading && <div>Loading...</div>}
@@ -61,6 +66,19 @@ export function VouchState() {
           {Intl.NumberFormat().format(duration / (24 * 60 * 60 * 1000))} days
         </div>
         <div>Until: {new Date(Date.now() + duration).toISOString()}</div>
+      </div>
+      <div>
+        {voucherState.isSuccess &&
+          (voucherState.data.length === 0 ? (
+            <>
+              <div>No voucher found</div>
+              <button onClick={() => createCustody.mutate()}>Create</button>
+            </>
+          ) : (
+            <>
+              <div>Balance: {voucherState.data[0].TotalConfidenceValue}</div>
+            </>
+          ))}
       </div>
     </div>
   );

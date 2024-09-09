@@ -1,6 +1,7 @@
-import { dryrun } from "@permaweb/aoconnect";
-import { queryOptions } from "@tanstack/react-query";
+import { dryrun, message } from "@permaweb/aoconnect";
+import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { getTagValue } from "../lib/arweave";
+import { AoSigner } from "../hooks/useAoSigner";
 
 const VITE_VOUCHER_PROCESS_ID = import.meta.env.VITE_VOUCHER_PROCESS_ID!;
 const VITE_WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
@@ -20,7 +21,7 @@ export const vouchStateQuery = (walletId: string) =>
         ],
         data: `require"json".encode(VOUCH_DB_ADMIN:exec([[SELECT * FROM Wallet WHERE WalletId = "${walletId}"]]))`,
       });
-      return res.Output.data;
+      return JSON.parse(res.Output.data);
     },
   });
 
@@ -63,3 +64,21 @@ export const vouchConfidenceQuery = (quantity: number, duration: number) =>
       return result;
     },
   });
+
+export const createCustodyMutation = (aoSigner: AoSigner): MutationOptions => ({
+  mutationKey: ["createCustody"],
+  mutationFn: async () => {
+    const messageId = await message({
+      process: VITE_VOUCHER_PROCESS_ID,
+      tags: [
+        {
+          name: "Action",
+          value: "Custody.Create",
+        },
+      ],
+      signer: aoSigner,
+    });
+    console.log({ messageId });
+    return messageId;
+  },
+});

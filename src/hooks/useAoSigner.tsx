@@ -7,12 +7,12 @@ type Signer = {
   signDataItem: (dataItem: DataItem) => Promise<ArrayBuffer>;
 };
 
+export type AoSigner = ReturnType<typeof createDataItemSigner>;
+
 export function useAoSigner() {
   const api = useApi();
 
-  const [aoSigner, setAoSigner] = useState<ReturnType<
-    typeof createDataItemSigner
-  > | null>(null);
+  const [aoSigner, setAoSigner] = useState<AoSigner | null>(null);
 
   useEffect(() => {
     if (!api) return;
@@ -25,9 +25,7 @@ export function useAoSigner() {
     };
   }, [api]);
 
-  return {
-    aoSigner,
-  };
+  return { aoSigner };
 }
 
 export default useAoSigner;

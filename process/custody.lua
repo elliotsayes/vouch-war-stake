@@ -158,7 +158,7 @@ Handlers.add(
       HandleStake(msg)
     else
       if msg.From == AO_TOKEN_PROCESS then
-        WithdrawExpriedStakes(msg)
+        -- WithdrawExpriedStakes(msg)
         HandleDistribute(msg)
       else
         RefundTokens(msg)
