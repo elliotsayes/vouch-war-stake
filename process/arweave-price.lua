@@ -63,10 +63,19 @@ Handlers.add(
   end
 )
 
+LAST_UPDATE = 0
+UPDATE_INTERVAL = 60 * 60 * 1000 -- 1 hour
+
 Handlers.add(
   "CronTick",
   function(msg)
     return msg.Cron == true
   end,
-  RequestData
+  function(msg)
+    local now = msg.Timestamp;
+    if (now - LAST_UPDATE > UPDATE_INTERVAL) then
+      RequestData()
+      LAST_UPDATE = now
+    end
+  end
 )
