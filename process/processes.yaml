@@ -6,6 +6,8 @@
   tags:
     - name: Name
       value: Vouch-WAR-Stake-Dev
+    - name: Authority
+      value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
 - name: trigger
   file: trigger.lua
   prerun: loadDbAdmin.lua
@@ -14,6 +16,8 @@
   tags:
     - name: Name
       value: Vouch-WAR-Stake-Trigger-Dev
+    - name: Authority
+      value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
     - name: Cron-Interval
       value: 1-minute
 - name: vouchdao-dev
@@ -24,3 +28,5 @@
   tags:
     - name: Name
       value: Vouch-WAR-Stake-VouchDao-Dev
+    - name: Authority
+      value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
