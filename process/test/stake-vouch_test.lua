@@ -33,7 +33,8 @@ _G.ao.env = {
   }
 }
 
-local stake_vouch = require "stake-vouch" -- require so that process handlers are loaded
+local json = require "json"
+local vouch_custody = require "vouch-custody" -- require so that process handlers are loaded
 -- local utils = require "utils"
 -- local bint = require ".bint" (512)
 
@@ -42,7 +43,7 @@ local resetGlobals = function()
   -- according to initialization in process.lual
 end
 
-local testWallet = "<MyWallet>"
+local testWallet = "0cQJ5Hd4oCaL57CWP-Pqe5_e0D4_ZDWuxKBgR9ke1SI"
 local testCustodyProcess = "<Dummy>"
 local warTokenId = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 local testQuantity1 = 100000000000  -- 0.1wAR
@@ -71,7 +72,7 @@ describe("vouching", function()
 
   it("should spawn a child", function()
     _G.RecordWalletPrototype(testWallet, 0)
-    _G.RecordWalletProcess(testWallet, 1, testCustodyProcess)
+    _G.RecordWalletCustodyProcessId(testWallet, 1, testCustodyProcess)
   end)
 
   it("should add a vouch", function()
@@ -80,12 +81,14 @@ describe("vouching", function()
       Target = _G.MainProcessId,
       From = testCustodyProcess,
       Tags = {
-        Action = "Stake-Notice",
+        Action = "Notify-On-Topic",
+      },
+      Data = json.encode({
         Sender = testWallet,
         TokenId = warTokenId,
         Quantity = tostring(testQuantity1),
-        ["Duration"] = tostring(testDuration1),
-      }
+        ["StakeDurationMs"] = tostring(testDuration1),
+      })
     })
 
     local walletCount = _G.VOUCH_DB_ADMIN:count("Wallet")
@@ -103,12 +106,14 @@ describe("vouching", function()
       Target = _G.MainProcessId,
       From = testCustodyProcess,
       Tags = {
-        Action = "Stake-Notice",
+        Action = "Notify-On-Topic",
+      },
+      Data = json.encode({
         Sender = testWallet,
         TokenId = warTokenId,
         Quantity = tostring(testQuantity2),
-        ["Duration"] = tostring(testDuration2),
-      }
+        ["StakeDurationMs"] = tostring(testDuration2),
+      })
     })
 
     local walletCount = _G.VOUCH_DB_ADMIN:count("Wallet")

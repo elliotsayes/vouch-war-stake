@@ -37,7 +37,7 @@ function ReceiveData(msg)
         Send({
           Target = process,
           Tags = {
-            Action = "Price-Update",
+            Action = "Price.Update",
             TokenId = WAR_TOKEN_PROCESS,
             Price = priceUsd,
             Currency = "USD"

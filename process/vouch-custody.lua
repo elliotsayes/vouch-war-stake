@@ -126,20 +126,28 @@ function ParseDuration(tokenId, duration)
   return true, durationNum
 end
 
-function ParseStake(msg, walletId)
-  local tokenId = msg.Tags.TokenId
+function ParseStakeDeposit(msg)
+  local data = json.decode(msg.Data)
+
+  local sender = data.Sender
+  if not ValidateArweaveId(sender) then
+    print("Invalid sender")
+    return false, nil
+  end
+
+  local tokenId = data.TokenId
   if not ValidateArweaveId(tokenId) or TOKEN_WHITELIST[tokenId] == nil then
     print("Invalid token id")
     return false, nil
   end
 
-  local isValidQuantity, quantity = ParseQuantity(tokenId, msg.Tags.Quantity)
+  local isValidQuantity, quantity = ParseQuantity(tokenId, data.Quantity)
   if not isValidQuantity then
     print("Invalid quantity")
     return false, nil
   end
 
-  local isValidDuration, duration = ParseDuration(tokenId, msg.Tags.Duration)
+  local isValidDuration, duration = ParseDuration(tokenId, data.StakeDurationMs)
   if not isValidDuration then
     print("Invalid duration")
     return false, nil
@@ -147,7 +155,7 @@ function ParseStake(msg, walletId)
 
   return true, {
     Timestamp = msg.Timestamp,
-    WalletId = walletId,
+    Sender = sender,
     TokenId = tokenId,
     Quantity = quantity,
     Duration = duration,
@@ -212,13 +220,13 @@ function RemoveWalletPrototype(walletId)
   end
 end
 
-function RecordWalletProcess(walletId, timestamp, processId)
+function RecordWalletCustodyProcessId(walletId, timestamp, custodyProcessId)
   local stmt = VOUCH_DB:prepare([[
   UPDATE Wallet
   SET CustodyProcessId = ?, TimestampModified = ?
   WHERE WalletId = ?;
 ]])
-  stmt:bind_values(processId, timestamp, walletId)
+  stmt:bind_values(custodyProcessId, timestamp, walletId)
   stmt:step()
   local res = stmt:finalize()
 
@@ -254,6 +262,27 @@ function QueryCustodyProcess(walletId)
   return processId
 end
 
+function SubscribeToCustodyProcess(custodyProcessId)
+  local req = ao.send({
+    Target = custodyProcessId,
+    Tags = {
+      ['Action'] = 'Register-Subscriber',
+      Topics = json.encode({ 'stake-deposit' })
+    }
+  })
+
+  local res = Handlers.receive({
+    From = custodyProcessId,
+    Action = 'Subscriber-Registration-Confirmation'
+  })
+
+  local _error = res.Tags['Error']
+  local ok = res.Tags['OK']
+  if _error ~= nil or ok ~= "true" then
+    error("Error subscribing to custody process: " .. _error)
+  end
+end
+
 Handlers.add(
   "Vouch-Custody.Register",
   Handlers.utils.hasMatchingTag("Action", "Vouch-Custody.Register"),
@@ -263,14 +292,14 @@ Handlers.add(
       -- We insert already, because `QueryCustodyProcess` will suspend the process,
       -- and we want to make sure it isn't queried multiple times at once
       RecordWalletPrototype(walletId, msg.Timestamp)
-      local processId = QueryCustodyProcess(walletId)
-      if processId == nil then
+      local custodyProcessId = QueryCustodyProcess(walletId)
+      if custodyProcessId == nil then
         print("No custody process")
         RemoveWalletPrototype(walletId)
         return
-      else
-        RecordWalletProcess(walletId, msg.Timestamp, processId)
       end
+      SubscribeToCustodyProcess(custodyProcessId)
+      RecordWalletCustodyProcessId(walletId, msg.Timestamp, custodyProcessId)
     else
       print("Wallet already exists")
     end
@@ -283,7 +312,7 @@ function CountStakeHistory(stake)
   FROM StakeHistory
   WHERE WalletId = ?;
 ]])
-  stmt:bind_values(stake.WalletId)
+  stmt:bind_values(stake.Sender)
   local res = stmt:step()
   local count = stmt:get_value(0)
   stmt:finalize()
@@ -296,7 +325,7 @@ function RecordStake(stake, confidence)
 INSERT INTO StakeHistory (WalletId, Timestamp, Quantity, StakeDuration, ConfidenceValue)
 VALUES (?, ?, ?, ?, ?);
 ]])
-  stmt:bind_values(stake.WalletId, stake.Timestamp, stake.Quantity, stake.Duration, confidence)
+  stmt:bind_values(stake.Sender, stake.Timestamp, stake.Quantity, stake.Duration, confidence)
   stmt:step()
   local res = stmt:finalize()
   if res ~= sqlite3.OK then
@@ -308,7 +337,7 @@ UPDATE Wallet
 SET TotalConfidenceValue = TotalConfidenceValue + ?
 WHERE WalletId = ?;
 ]])
-  stmt:bind_values(confidence, stake.WalletId)
+  stmt:bind_values(confidence, stake.Sender)
   stmt:step()
   local res = stmt:finalize()
 
@@ -319,28 +348,42 @@ WHERE WalletId = ?;
   print("Stake created")
 end
 
-function SendVouch(stake, confidence)
+function RetrieveConfidenceValue(walletId)
+  local stmt = VOUCH_DB:prepare([[
+  SELECT TotalConfidenceValue
+  FROM Wallet
+  WHERE WalletId = ?;
+]])
+  stmt:bind_values(walletId)
+  local res = stmt:step()
+  local confidenceValue = stmt:get_value(0)
+  stmt:finalize()
+
+  return confidenceValue
+end
+
+function SendVouch(walletId, confidence)
   local confidenceStr = string.format("%.2f-USD", confidence)
 
   ao.send({
     Target = VOUCH_PROCESS,
     Tags = {
       ['Data-Protocol'] = 'Vouch',
-      ['Vouch-For'] = stake.WalletId,
-      ['Method'] = 'WAR-Stake',
+      ['Vouch-For'] = walletId,
+      ['Method'] = 'Custody',
       ['Confidence-Value'] = confidenceStr,
     },
   })
 end
 
-function GetProcessWalletId(msg)
+function GetCustodyProcessWalletId(processId)
   -- check the wallet table
   local stmt = VOUCH_DB:prepare([[
-  SELECT WalletId
-  FROM Wallet
-  WHERE ProcessId = ?;
+SELECT WalletId
+FROM Wallet
+WHERE CustodyProcessId = ?;
 ]])
-  stmt:bind_values(msg.From)
+  stmt:bind_values(processId)
   local res = stmt:step()
   local walletId = stmt:get_value(0)
   stmt:finalize()
@@ -349,17 +392,17 @@ function GetProcessWalletId(msg)
 end
 
 Handlers.add(
-  "Stake-Notice",
-  Handlers.utils.hasMatchingTag("Action", "Stake-Notice"),
+  "Notify-On-Topic",
+  Handlers.utils.hasMatchingTag("Action", "Notify-On-Topic"),
   function(msg)
-    local walletId = GetProcessWalletId(msg)
-    if walletId == nil then
-      print("Stake-Notice not from child process, ignoring")
+    local custodyOwner = GetCustodyProcessWalletId(msg.From)
+    if custodyOwner == nil then
+      print("Notify-On-Topic not from child process, ignoring")
       return
     end
 
-    local isStakeValid, stake = ParseStake(msg, walletId)
-    if not isStakeValid then
+    local isStakeValid, stake = ParseStakeDeposit(msg)
+    if not isStakeValid or stake == nil then
       return
     end
 
@@ -374,9 +417,10 @@ Handlers.add(
       print("Invalid confidence value: " .. (confidence or "<nil>"))
       return
     end
-
     RecordStake(stake, confidence)
-    SendVouch(stake, confidence)
+
+    local totalConfidence = RetrieveConfidenceValue(stake.Sender)
+    SendVouch(stake.Sender, totalConfidence)
   end
 )
 
@@ -386,7 +430,7 @@ Handlers.add(
   function(msg)
     print("Voucher.Calculate-Confidence")
 
-    local isValidStake, stake = ParseStake(msg, msg.From)
+    local isValidStake, stake = ParseStakeDeposit(msg)
     if not isValidStake then
       msg.reply({
         Tags = {
