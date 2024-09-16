@@ -25,12 +25,16 @@ function Init(db)
   db:exec [[
     CREATE TABLE IF NOT EXISTS StakeHistory(
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
-      WalletId TEXT NOT NULL,
+      Sender TEXT NOT NULL,
+      CustodyOwner TEXT NOT NULL,
+      CustodyProcessId TEXT NOT NULL,
       Timestamp INTEGER NOT NULL,
       Quantity STRING NOT NULL,
       StakeDuration INTEGER NOT NULL,
       ConfidenceValue INTEGER NOT NULL,
-      FOREIGN KEY (WalletId) REFERENCES Wallet(WalletId)
+      FOREIGN KEY (Sender) REFERENCES Wallet(WalletId),
+      FOREIGN KEY (CustodyOwner) REFERENCES Wallet(WalletId),
+      FOREIGN KEY (CustodyProcessId) REFERENCES CustodyProcess(CustodyProcessId)
     );
   ]]
 end
@@ -165,6 +169,7 @@ function ParseStakeDeposit(msg)
   return true, {
     Timestamp = msg.Timestamp,
     Sender = sender,
+    CustodyProcessId = msg.From,
     TokenId = tokenId,
     Quantity = quantity,
     Duration = duration,
@@ -360,12 +365,13 @@ function CountStakeHistory(stake)
   return count
 end
 
-function RecordStake(stake, confidence)
+function RecordStake(stake, custodyOwner, confidence)
   local stmt = VOUCH_DB:prepare([[
-INSERT INTO StakeHistory (WalletId, Timestamp, Quantity, StakeDuration, ConfidenceValue)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO StakeHistory (Sender, CustodyOwner, CustodyProcessId, Timestamp, Quantity, StakeDuration, ConfidenceValue)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 ]])
-  stmt:bind_values(stake.Sender, stake.Timestamp, stake.Quantity, stake.Duration, confidence)
+  stmt:bind_values(stake.Sender, custodyOwner, stake.CustodyProcessId, stake.Timestamp, stake.Quantity, stake.Duration,
+    confidence)
   stmt:step()
   local res = stmt:finalize()
   if res ~= sqlite3.OK then
@@ -396,6 +402,9 @@ function RetrieveConfidenceValue(walletId)
 ]])
   stmt:bind_values(walletId)
   local res = stmt:step()
+  if res ~= sqlite3.ROW then
+    error("Error getting confidence value: " .. VOUCH_DB:errmsg())
+  end
   local confidenceValue = stmt:get_value(0)
   stmt:finalize()
 
@@ -449,18 +458,16 @@ Handlers.add(
       return
     end
 
-    -- local stakeCount = CountStakeHistory(stake)
-    -- if stakeCount > 0 then
-    --   print("Warning: Updating stake is currently unsupported")
-    --   return
-    -- end
-
     local isConfidenceValid, confidence = CalculateConfidence(stake)
     if not isConfidenceValid then
       print("Invalid confidence value: " .. (confidence or "<nil>"))
       return
     end
-    RecordStake(stake, confidence)
+
+    if not WalletRecorded(stake.Sender) then
+      CreateWallet(stake.Sender, stake.Timestamp)
+    end
+    RecordStake(stake, custodyOwner, confidence)
 
     local totalConfidence = RetrieveConfidenceValue(stake.Sender)
     SendVouch(stake.Sender, totalConfidence)

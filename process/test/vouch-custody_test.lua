@@ -44,6 +44,7 @@ local resetGlobals = function()
 end
 
 local testWallet = "0cQJ5Hd4oCaL57CWP-Pqe5_e0D4_ZDWuxKBgR9ke1SI"
+local testWallet2 = "K3FysbyRLGwzJByRZOOz1I6ybQtZI3kFNMtmkC4IkoQ"
 local testCustodyProcess = "<Dummy>"
 local warTokenId = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 local testQuantity1 = 100000000000  -- 0.1wAR
@@ -129,5 +130,31 @@ describe("vouching", function()
 
     local wallets = _G.VOUCH_DB_ADMIN:exec("SELECT * FROM Wallet")
     assert.near(1.1, wallets[1].TotalConfidenceValue, 0.001)
+  end)
+
+
+  it("should add another vouch", function()
+    -- Simulate a vouch message
+    ao.send({
+      Target = _G.MainProcessId,
+      From = testCustodyProcess,
+      Tags = {
+        Action = "Notify-On-Topic",
+      },
+      Data = json.encode({
+        Sender = testWallet2,
+        TokenId = warTokenId,
+        Quantity = tostring(testQuantity2),
+        ["StakeDurationMs"] = tostring(testDuration2),
+      })
+    })
+
+    local walletCount = _G.VOUCH_DB_ADMIN:count("Wallet")
+    assert.equal(2, walletCount)
+    local custodyCount = _G.VOUCH_DB_ADMIN:count("CustodyProcess")
+    assert.equal(1, custodyCount)
+
+    local historyCount = _G.VOUCH_DB_ADMIN:count("StakeHistory")
+    assert.equal(3, historyCount)
   end)
 end)
