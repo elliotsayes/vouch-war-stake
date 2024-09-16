@@ -8,8 +8,17 @@ function Init(db)
       WalletId TEXT PRIMARY KEY NOT NULL,
       TimestampCreated INTEGER NOT NULL,
       TimestampModified INTEGER NOT NULL,
-      CustodyProcessId TEXT UNIQUE,
       TotalConfidenceValue INTEGER NOT NULL DEFAULT 0
+    );
+  ]]
+
+  db:exec [[
+    CREATE TABLE IF NOT EXISTS CustodyProcess(
+      WalletId TEXT PRIMARY KEY NOT NULL,
+      TimestampCreated INTEGER NOT NULL,
+      TimestampModified INTEGER NOT NULL,
+      CustodyProcessId TEXT,
+      FOREIGN KEY (WalletId) REFERENCES Wallet(WalletId)
     );
   ]]
 
@@ -18,7 +27,7 @@ function Init(db)
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
       WalletId TEXT NOT NULL,
       Timestamp INTEGER NOT NULL,
-      Quantity INTEGER NOT NULL,
+      Quantity STRING NOT NULL,
       StakeDuration INTEGER NOT NULL,
       ConfidenceValue INTEGER NOT NULL,
       FOREIGN KEY (WalletId) REFERENCES Wallet(WalletId)
@@ -179,7 +188,7 @@ function CalculateConfidence(stake)
   return true, confidenceValue
 end
 
-function WalletExists(walletId)
+function WalletRecorded(walletId)
   local stmt = VOUCH_DB:prepare([[
   SELECT WalletId
   FROM Wallet
@@ -192,7 +201,7 @@ function WalletExists(walletId)
   return res == sqlite3.ROW
 end
 
-function RecordWalletPrototype(walletId, timestamp)
+function CreateWallet(walletId, timestamp)
   local stmt = VOUCH_DB:prepare([[
   INSERT INTO Wallet (WalletId, TimestampCreated, TimestampModified)
   VALUES (?, ?, ?)
@@ -206,9 +215,36 @@ function RecordWalletPrototype(walletId, timestamp)
   end
 end
 
-function RemoveWalletPrototype(walletId)
+function CustodyProcessRecorded(walletId)
   local stmt = VOUCH_DB:prepare([[
-  DELETE FROM Wallet
+  SELECT WalletId
+  FROM CustodyProcess
+  WHERE WalletId = ?;
+]])
+  stmt:bind_values(walletId)
+  local res = stmt:step()
+  stmt:finalize()
+
+  return res == sqlite3.ROW
+end
+
+function RecordCustodyProcessPrototype(walletId, timestamp)
+  local stmt = VOUCH_DB:prepare([[
+INSERT INTO CustodyProcess (WalletId, TimestampCreated, TimestampModified)
+VALUES (?, ?, ?)
+]])
+  stmt:bind_values(walletId, timestamp, timestamp)
+  stmt:step()
+  local res = stmt:finalize()
+
+  if res ~= sqlite3.OK then
+    error("Error creating Wallet: " .. VOUCH_DB:errmsg())
+  end
+end
+
+function RemoveCustodyProcessPrototype(walletId)
+  local stmt = VOUCH_DB:prepare([[
+  DELETE FROM CustodyProcess
   WHERE WalletId = ?;
 ]])
   stmt:bind_values(walletId)
@@ -220,11 +256,11 @@ function RemoveWalletPrototype(walletId)
   end
 end
 
-function RecordWalletCustodyProcessId(walletId, timestamp, custodyProcessId)
+function RecordCustodyProcessId(walletId, timestamp, custodyProcessId)
   local stmt = VOUCH_DB:prepare([[
-  UPDATE Wallet
-  SET CustodyProcessId = ?, TimestampModified = ?
-  WHERE WalletId = ?;
+UPDATE CustodyProcess
+SET CustodyProcessId = ?, TimestampModified = ?
+WHERE WalletId = ?;
 ]])
   stmt:bind_values(custodyProcessId, timestamp, walletId)
   stmt:step()
@@ -284,25 +320,29 @@ function SubscribeToCustodyProcess(custodyProcessId)
 end
 
 Handlers.add(
-  "Vouch-Custody.Register",
-  Handlers.utils.hasMatchingTag("Action", "Vouch-Custody.Register"),
+  "Vouch-Custody.Register-Custody",
+  Handlers.utils.hasMatchingTag("Action", "Vouch-Custody.Register-Custody"),
   function(msg)
     local walletId = msg.From
-    if not WalletExists(walletId) then
-      -- We insert already, because `QueryCustodyProcess` will suspend the process,
-      -- and we want to make sure it isn't queried multiple times at once
-      RecordWalletPrototype(walletId, msg.Timestamp)
-      local custodyProcessId = QueryCustodyProcess(walletId)
-      if custodyProcessId == nil then
-        print("No custody process")
-        RemoveWalletPrototype(walletId)
-        return
-      end
-      SubscribeToCustodyProcess(custodyProcessId)
-      RecordWalletCustodyProcessId(walletId, msg.Timestamp, custodyProcessId)
-    else
-      print("Wallet already exists")
+    if not WalletRecorded(walletId) then
+      CreateWallet(walletId, msg.Timestamp)
     end
+
+    if CustodyProcessRecorded(walletId) then
+      return print("Process already recorded")
+    end
+
+    -- We insert already, because `QueryCustodyProcess` will suspend the process,
+    -- and we want to make sure it isn't queried multiple times at once
+    RecordCustodyProcessPrototype(walletId, msg.Timestamp)
+    local custodyProcessId = QueryCustodyProcess(walletId)
+    if custodyProcessId == nil then
+      print("No custody process in ")
+      RemoveCustodyProcessPrototype(walletId)
+      return
+    end
+    SubscribeToCustodyProcess(custodyProcessId)
+    RecordCustodyProcessId(walletId, msg.Timestamp, custodyProcessId)
   end
 )
 
@@ -379,12 +419,15 @@ end
 function GetCustodyProcessWalletId(processId)
   -- check the wallet table
   local stmt = VOUCH_DB:prepare([[
-SELECT WalletId
-FROM Wallet
-WHERE CustodyProcessId = ?;
+  SELECT WalletId
+  FROM CustodyProcess
+  WHERE CustodyProcessId = ?;
 ]])
   stmt:bind_values(processId)
   local res = stmt:step()
+  if res ~= sqlite3.ROW then
+    error("Error getting custody process wallet id: " .. VOUCH_DB:errmsg())
+  end
   local walletId = stmt:get_value(0)
   stmt:finalize()
 
