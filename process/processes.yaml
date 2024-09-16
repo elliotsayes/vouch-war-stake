@@ -15,7 +15,7 @@
   module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
   tags:
     - name: Name
-      value: Vouch-WAR-Stake-VouchDao-Dev
+      value: Vouch-Custody-VouchDao-Dev
     - name: Authority
       value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
 - name: arweave-price
@@ -24,7 +24,7 @@
   module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
   tags:
     - name: Name
-      value: Vouch-WAR-Stake-ArweavePrice-Dev
+      value: Vouch-Custody-ArweavePrice-Dev
     - name: Authority
       value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
     - name: Cron-Interval
