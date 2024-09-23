@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Custody contract > getActiveStakesQuery 1`] = `
+{
+  "ActiveStakes": [
+    {
+      "DepositTimeMs": 1726383444675,
+      "Id": "azpc7I6H5R4nIWY5nsNeK_WUV_pGlilQ1hSSdqV9Zyw",
+      "Quantity": "1000000000",
+      "Sender": "0cQJ5Hd4oCaL57CWP-Pqe5_e0D4_ZDWuxKBgR9ke1SI",
+      "StakeDurationMs": 86400000,
+      "TokenId": "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10",
+      "WithdrawTimeMs": 1726469844675,
+      "timestamp": 1726383444675,
+    },
+  ],
+}
+`;
+
+exports[`Custody contract > getInfoQuery 1`] = `
+{
+  "RewardTokens": {
+    "m3PaWzK4PTG9lAaqYQPaPdOcXdO8hYqi5Fe9NWqXd0w": {
+      "Enabled": true,
+    },
+  },
+  "StakingTokens": {
+    "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10": {
+      "DurationBounds": {
+        "Max": 31536000000,
+        "Min": 60000,
+      },
+      "Enabled": true,
+      "QuantityBounds": {
+        "Max": "1000000000000000",
+        "Min": "1000000000",
+      },
+    },
+  },
+}
+`;
