@@ -12,7 +12,7 @@ describe("Custody contract", () => {
 
   it("getActiveStakesQuery", async () => {
     const res = await queryClient.fetchQuery(
-      getActiveStakesQuery(testContractId)
+      getActiveStakesQuery(testContractId),
     );
     expect(res).toMatchSnapshot();
   });
