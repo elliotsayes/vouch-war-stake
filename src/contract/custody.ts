@@ -60,7 +60,7 @@ export const depositMutation = (
   tokenId: string,
   quantity: string,
   stakeDurationMs: number,
-  aoSigner: AoSigner
+  aoSigner: AoSigner,
 ): MutationOptions => ({
   mutationKey: ["Custody", custodyProcessId, "Deposit", tokenId],
   mutationFn: async () => {

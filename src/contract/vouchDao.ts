@@ -1,7 +1,15 @@
+import { ArweaveId } from "@/features/arweave/lib/model";
 import { dryrun } from "@permaweb/aoconnect";
 import { queryOptions } from "@tanstack/react-query";
 
 const VOUCHDAO_PROCESS_ID = import.meta.env.VITE_VOUCHDAO_PROCESS_ID!;
+
+export type VouchValueStr = `${number}-${string}`;
+export type VouchValue = {
+  value: number;
+  currency: string;
+};
+export type VouchHistory = Record<ArweaveId, VouchValue>;
 
 type VouchDaoGetVouchesResponse =
   | {
@@ -10,12 +18,12 @@ type VouchDaoGetVouchesResponse =
     }
   | {
       "Vouches-For": string;
-      "Total-Value": string; // "0-USD";
+      "Total-Value": VouchValueStr; // "0-USD";
       Vouchers: Record<
         string,
-        | Record<string, unknown> & {
-            Value: string; // "0-USD";
-          }
+        Record<string, unknown> & {
+          Value: VouchValueStr; // "0-USD";
+        }
       >;
     };
 
@@ -38,7 +46,7 @@ export const vouchDaoVouchesQuery = (walletId: string) =>
       });
       const replyData = res.Messages[0].Data;
       const replyDataParsed = JSON.parse(
-        replyData
+        replyData,
       ) as VouchDaoGetVouchesResponse;
       console.log(replyDataParsed);
       return replyDataParsed;

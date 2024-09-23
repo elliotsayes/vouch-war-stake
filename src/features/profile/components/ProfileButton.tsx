@@ -3,7 +3,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ProfileAssets, ProfileInfo } from "../contract/model";
 import ProfileDetailsDropdown from "./ProfileDetailsDropdown";
 import {
   Card,
@@ -13,21 +12,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ProfileImage from "./ProfileImage";
+import { useActiveAddress } from "arweave-wallet-kit";
+import { useProfileInfo } from "../hooks/useProfileInfo";
 
-interface ProfileButtonProps {
-  profileInfo?: ProfileInfo;
-  assets?: ProfileAssets;
-}
+export default function ProfileButton() {
+  const walletId = useActiveAddress();
+  const profileInfo = useProfileInfo({ walletId });
 
-export default function ProfileButton({ profileInfo, assets }: ProfileButtonProps) {
   return (
     <Popover>
       <PopoverTrigger>
-        <ProfileImage profileImage={profileInfo?.ProfileImage} size="small" />
+        <ProfileImage
+          profileImage={profileInfo.data?.ProfileImage}
+          size="small"
+        />
       </PopoverTrigger>
       <PopoverContent align="end">
-        {profileInfo ? (
-          <ProfileDetailsDropdown profileInfo={profileInfo} profileAssets={assets} />
+        {profileInfo.data ? (
+          <ProfileDetailsDropdown profileInfo={profileInfo.data} />
         ) : (
           <Card>
             <CardHeader>

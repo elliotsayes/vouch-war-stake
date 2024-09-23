@@ -2,15 +2,14 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { profileInfoBatcher, profileInfoBatcherWallet } from "../utils/batch";
 import { ProfileInfo } from "../contract/model";
 
-type WalletIdOrProfileId =
-  | {
-      walletId: string;
-    }
-  | {
-      profileId: string;
-    };
+type WalletIdOrProfileId = {
+  walletId?: string;
+  profileId?: string;
+};
 
-export const useProfileInfo = (opts: WalletIdOrProfileId | undefined) => {
+export const useProfileInfo = (opts: WalletIdOrProfileId) => {
+  const { walletId, profileId } = opts;
+
   // check if profileId is defined
   let queryOpts = queryOptions({
     queryKey: ["ProfileInfo"],
@@ -18,21 +17,20 @@ export const useProfileInfo = (opts: WalletIdOrProfileId | undefined) => {
       return undefined as ProfileInfo | undefined;
     },
   });
-  if ("profileId" in opts) {
+  if (profileId) {
     queryOpts = queryOptions({
-      queryKey: ["ProfileInfo", opts.profileId],
+      queryKey: ["ProfileInfo", profileId],
       queryFn: async () => {
-        const profileInfo = await profileInfoBatcher.fetch(opts.profileId);
+        const profileInfo = await profileInfoBatcher.fetch(profileId);
         return profileInfo as ProfileInfo | undefined;
       },
     });
-  } else if ("walletId" in opts) {
+  } else if (walletId) {
     queryOpts = queryOptions({
-      queryKey: ["ProfileInfoByWallet", opts.walletId],
+      queryKey: ["ProfileInfoByWallet", walletId],
       queryFn: async () => {
-        const walletIdAndProfileInfo = await profileInfoBatcherWallet.fetch(
-          opts.walletId,
-        );
+        const walletIdAndProfileInfo =
+          await profileInfoBatcherWallet.fetch(walletId);
         return walletIdAndProfileInfo.profile as ProfileInfo | undefined;
       },
     });
