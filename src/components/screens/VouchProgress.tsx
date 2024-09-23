@@ -35,7 +35,7 @@ export const VouchProgress = ({
           <GoalProgress targetValue={targetValue} profileId={profileId} />
         </div>
         <div>
-          <h1 className="text-lg mb-4 text-muted-foreground">
+          <h1 className="text-lg mb-2 text-muted-foreground">
             Increase your vouch score with these services
           </h1>
           <VouchButtons onActionVoucherClick={() => setShowModal(true)} />

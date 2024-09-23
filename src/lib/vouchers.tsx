@@ -6,6 +6,7 @@ export type VouchMethod =
 
 export type VoucherInfo = {
   name: VouchMethod;
+  description: string;
   address: string;
   url: string;
   icon: JSX.Element;
@@ -14,12 +15,15 @@ export type VoucherInfo = {
 export const whitelistedVouchers: Array<VoucherInfo> = [
   {
     name: "Vouch-X",
+    description:
+      "Earn vouch points based on the credibility of your X account.",
     address: "Ax_uXyLQBPZSQ15movzv9-O1mDo30khslqN64qD27Z8",
     url: "https://vouch-twitter.arweave.net/",
     icon: (
       <svg
-        width="24"
-        height="24"
+        width="32"
+        height="32"
+        className="p-0.5"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -33,12 +37,13 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
   },
   {
     name: "Vouch-AO-Balance",
+    description: "Earn vouch points for the AO tokens locked in your wallet.",
     address: "def456",
     url: "https://vouch-ao-balance.arweave.net/",
     icon: (
       <svg
-        width="26"
-        height="26"
+        width="32"
+        height="32"
         viewBox="0 0 429 214"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -62,14 +67,17 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
   },
   {
     name: "Vouch-Gitcoin-Passport",
+    description:
+      "Earn vouch points from your Ethereum wallet via Gitcoin Passport",
     address: "ghi789",
     url: "https://vouch-gitcoin-passport.arweave.net/",
     icon: (
       <svg
-        fill="none"
-        height="25"
+        width="32"
+        height="32"
+        className="p-0.5"
         viewBox="0 0 128 146"
-        width="25"
+        fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <g fill="#fff">
@@ -87,17 +95,18 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
   },
   {
     name: "Vouch-wAR-Stake",
+    description: "Earn vouch points by staking wrapped Arweave tokens.",
     address: "jkl012",
     url: "https://vouch-war-stake.arweave.net/",
     icon: (
-      <div className="relative w-6 h-6">
+      <div className="relative w-8 h-8">
         <img
           className="rounded-full h-full w-full"
-          src="https://aox.xyz/assets/war-3146b8af.png"
+          src="/images/war-3146b8af.png"
         />
         <img
-          className="rounded-full w-3 h-3 absolute border bg-white"
-          src="https://aox.xyz/assets/ao-cf4fb40b.svg"
+          className="rounded-full w-4 h-4 absolute border bg-white"
+          src="/images/ao-cf4fb40b.svg"
           style={{
             borderColor: "rgba(218, 218, 218, 0.85)",
             bottom: "-2px",
