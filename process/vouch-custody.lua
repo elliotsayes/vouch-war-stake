@@ -55,7 +55,7 @@ PRICE_PROCESS = "GhzqFey5suK6apvvWKzDYgmB69Jol62BRfC1ayEraeQ"
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 WAR_ORACLE_PROCESS = "<WAR_ORACLE_PROCESS>"
 
-TOKEN_WHITELIST = {
+TokenWhitelist = {
   [WAR_TOKEN_PROCESS] = {
     Name = 'WAR',
     Ticker = 'AR',
@@ -108,7 +108,7 @@ function ParseQuantity(tokenId, quantity)
   if quantityNum == nil then
     return false, nil
   end
-  local tokenConfig = TOKEN_WHITELIST[tokenId]
+  local tokenConfig = TokenWhitelist[tokenId]
   if tokenConfig == nil then
     return false, nil
   end
@@ -126,7 +126,7 @@ function ParseDuration(tokenId, duration)
   if durationNum == nil then
     return false, nil
   end
-  local tokenConfig = TOKEN_WHITELIST[tokenId]
+  local tokenConfig = TokenWhitelist[tokenId]
   if tokenConfig == nil then
     return false, nil
   end
@@ -149,7 +149,7 @@ function ParseStakeDeposit(msg)
   end
 
   local tokenId = data.TokenId
-  if not ValidateArweaveId(tokenId) or TOKEN_WHITELIST[tokenId] == nil then
+  if not ValidateArweaveId(tokenId) or TokenWhitelist[tokenId] == nil then
     print("Invalid token id")
     return false, nil
   end
@@ -177,7 +177,7 @@ function ParseStakeDeposit(msg)
 end
 
 function CalculateConfidence(stake)
-  local tokenConfig = TOKEN_WHITELIST[stake.TokenId]
+  local tokenConfig = TokenWhitelist[stake.TokenId]
   if tokenConfig.ValueUsd == nil then
     return false, nil
   end
@@ -526,6 +526,23 @@ Handlers.add(
     end
 
     print("Updating price of " .. WAR_TOKEN_PROCESS .. " to " .. price)
-    TOKEN_WHITELIST[WAR_TOKEN_PROCESS].ValueUsd = price
+    TokenWhitelist[WAR_TOKEN_PROCESS].ValueUsd = price
+  end
+)
+
+Handlers.add(
+  "Info",
+  Handlers.utils.hasMatchingTag("Action", "Info"),
+  function(msg)
+    local data = json.encode({
+      TokenWhitelist = TokenWhitelist,
+    })
+    msg.reply({
+      Tags = {
+        ['Status'] = "Success",
+        ['Value'] = "Vouch-Custody",
+      },
+      Data = data
+    })
   end
 )

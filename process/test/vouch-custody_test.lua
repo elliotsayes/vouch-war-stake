@@ -57,7 +57,7 @@ describe("vouching", function()
     resetGlobals()
     _G.VOUCH_PROCESS = "<VOUCH_PROCESS>"
     -- Set a confidenceValue for war token
-    _G.TOKEN_WHITELIST[warTokenId].ValueUsd = 10.0
+    _G.TokenWhitelist[warTokenId].ValueUsd = 10.0
   end)
 
   teardown(function()

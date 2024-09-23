@@ -12,10 +12,19 @@ import { VouchBreakdown } from "./VouchBreakdown";
 
 export type GoalProgressProps = {
   targetValue: VouchValue;
+  bonusValue?: number;
+  projectedMeetsTarget?: boolean;
   profileId?: string;
 };
 
-export const GoalProgress = ({ targetValue, profileId }: GoalProgressProps) => {
+export const GoalProgress = ({
+  targetValue,
+  bonusValue,
+  projectedMeetsTarget,
+  profileId,
+}: GoalProgressProps) => {
+  const hasBonus = bonusValue && bonusValue !== 0;
+
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
 
@@ -45,15 +54,20 @@ export const GoalProgress = ({ targetValue, profileId }: GoalProgressProps) => {
           <div className="absolute top-0 right-0 pr-2 pt-1">
             <HoverCard>
               <HoverCardTrigger>ⓘ</HoverCardTrigger>
-              <HoverCardContent align="end">
+              <HoverCardContent side="top" align="end">
                 <VouchBreakdown />
               </HoverCardContent>
             </HoverCard>
           </div>
           <div className="text-center text-lg">
-            {vouchData.data?.total
-              ? Math.round(vouchData.data.total * 100) / 100
-              : "..."}
+            <span
+              className={`${hasBonus ? `animate-pulse ${projectedMeetsTarget ? "text-green-800" : "text-red-800"}` : ""}`}
+            >
+              {vouchData.data?.total
+                ? Math.floor((vouchData.data.total + (bonusValue ?? 0)) * 100) /
+                  100
+                : "..."}
+            </span>
             {" ⟋ "}
             {targetValue.value}{" "}
             <span className="text-primary/80 text-sm">

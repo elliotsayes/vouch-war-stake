@@ -18,9 +18,9 @@ export const VouchBreakdown = () => {
   const vouchData = useWhitelistedVouchData(walletId!);
 
   return (
-    <Card>
+    <Card className="px-2 pb-1">
       <Table>
-        <TableCaption>Allowed Vouch methods</TableCaption>
+        {/* <TableCaption className="mt-1">Allowed Vouch methods</TableCaption> */}
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Method</TableHead>

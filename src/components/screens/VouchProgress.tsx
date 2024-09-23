@@ -23,6 +23,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { StakeConfiguration } from "../StakeConfiguration";
+import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 
 export interface VouchProgressProps {
   targetValue: VouchValue;
@@ -35,6 +37,16 @@ export const VouchProgress = ({
 }: VouchProgressProps) => {
   const [showStakeSheet, setShowStakeSheet] = useState(false);
   const [showConfirmQuitDialog, setShowConfirmQuitDialog] = useState(false);
+
+  const walletId = useActiveAddress();
+  const vouchData = useWhitelistedVouchData(walletId!);
+
+  // const requiredToMeetTarget = targetValue.value - (vouchData.data?.total ?? 0);
+
+  const [bonusValue, setBonusValue] = useState(0);
+
+  const projectedValue = (vouchData.data?.total ?? 0) + bonusValue;
+  const projectedMeetsTarget = projectedValue >= targetValue.value;
 
   return (
     <Sheet open={showStakeSheet} onOpenChange={setShowStakeSheet}>
@@ -53,7 +65,16 @@ export const VouchProgress = ({
               on the Permaweb
             </h1>
             <div className="pb-4">
-              <GoalProgress targetValue={targetValue} profileId={profileId} />
+              <GoalProgress
+                targetValue={targetValue}
+                {...(showStakeSheet
+                  ? {
+                      bonusValue,
+                      projectedMeetsTarget,
+                    }
+                  : {})}
+                profileId={profileId}
+              />
             </div>
             <div>
               <h1 className="text-lg mb-2 text-muted-foreground">
@@ -63,10 +84,12 @@ export const VouchProgress = ({
                 onActionVoucherClick={() => setShowStakeSheet(true)}
               />
             </div>
+            <div
+              className={`transition-all duration-500 ${showStakeSheet ? "h-1/4" : "h-0"}`}
+            />
           </div>
         </div>
         <SheetContent
-          side={"bottom"}
           onInteractOutside={(e) => {
             e.preventDefault();
             setShowConfirmQuitDialog(true);
@@ -75,14 +98,17 @@ export const VouchProgress = ({
             e.preventDefault();
             setShowConfirmQuitDialog(true);
           }}
+          side={"bottom"}
         >
           <SheetHeader>
-            <SheetTitle>Are you absolutely sure?</SheetTitle>
-            <SheetDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
-            </SheetDescription>
+            <SheetTitle>Get Vouch points by Staking wrapped Arweave</SheetTitle>
           </SheetHeader>
+          <StakeConfiguration
+            targetValue={targetValue}
+            bonusValue={bonusValue}
+            setBonusValue={setBonusValue}
+            projectedMeetsTarget={projectedMeetsTarget}
+          />
         </SheetContent>
         <AlertDialogContent>
           <AlertDialogHeader>
