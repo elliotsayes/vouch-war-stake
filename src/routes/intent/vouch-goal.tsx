@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 type VouchGoalSearch = {
-  targetValue: number;
-  targetCurrency: string;
+  value: number;
+  currency: string;
   profileId?: string;
 };
 
 export const Route = createFileRoute("/intent/vouch-goal")({
   validateSearch: (search): VouchGoalSearch => {
     return {
-      targetValue: Number(search.targetValue),
-      targetCurrency: (search.targetCurrency as string) || "USD",
+      value: Number(search.value),
+      currency: (search.currency as string) || "USD",
       profileId: (search.profileId as string) || undefined,
     };
   },
@@ -19,7 +19,11 @@ export const Route = createFileRoute("/intent/vouch-goal")({
 });
 
 function VouchGoal() {
-  const { targetCurrency, targetValue, profileId } = Route.useSearch();
+  const {
+    currency: targetCurrency,
+    value: targetValue,
+    profileId,
+  } = Route.useSearch();
 
   return (
     <div className="p-2">

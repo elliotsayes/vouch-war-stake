@@ -10,8 +10,8 @@ function Index() {
       <Link
         to="/intent/vouch-goal"
         search={{
-          targetValue: 10,
-          targetCurrency: "USD",
+          value: 10,
+          currency: "USD",
           profileId: "QIi6XZQOJlCnT_Vf-xKdcYqrBk-Y94QT8eiuBDLsMq8",
         }}
       >
