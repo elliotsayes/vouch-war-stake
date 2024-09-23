@@ -1,7 +1,7 @@
 import { dryrun } from "@permaweb/aoconnect";
 import { queryOptions } from "@tanstack/react-query";
 
-const VITE_VOUCHDAO_PROCESS_ID = import.meta.env.VITE_VOUCHDAO_PROCESS_ID!;
+const VOUCHDAO_PROCESS_ID = import.meta.env.VITE_VOUCHDAO_PROCESS_ID!;
 
 type VouchDaoGetVouchesResponse =
   | {
@@ -21,10 +21,10 @@ type VouchDaoGetVouchesResponse =
 
 export const vouchDaoVouchesQuery = (walletId: string) =>
   queryOptions({
-    queryKey: ["vouchDao", VITE_VOUCHDAO_PROCESS_ID, "Get-Vouches", walletId],
+    queryKey: ["vouchDao", VOUCHDAO_PROCESS_ID, "Get-Vouches", walletId],
     queryFn: async () => {
       const res = await dryrun({
-        process: VITE_VOUCHDAO_PROCESS_ID,
+        process: VOUCHDAO_PROCESS_ID,
         tags: [
           {
             name: "Action",

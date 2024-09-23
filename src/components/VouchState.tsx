@@ -2,9 +2,9 @@ import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { useActiveAddress } from "arweave-wallet-kit";
 import {
   createCustodyMutation,
-  vouchConfidenceQuery,
-  vouchStateQuery,
-} from "../contract/vouchWarStake";
+  getWalletQuery,
+} from "../contract/custodyCreator";
+import { vouchCustodyInfoQuery } from "../contract/vouchCustody";
 import { useState } from "react";
 import useAoSigner from "../hooks/useAoSigner";
 import { vouchDaoVouchesQuery } from "../contract/vouchDao";
@@ -21,12 +21,14 @@ export function VouchState() {
 
   const vouchDaoVouches = useQuery(vouchDaoVouchesQuery(activeAddress!));
 
-  const voucherState = useQuery(vouchStateQuery(activeAddress!));
-  const voucherConfidence = useQuery(
-    queryOptions({
-      ...vouchConfidenceQuery(quantity, duration),
-    })
-  );
+  const custodyCreatorInfo = useQuery(getWalletQuery(activeAddress!));
+
+  const voucherState = useQuery(vouchCustodyInfoQuery());
+  // const voucherConfidence = useQuery(
+  //   queryOptions({
+  //     ...vouchConfidenceQuery(quantity, duration),
+  //   })
+  // );
 
   const createCustody = useMutation(createCustodyMutation(aoSigner!));
 
@@ -36,13 +38,22 @@ export function VouchState() {
         {voucherState.isLoading && <div>Loading...</div>}
         {voucherState.isError && <div>Error: {voucherState.error.message}</div>}
       </div>
-      <div>
+      {/* <div>
         {voucherConfidence.isLoading && <div>Loading...</div>}
         {voucherConfidence.isError && (
           <div>Error: {voucherConfidence.error.message}</div>
         )}
         {voucherConfidence.isSuccess && (
           <div>US${voucherConfidence.data.confidence.toFixed(2)}</div>
+        )}
+      </div> */}
+      <div>
+        {custodyCreatorInfo.isLoading && <div>Loading...</div>}
+        {custodyCreatorInfo.isError && (
+          <div>Error: {custodyCreatorInfo.error.message}</div>
+        )}
+        {custodyCreatorInfo.isSuccess && (
+          <div>Wallet: {custodyCreatorInfo.data}</div>
         )}
       </div>
       <div>

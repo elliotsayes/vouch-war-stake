@@ -8,7 +8,7 @@ export function TestMessage() {
     <div>
       <button
         onClick={async () => {
-          const process = import.meta.env.VITE_VOUCHER_PROCESS_ID!;
+          const process = import.meta.env.VITE_VOUCH_CUSTODY_PROCESS_ID!;
           console.log(process);
           const res = await message({
             process,
