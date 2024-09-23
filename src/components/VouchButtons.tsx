@@ -38,7 +38,7 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
                   <ExternalLinkIcon className="ml-1 inline" width={12} />
                 </span>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
+              <TooltipContent side="bottom" className="max-w-60">
                 {voucher.description}
               </TooltipContent>
             </Tooltip>
@@ -58,7 +58,7 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
                 <CaretDownIcon className="inline" width={20} />
               </span>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="bottom" className="max-w-60">
               {actionVoucher.description}
             </TooltipContent>
           </Tooltip>

@@ -3,8 +3,6 @@ import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { getTagValue } from "../lib/arweave";
 import { AoSigner } from "../hooks/useAoSigner";
 
-const WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
-
 export const getInfoQuery = (processId: string) =>
   queryOptions({
     queryKey: ["Custody", processId, "Info"],

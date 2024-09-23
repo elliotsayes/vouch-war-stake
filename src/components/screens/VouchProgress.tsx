@@ -100,8 +100,10 @@ export const VouchProgress = ({
           }}
           side={"bottom"}
         >
-          <SheetHeader>
-            <SheetTitle>Get Vouch points by Staking wrapped Arweave</SheetTitle>
+          <SheetHeader className="md:w-[80%] max-w-md mx-auto">
+            <SheetTitle className="text-center">
+              Earn vouch points by staking wrapped Arweave
+            </SheetTitle>
           </SheetHeader>
           <StakeConfiguration
             targetValue={targetValue}

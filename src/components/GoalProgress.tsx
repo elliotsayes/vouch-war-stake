@@ -9,6 +9,7 @@ import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "./VouchBreakdown";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 export type GoalProgressProps = {
   targetValue: VouchValue;
@@ -53,7 +54,9 @@ export const GoalProgress = ({
         <Card className="bg-primary/10 flex flex-col flex-grow-0 justify-center py-3 relative">
           <div className="absolute top-0 right-0 pr-2 pt-1">
             <HoverCard>
-              <HoverCardTrigger>ⓘ</HoverCardTrigger>
+              <HoverCardTrigger>
+                <InfoCircledIcon />
+              </HoverCardTrigger>
               <HoverCardContent side="top" align="end">
                 <VouchBreakdown />
               </HoverCardContent>
