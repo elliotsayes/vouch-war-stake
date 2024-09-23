@@ -20,7 +20,24 @@ declare module "@tanstack/react-router" {
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ArweaveWalletKit>
+      <ArweaveWalletKit
+        theme={{
+          displayTheme: "light",
+          accent: {
+            r: 128,
+            g: 128,
+            b: 128,
+          },
+          titleHighlight: {
+            r: 128,
+            g: 128,
+            b: 128,
+          },
+          font: {
+            fontFamily: "Inter",
+          },
+        }}
+      >
         <RouterProvider router={router} />
       </ArweaveWalletKit>
     </QueryClientProvider>
