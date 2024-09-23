@@ -4,6 +4,8 @@ import { vouchDaoVouchesQuery, VouchValue } from "@/contract/vouchDao";
 import { ConnectButton, useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "../VouchBreakdown";
 import { useQuery } from "@tanstack/react-query";
+import { VouchButtons } from "../VouchButtons";
+import { useState } from "react";
 
 export interface VouchProgressProps {
   targetValue: VouchValue;
@@ -15,6 +17,7 @@ export const VouchProgress = ({
   profileId,
 }: VouchProgressProps) => {
   const walletId = useActiveAddress();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     // Full Screen
@@ -23,12 +26,20 @@ export const VouchProgress = ({
         <ConnectButton />
       </div>
       {/* Centered box */}
-      <div className="flex flex-col items-center justify-center h-full text-center">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pb-8">
+      <div className="flex flex-col items-center justify-center h-full text-center gap-4">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pb-4">
           Get Vouched <br />
           on the Permaweb
         </h1>
-        <GoalProgress targetValue={targetValue} profileId={profileId} />
+        <div className="pb-4">
+          <GoalProgress targetValue={targetValue} profileId={profileId} />
+        </div>
+        <div>
+          <h1 className="text-lg mb-4 text-muted-foreground">
+            Increase your vouch score with these services
+          </h1>
+          <VouchButtons onActionVoucherClick={() => setShowModal(true)} />
+        </div>
       </div>
     </div>
   );

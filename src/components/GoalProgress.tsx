@@ -30,8 +30,8 @@ export const GoalProgress = ({ targetValue, profileId }: GoalProgressProps) => {
           className={`${profileInfo.isLoading && "animate-pulse"}`}
         />
       </Avatar>
-      <div className="flex flex-col flex-grow-0 justify-center gap-2">
-        <div className="text-xl flex flex-row items-center">
+      <div className="flex flex-col flex-grow-0 justify-center gap-1">
+        <div className="text-lg text-primary/80 flex flex-row items-center">
           Goal for access to{" "}
           {profileInfo.isLoading ? (
             <Skeleton className="ml-2 h-4 w-12 animate-pulse" />
@@ -45,7 +45,7 @@ export const GoalProgress = ({ targetValue, profileId }: GoalProgressProps) => {
           <div className="absolute top-0 right-0 pr-2 pt-1">
             <HoverCard>
               <HoverCardTrigger>ⓘ</HoverCardTrigger>
-              <HoverCardContent>
+              <HoverCardContent align="end">
                 <VouchBreakdown />
               </HoverCardContent>
             </HoverCard>
