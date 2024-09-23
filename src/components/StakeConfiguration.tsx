@@ -121,7 +121,7 @@ export const StakeConfiguration = ({
               Quantity{" "}
               <Input
                 type="number"
-                className="ml-2 w-20"
+                className="ml-2 mr-1 w-20"
                 step={0.1}
                 value={quantity}
                 onChange={(e) => {
@@ -147,7 +147,7 @@ export const StakeConfiguration = ({
               Stake time
               <Input
                 type="number"
-                className="ml-2 w-20"
+                className="ml-2 mr-1 w-20"
                 value={
                   Math.ceil((100 * stakeTime) / (24 * 60 * 60 * 1000)) / 100
                 }
