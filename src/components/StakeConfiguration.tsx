@@ -13,8 +13,9 @@ import { Tooltip, TooltipTrigger } from "./ui/tooltip";
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Card } from "./ui/card";
 
-const yearMs = 365 * 24 * 60 * 60 * 1000;
-const maxStakeTime = yearMs;
+const dayMs = 24 * 60 * 60 * 1000;
+const yearMs = 365 * dayMs;
+const maxStakeTimeMs = yearMs;
 
 export interface StakeConfigurationProps {
   targetValue: VouchValue;
@@ -63,7 +64,7 @@ export const StakeConfiguration = ({
     // if (!vouchCustodyInfo.data) {
     //   return false;
     // }
-    setStakeTime(maxStakeTime);
+    setStakeTime(maxStakeTimeMs);
 
     // Calculate required to meet target
     const requiredToMeetTarget = targetValue.value - vouchData.data.total;
@@ -75,7 +76,8 @@ export const StakeConfiguration = ({
       const interestRate = 0.1;
 
       const quantity =
-        (requiredToMeetTarget * yearMs) / (price * interestRate * maxStakeTime);
+        (requiredToMeetTarget * yearMs) /
+        (price * interestRate * maxStakeTimeMs);
 
       setQuantity(quantity);
     }
@@ -121,11 +123,13 @@ export const StakeConfiguration = ({
               Quantity{" "}
               <Input
                 type="number"
-                className="ml-2 mr-1 w-20"
+                className="ml-2 mr-1 w-24"
                 step={0.1}
+                max={100}
                 value={quantity}
                 onChange={(e) => {
-                  setQuantity(parseFloat(e.target.value));
+                  const unsignedValue = Math.max(0, parseFloat(e.target.value));
+                  setQuantity(Math.min(unsignedValue, 100));
                   setIsAuto(false);
                 }}
               />
@@ -147,14 +151,12 @@ export const StakeConfiguration = ({
               Stake time
               <Input
                 type="number"
-                className="ml-2 mr-1 w-20"
-                value={
-                  Math.ceil((100 * stakeTime) / (24 * 60 * 60 * 1000)) / 100
-                }
+                className="ml-2 mr-1 w-24"
+                value={Math.ceil((100 * stakeTime) / dayMs) / 100}
+                max={maxStakeTimeMs / dayMs}
                 onChange={(e) => {
-                  setStakeTime(
-                    parseFloat(e.target.value) * 24 * 60 * 60 * 1000,
-                  );
+                  const valueDays = Math.max(0, parseFloat(e.target.value));
+                  setStakeTime(Math.min(maxStakeTimeMs, valueDays * dayMs));
                   setIsAuto(false);
                 }}
               />
@@ -162,7 +164,7 @@ export const StakeConfiguration = ({
             </div>
             <Slider
               min={0}
-              max={maxStakeTime}
+              max={maxStakeTimeMs}
               step={1}
               value={[stakeTime]}
               onValueChange={(value) => {
