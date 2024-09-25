@@ -5,13 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useActiveAddress } from "arweave-wallet-kit";
 import { Slider } from "./ui/slider";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { set } from "zod";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { tokenBalanceQuery } from "@/contract/token";
 import { Tooltip, TooltipTrigger } from "./ui/tooltip";
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Card } from "./ui/card";
+import { DepositParameters } from "@/contract/custody";
 
 const dayMs = 24 * 60 * 60 * 1000;
 const yearMs = 365 * dayMs;
@@ -22,6 +22,7 @@ export interface StakeConfigurationProps {
   bonusValue: number;
   setBonusValue: (value: number) => void;
   projectedMeetsTarget?: boolean;
+  onConfirmDeposit: (depositParameters: DepositParameters) => void;
 }
 
 const WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
@@ -32,6 +33,7 @@ export const StakeConfiguration = ({
   bonusValue,
   setBonusValue,
   projectedMeetsTarget,
+  onConfirmDeposit,
 }: StakeConfigurationProps) => {
   const [quantity, setQuantity] = useState(0);
   const [stakeTime, setStakeTime] = useState(0);
@@ -48,22 +50,14 @@ export const StakeConfiguration = ({
 
   const vouchData = useWhitelistedVouchData(walletId!);
 
-  // if (vouchData.isLoading || vouchCustodyInfo.isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (!vouchData.isSuccess || !vouchCustodyInfo.isSuccess) {
-  //   return <div>Something went wrong!</div>;
-  // }
-
   const fired = useRef(false);
   const calculateAuto = useCallback(() => {
     if (!vouchData.data?.total) {
       return false;
     }
-    // if (!vouchCustodyInfo.data) {
-    //   return false;
-    // }
+    if (!vouchCustodyInfo.data) {
+      return false;
+    }
     setStakeTime(maxStakeTimeMs);
 
     // Calculate required to meet target
@@ -83,14 +77,10 @@ export const StakeConfiguration = ({
     }
     setIsAuto(true);
     return true;
-  }, [
-    targetValue.value,
-    // vouchCustodyInfo.data,
-    vouchData.data?.total,
-  ]);
+  }, [targetValue.value, vouchCustodyInfo.data, vouchData.data?.total]);
 
   useEffect(() => {
-    // if (!vouchCustodyInfo.data) return;
+    if (!vouchCustodyInfo.data) return;
 
     const interestRate = 0.1;
     const price = 20;
@@ -105,11 +95,17 @@ export const StakeConfiguration = ({
     if (calculateAuto()) fired.current = true;
   }, [vouchData.isSuccess, vouchCustodyInfo.isSuccess, calculateAuto]);
 
+  const isLoading = vouchData.isLoading || vouchCustodyInfo.isLoading;
+
+  if (!isLoading && (!vouchData.isSuccess || !vouchCustodyInfo.isSuccess)) {
+    return <div>Something went wrong!</div>;
+  }
+
   return (
     <TooltipProvider>
       <div className="md:w-[80%] max-w-sm mx-auto my-4 py-4 relative">
         <Button
-          disabled={isAuto}
+          disabled={isAuto || isLoading}
           variant={"outline"}
           size={"sm"}
           onClick={calculateAuto}
@@ -122,6 +118,7 @@ export const StakeConfiguration = ({
             <div className="flex flex-row items-center">
               Quantity{" "}
               <Input
+                disabled={isLoading}
                 type="number"
                 className="ml-2 mr-1 w-24"
                 step={0.1}
@@ -136,6 +133,7 @@ export const StakeConfiguration = ({
               $wAR
             </div>
             <Slider
+              disabled={isLoading}
               min={0}
               max={100}
               step={0.1}
@@ -150,6 +148,7 @@ export const StakeConfiguration = ({
             <div className="flex flex-row items-center">
               Stake time
               <Input
+                disabled={isLoading}
                 type="number"
                 className="ml-2 mr-1 w-24"
                 value={Math.ceil((100 * stakeTime) / dayMs) / 100}
@@ -163,6 +162,7 @@ export const StakeConfiguration = ({
               days
             </div>
             <Slider
+              disabled={isLoading}
               min={0}
               max={maxStakeTimeMs}
               step={1}
@@ -176,11 +176,22 @@ export const StakeConfiguration = ({
         </div>
         <div className="mt-6 mb-4 flex flex-col items-center">
           {hasSufficientBalance ? (
-            <Button disabled={!hasSufficientBalance}>Stake $wAR</Button>
+            <Button
+              disabled={isLoading}
+              onClick={() => {
+                onConfirmDeposit({
+                  tokenId: WAR_TOKEN_PROCESS_ID,
+                  quantity: (quantity * WAR_MULTIPLIER).toString(),
+                  stakeDurationMs: stakeTime,
+                });
+              }}
+            >
+              Stake $wAR
+            </Button>
           ) : (
             <Tooltip>
               <TooltipTrigger className="cursor-help">
-                <Button disabled={!hasSufficientBalance}>
+                <Button disabled={!hasSufficientBalance || isLoading}>
                   Insufficient $wAR...
                 </Button>
               </TooltipTrigger>

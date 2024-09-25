@@ -19,6 +19,8 @@ export const vouchCustodyInfoQuery = () =>
           },
         ],
       });
-      return JSON.parse(res.Messages[0].Data);
+      const data = JSON.parse(res.Messages[0].Data);
+      console.log({ vouchCustodyInfo: data });
+      return data;
     },
   });

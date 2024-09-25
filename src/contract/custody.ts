@@ -3,6 +3,12 @@ import { MutationOptions, queryOptions } from "@tanstack/react-query";
 import { getTagValue } from "../lib/arweave";
 import { AoSigner } from "../hooks/useAoSigner";
 
+export type DepositParameters = {
+  tokenId: string;
+  quantity: string;
+  stakeDurationMs: number;
+};
+
 export const getInfoQuery = (processId: string) =>
   queryOptions({
     queryKey: ["Custody", processId, "Info"],
@@ -55,9 +61,7 @@ export const getActiveStakesQuery = (processId: string, walletId?: string) =>
 
 export const depositMutation = (
   custodyProcessId: string,
-  tokenId: string,
-  quantity: string,
-  stakeDurationMs: number,
+  { tokenId, quantity, stakeDurationMs }: DepositParameters,
   aoSigner: AoSigner,
 ): MutationOptions => ({
   mutationKey: ["Custody", custodyProcessId, "Deposit", tokenId],

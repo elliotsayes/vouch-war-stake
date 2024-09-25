@@ -25,15 +25,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { StakeConfiguration } from "../StakeConfiguration";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
+import { DepositParameters } from "@/contract/custody";
 
 export interface VouchProgressProps {
   targetValue: VouchValue;
   profileId?: string;
+  onConfirmDeposit: (depositParameters: DepositParameters) => void;
 }
 
 export const VouchProgress = ({
   targetValue,
   profileId,
+  onConfirmDeposit,
 }: VouchProgressProps) => {
   const [showStakeSheet, setShowStakeSheet] = useState(false);
   const [showConfirmQuitDialog, setShowConfirmQuitDialog] = useState(false);
@@ -76,7 +79,9 @@ export const VouchProgress = ({
                 profileId={profileId}
               />
             </div>
-            <div>
+            <div
+              className={`transition-opacity duration-500 ${showStakeSheet ? "opacity-20" : ""}`}
+            >
               <h1 className="text-lg mb-4 text-muted-foreground">
                 Increase your vouch score with these services
               </h1>
@@ -110,6 +115,7 @@ export const VouchProgress = ({
             bonusValue={bonusValue}
             setBonusValue={setBonusValue}
             projectedMeetsTarget={projectedMeetsTarget}
+            onConfirmDeposit={onConfirmDeposit}
           />
         </SheetContent>
         <AlertDialogContent>

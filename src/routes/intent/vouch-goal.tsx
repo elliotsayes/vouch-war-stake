@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { VouchValue } from "@/contract/vouchDao";
 import { VouchProgress } from "@/components/screens/VouchProgress";
 import { ConnectWalletBlocker } from "@/components/screens/ConnectWalletBlocker";
+import { DepositParameters } from "@/contract/custody";
+import { useState } from "react";
+import { StakeProgress } from "@/components/screens/StakeProgress";
 
 type VouchGoalSearch = {
   value: number;
@@ -28,9 +31,24 @@ function VouchGoal() {
     currency,
   };
 
+  const [depositParameters, setDepositParameters] =
+    useState<DepositParameters | null>(null);
+
+  const [depositResult, setDepositResult] = useState<true | null>(null);
+
   return (
     <ConnectWalletBlocker>
-      <VouchProgress targetValue={targetValue} profileId={profileId} />
+      {depositParameters === null ? (
+        <VouchProgress
+          targetValue={targetValue}
+          profileId={profileId}
+          onConfirmDeposit={setDepositParameters}
+        />
+      ) : depositResult === null ? (
+        <StakeProgress depositParameters={depositParameters} />
+      ) : (
+        <div>Done!</div>
+      )}
     </ConnectWalletBlocker>
   );
 }
