@@ -1,11 +1,13 @@
 local json = require("json")
+local directory = require("aoform.directory")
 
 _0RBIT = "BaMK1dfayo75s3q1ow6AO64UDpD9SEFbeE8xYrY2fyQ"
 _0RBT_POINTS_PROCESS = "BUhZLMwQ6yZHguLtJYA5lLUa9LQzLXMXRfaq9FVcPJc"
 FEE_AMOUNT = "1000000000000" -- 1 $0RBT
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
-VOUCHER_PROCESS = "VukxndIxBlR7qGEuIotb4YKWUFn6BMEjoWM4ln9COLw"
+-- VOUCHER_PROCESS = "VukxndIxBlR7qGEuIotb4YKWUFn6BMEjoWM4ln9COLw"
+VOUCHER_PROCESS = directory['vouch-custody']
 SUBSCRIBER_PROCESSES = {
   VOUCHER_PROCESS
 }

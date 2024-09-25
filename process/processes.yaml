@@ -1,8 +1,9 @@
 - name: vouch-custody
   file: vouch-custody.lua
+  directory: true
   prerun: loadDbAdmin.lua
-  scheduler: "TZ7o7SIZ06ZEJ14lXwVtng1EtSx60QkPy-kh-kdAXog"
-  module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
+  scheduler: "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA"
+  module: "aGVVWHldKA7GBlI_w7Qp_agO6aKjCoOTPA1G2OlluXE"
   tags:
     - name: Name
       value: Vouch-Custody-Dev
@@ -10,9 +11,10 @@
       value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
 - name: vouchdao-dev
   file: vouchdao.lua
+  directory: true
   prerun: loadDbAdmin.lua
-  scheduler: "TZ7o7SIZ06ZEJ14lXwVtng1EtSx60QkPy-kh-kdAXog"
-  module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
+  scheduler: "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA"
+  module: "aGVVWHldKA7GBlI_w7Qp_agO6aKjCoOTPA1G2OlluXE"
   tags:
     - name: Name
       value: Vouch-Custody-VouchDao-Dev
@@ -20,8 +22,9 @@
       value: fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY
 - name: arweave-price
   file: arweave-price.lua
-  scheduler: "TZ7o7SIZ06ZEJ14lXwVtng1EtSx60QkPy-kh-kdAXog"
-  module: "C4bxMlK8d_wQ-QpXIIZLU8UWXu6Sd8PDJw7HN3nNE2I"
+  directory: true
+  scheduler: "_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA"
+  module: "aGVVWHldKA7GBlI_w7Qp_agO6aKjCoOTPA1G2OlluXE"
   tags:
     - name: Name
       value: Vouch-Custody-ArweavePrice-Dev

@@ -1,6 +1,7 @@
 local json = require("json")
 local sqlite3 = require("lsqlite3")
 local DbAdmin = require("DbAdmin")
+local directory = require("aoform.directory")
 
 function Init(db)
   db:exec [[
@@ -48,12 +49,11 @@ if not VOUCH_DB_INIT then
   VOUCH_DB_INIT = true
 end
 
-CUSTODY_CREATOR_PROCESS = "<CUSTODY_CREATOR_PROCESS>"
-VOUCH_PROCESS = "mIXsPDpV3ITGrXjowrTlAfjuFWmHd7ixBglJazDvfTs"
-PRICE_PROCESS = "GhzqFey5suK6apvvWKzDYgmB69Jol62BRfC1ayEraeQ"
+CUSTODY_CREATOR_PROCESS = "cn9WpPF47c_ppKH4La0zlXFbiTYxk_TJbbrTWfp1Kk0" -- "<CUSTODY_CREATOR_PROCESS>"
+VOUCH_PROCESS = directory["vouchdao-dev"]                               -- "mIXsPDpV3ITGrXjowrTlAfjuFWmHd7ixBglJazDvfTs"
+PRICE_PROCESS = directory["arweave-price"]
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
-WAR_ORACLE_PROCESS = "<WAR_ORACLE_PROCESS>"
 
 TokenWhitelist = {
   [WAR_TOKEN_PROCESS] = {
