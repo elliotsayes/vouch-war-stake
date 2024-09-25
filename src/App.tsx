@@ -21,6 +21,9 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ArweaveWalletKit
+        config={{
+          permissions: ["ACCESS_ADDRESS", "SIGN_TRANSACTION", "SIGNATURE"],
+        }}
         theme={{
           displayTheme: "light",
           accent: {

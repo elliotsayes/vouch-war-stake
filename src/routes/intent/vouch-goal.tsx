@@ -38,17 +38,23 @@ function VouchGoal() {
 
   return (
     <ConnectWalletBlocker>
-      {depositParameters === null ? (
-        <VouchProgress
-          targetValue={targetValue}
-          profileId={profileId}
-          onConfirmDeposit={setDepositParameters}
-        />
-      ) : depositResult === null ? (
-        <StakeProgress depositParameters={depositParameters} />
-      ) : (
-        <div>Done!</div>
-      )}
+      {(walletId, aoSigner) =>
+        depositParameters === null ? (
+          <VouchProgress
+            targetValue={targetValue}
+            profileId={profileId}
+            onConfirmDeposit={setDepositParameters}
+          />
+        ) : depositResult === null ? (
+          <StakeProgress
+            walletId={walletId}
+            aoSigner={aoSigner}
+            depositParameters={depositParameters}
+          />
+        ) : (
+          <div>Done!</div>
+        )
+      }
     </ConnectWalletBlocker>
   );
 }

@@ -1,9 +1,6 @@
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { useActiveAddress } from "arweave-wallet-kit";
-import {
-  createCustodyMutation,
-  getWalletQuery,
-} from "../contract/custodyCreator";
+import { createCustody, getWalletQuery } from "../contract/custodyCreator";
 import { vouchCustodyInfoQuery } from "../contract/vouchCustody";
 import { useState } from "react";
 import useAoSigner from "../hooks/useAoSigner";
@@ -30,7 +27,7 @@ export function VouchState() {
   //   })
   // );
 
-  const createCustody = useMutation(createCustodyMutation(aoSigner!));
+  const createCustody = useMutation(createCustody(aoSigner!));
 
   return (
     <div>
@@ -119,7 +116,7 @@ export function VouchState() {
                         </span>
                       ))}
                     </div>
-                  )
+                  ),
                 )}
               </>
             ))
