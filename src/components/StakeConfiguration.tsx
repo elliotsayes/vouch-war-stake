@@ -48,14 +48,16 @@ export const StakeConfiguration = ({
 
   const vouchCustodyInfo = useQuery(vouchCustodyInfoQuery());
 
-  const walletId = useActiveAddress();
+  const walletId = useActiveAddress()!;
   const warBalance = useQuery(
-    tokenBalanceQuery(WAR_TOKEN_PROCESS_ID, walletId!),
+    tokenBalanceQuery(WAR_TOKEN_PROCESS_ID, walletId),
   );
-  const hasSufficientBalance =
-    warBalance.isSuccess && warBalance.data >= quantity * WAR_MULTIPLIER;
 
-  const vouchData = useWhitelistedVouchData(walletId!);
+  const quantityMinor = BigInt(Math.ceil(quantity * WAR_MULTIPLIER));
+  const hasSufficientBalance =
+    warBalance.isSuccess && BigInt(warBalance.data) >= quantityMinor;
+
+  const vouchData = useWhitelistedVouchData(walletId);
 
   const fired = useRef(false);
   const calculateAuto = useCallback(() => {
@@ -182,11 +184,11 @@ export const StakeConfiguration = ({
         <div className="mt-6 mb-4 flex flex-col items-center">
           {hasSufficientBalance ? (
             <Button
-              disabled={isLoading}
+              disabled={isLoading || quantity === 0}
               onClick={() => {
                 onSubmitDeposit({
                   tokenId: WAR_TOKEN_PROCESS_ID,
-                  quantity: (quantity * WAR_MULTIPLIER).toString(),
+                  quantity: quantityMinor.toString(),
                   stakeDurationMs: stakeTime,
                 });
               }}
