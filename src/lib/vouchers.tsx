@@ -99,7 +99,7 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
     name: "Vouch-wAR-Stake",
     description: "Earn vouch points by staking wrapped Arweave tokens.",
     address: "3y0YE11i21hpP8UY0Z1AVhtPoJD4V_AbEBx-g0j9wRc",
-    url: "https://vouch-war-stake.arweave.net/",
+    url: "https://vouch-portal.arweave.net/",
     icon: (
       <div className="relative w-8 h-8">
         <img

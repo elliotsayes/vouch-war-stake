@@ -60,15 +60,19 @@ export const VouchBreakdown = () => {
               return (
                 <TableRow key={voucherName}>
                   <TableCell className="font-medium">
-                    <a
-                      href={vouchMeta?.url}
-                      target="_blank"
-                      className="underline flex items-center gap-0.5"
-                      rel="noreferrer"
-                    >
-                      {vouchMeta?.name}
-                      <ExternalLinkIcon width={12} />
-                    </a>
+                    {vouchMeta?.name === "Vouch-wAR-Stake" ? (
+                      <span>{vouchMeta?.name}</span>
+                    ) : (
+                      <a
+                        href={vouchMeta?.url}
+                        target="_blank"
+                        className="underline flex items-center gap-0.5"
+                        rel="noreferrer"
+                      >
+                        {vouchMeta?.name}
+                        <ExternalLinkIcon width={12} />
+                      </a>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     {vouchData.Value}
