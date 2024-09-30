@@ -38,6 +38,7 @@ export const VouchBreakdown = () => {
                       href={vouchMeta?.url}
                       target="_blank"
                       className="underline flex items-center gap-0.5"
+                      rel="noreferrer"
                     >
                       {vouchMeta?.name}
                       <ExternalLinkIcon width={12} />

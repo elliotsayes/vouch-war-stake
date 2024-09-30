@@ -289,8 +289,15 @@ Vouch = {
     local vouches = getVouchRecords(Msg.Tags["ID"])
 
     if #vouches == 0 then
-      Send({ Target = Msg.From, Action = "VouchDAO.Vouches", Data = require('json').encode({ Status = "NOT_VOUCHED", ID =
-      Msg.Tags["ID"] }) })
+      Send({
+        Target = Msg.From,
+        Action = "VouchDAO.Vouches",
+        Data = require('json').encode({
+          Status = "NOT_VOUCHED",
+          ID =
+              Msg.Tags["ID"]
+        })
+      })
       return print(Msg.From .. " is not Vouched!")
     end
     local totalValue = Utils.reduce(
@@ -324,8 +331,13 @@ Vouch = {
 
     result = Utils.reduce(function(acc, v)
       acc.Vouchers = acc.Vouchers or {}
-      acc.Vouchers[v.Voucher] = { Method = v.VoucherMethod, Country = v.Country or '', Identifier = v.Identifier or '', Value =
-      v.ConfidenceValue }
+      acc.Vouchers[v.Voucher] = {
+        Method = v.VoucherMethod,
+        Country = v.Country or '',
+        Identifier = v.Identifier or '',
+        Value =
+            v.ConfidenceValue
+      }
       return acc
     end, result, vouches)
     result['Sub-IDs'] = getSubIDsForWallet(vouches[1].VouchFor)

@@ -207,6 +207,7 @@ export const StakeConfiguration = ({
                     href="https://aox.xyz/"
                     target="_blank"
                     className="underline text-blue-800"
+                    rel="noreferrer"
                   >
                     aox.xyz
                   </a>{" "}
@@ -217,6 +218,7 @@ export const StakeConfiguration = ({
                     href="https://wardepot.arweave.net/"
                     target="_blank"
                     className="underline text-blue-800"
+                    rel="noreferrer"
                   >
                     wardepot.arweave.net
                   </a>

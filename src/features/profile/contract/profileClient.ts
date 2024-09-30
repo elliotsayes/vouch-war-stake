@@ -32,7 +32,7 @@ export const createProfileClient = (
     const message = await aoContractClient.dryrunReadReplyOne({
       tags: [{ name: "Action", value: "Info" }],
     });
-    console.log(message, '  ', message.Data)
+    console.log(message, "  ", message.Data);
     return message;
   },
 
@@ -61,7 +61,8 @@ export const createProfileClient = (
 export type ProfileClientForProcess = (processId: string) => ProfileClient;
 
 export const createProfileClientForProcess =
-  (wallet: AoWallet): ProfileClientForProcess => (processId: string) => {
+  (wallet: AoWallet): ProfileClientForProcess =>
+  (processId: string) => {
     const aoContractClient = createAoContractClient(
       processId,
       connect(),

@@ -34,6 +34,7 @@ function VouchGoal() {
   const [depositParameters, setDepositParameters] =
     useState<DepositParameters | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [depositResult, setDepositResult] = useState<true | null>(null);
 
   return (

@@ -32,6 +32,7 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
                     href={voucher.url}
                     target="_blank"
                     className="underline items-center pl-2 text-wrap"
+                    rel="noreferrer"
                   >
                     {voucher.name.replace(/-/g, " ")}
                   </a>

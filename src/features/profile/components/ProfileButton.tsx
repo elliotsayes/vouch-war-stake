@@ -45,6 +45,7 @@ export default function ProfileButton() {
                   href="https://ao-bazar.arweave.dev/#/"
                   target="_blank"
                   className="underline"
+                  rel="noreferrer"
                 >
                   Bazar
                 </a>{" "}
