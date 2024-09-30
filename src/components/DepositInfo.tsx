@@ -181,7 +181,9 @@ export const DepositInfo = () => {
         <div>
           Deposit $wAR into the{" "}
           <a
+            className="underline text-blue-900"
             href={`https://ao.link/#/entity/${import.meta.env.VITE_CUSTODY_CREATOR_PROCESS_ID!}`}
+            target="_blank"
           >
             custody contract
           </a>

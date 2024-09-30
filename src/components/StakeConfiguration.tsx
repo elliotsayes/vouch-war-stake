@@ -57,13 +57,13 @@ export const StakeConfiguration = ({
   const hasBonusAboveMinimum = bonusValue > 0.01;
   const quantityMinor = BigInt(Math.ceil(quantity * WAR_MULTIPLIER));
   const hasSufficientBalance =
-    true || (warBalance.isSuccess && BigInt(warBalance.data) >= quantityMinor);
+    warBalance.isSuccess && BigInt(warBalance.data) >= quantityMinor;
 
   const vouchData = useWhitelistedVouchData(walletId);
 
   const fired = useRef(false);
   const setParametersAuto = useCallback(() => {
-    if (!vouchData.data?.total) {
+    if (vouchData.data?.total === undefined) {
       return false;
     }
     if (!vouchCustodyInfo.data) {
@@ -221,7 +221,7 @@ export const StakeConfiguration = ({
                     <a
                       href="https://aox.xyz/"
                       target="_blank"
-                      className="underline text-blue-800"
+                      className="underline text-blue-900"
                       rel="noreferrer"
                     >
                       aox.xyz
@@ -232,7 +232,7 @@ export const StakeConfiguration = ({
                     <a
                       href="https://wardepot.arweave.net/"
                       target="_blank"
-                      className="underline text-blue-800"
+                      className="underline text-blue-900"
                       rel="noreferrer"
                     >
                       wardepot.arweave.net

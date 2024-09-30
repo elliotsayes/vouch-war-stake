@@ -79,7 +79,7 @@ export const StakeProgress = ({
                 in your personal secure{" "}
                 <a
                   href={`https://ao.link/#/entity/${state.context.custodyProcessId}`}
-                  className="underline text-blue-800"
+                  className="underline text-blue-900"
                   target="_blank"
                 >
                   custody contract
