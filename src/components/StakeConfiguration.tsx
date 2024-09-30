@@ -62,7 +62,7 @@ export const StakeConfiguration = ({
   const vouchData = useWhitelistedVouchData(walletId);
 
   const fired = useRef(false);
-  const calculateAuto = useCallback(() => {
+  const setParametersAuto = useCallback(() => {
     if (!vouchData.data?.total) {
       return false;
     }
@@ -101,8 +101,8 @@ export const StakeConfiguration = ({
 
   useEffect(() => {
     if (fired.current) return;
-    if (calculateAuto()) fired.current = true;
-  }, [vouchData.isSuccess, vouchCustodyInfo.isSuccess, calculateAuto]);
+    if (setParametersAuto()) fired.current = true;
+  }, [vouchData.isSuccess, vouchCustodyInfo.isSuccess, setParametersAuto]);
 
   const isLoading = vouchData.isLoading || vouchCustodyInfo.isLoading;
 
@@ -121,7 +121,7 @@ export const StakeConfiguration = ({
             disabled={isAuto || isLoading}
             variant={"outline"}
             size={"sm"}
-            onClick={calculateAuto}
+            onClick={setParametersAuto}
             className="absolute right-0 top-0"
           >
             Auto
@@ -134,8 +134,9 @@ export const StakeConfiguration = ({
                   disabled={isLoading}
                   type="number"
                   className="ml-2 mr-1 w-24"
-                  step={0.1}
+                  min={0.01}
                   max={100}
+                  step={0.1}
                   value={quantity}
                   onChange={(e) => {
                     const val = parseFloat(e.target.value);
@@ -149,7 +150,7 @@ export const StakeConfiguration = ({
               </div>
               <Slider
                 disabled={isLoading}
-                min={0}
+                min={0.01}
                 max={100}
                 step={0.1}
                 value={[quantity]}
@@ -192,9 +193,9 @@ export const StakeConfiguration = ({
             </div>
           </div>
           <div className="mt-6 mb-4 flex flex-col items-center">
-            {hasSufficientBalance ? (
+            {hasSufficientBalance && hasBonusAboveMinimum ? (
               <Button
-                disabled={isLoading || !hasBonusAboveMinimum}
+                disabled={isLoading}
                 onClick={() => {
                   onSubmitDeposit({
                     tokenId: WAR_TOKEN_PROCESS_ID,
@@ -208,8 +209,10 @@ export const StakeConfiguration = ({
             ) : (
               <Tooltip>
                 <TooltipTrigger className="cursor-help">
-                  <Button disabled={!hasSufficientBalance || isLoading}>
-                    Insufficient $wAR...
+                  <Button disabled>
+                    {!hasSufficientBalance
+                      ? "Insufficient $wAR..."
+                      : "Vouch points too low..."}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">

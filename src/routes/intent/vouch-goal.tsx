@@ -5,6 +5,7 @@ import { ConnectWalletBlocker } from "@/components/screens/ConnectWalletBlocker"
 import { DepositParameters } from "@/contract/custody";
 import { useState } from "react";
 import { StakeProgress } from "@/components/screens/StakeProgress";
+import { toast } from "sonner";
 
 type VouchGoalSearch = {
   value: number;
@@ -34,9 +35,6 @@ function VouchGoal() {
   const [depositParameters, setDepositParameters] =
     useState<DepositParameters | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [depositResult, setDepositResult] = useState<true | null>(null);
-
   return (
     <ConnectWalletBlocker>
       {(walletId, aoSigner) =>
@@ -46,14 +44,26 @@ function VouchGoal() {
             profileId={profileId}
             onConfirmDeposit={setDepositParameters}
           />
-        ) : depositResult === null ? (
+        ) : (
           <StakeProgress
             walletId={walletId}
             aoSigner={aoSigner}
             depositParameters={depositParameters}
+            onDepositCancelled={() => {
+              toast("Deposit cancelled", {
+                description:
+                  "Please try completing the deposit process again, so you can reach your vouch goal.",
+              });
+              setDepositParameters(null);
+            }}
+            onDepositComplete={() => {
+              toast("Deposit complete!", {
+                description:
+                  "You've successfully deposited your stake. Please check your vouch goal again!",
+              });
+              setDepositParameters(null);
+            }}
           />
-        ) : (
-          <div>Done!</div>
         )
       }
     </ConnectWalletBlocker>
