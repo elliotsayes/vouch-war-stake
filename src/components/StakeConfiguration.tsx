@@ -162,7 +162,7 @@ export const StakeConfiguration = ({
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex flex-row items-center">
-                Stake time
+                Stake period
                 <Input
                   disabled={isLoading}
                   type="number"

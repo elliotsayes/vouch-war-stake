@@ -188,8 +188,8 @@ export const DepositInfo = () => {
             custody contract
           </a>
           .<br />
-          <span className="text-muted-foreground">
-            Your $wAR may be withdrawn after the Stake period.
+          <span className="text-muted-foreground text-sm">
+            Your $wAR may be withdrawn after the stake period.
           </span>
         </div>
       )}
