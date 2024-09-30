@@ -7,8 +7,8 @@
   },
   "scripts": {
     "test": "bash ./scripts/test.sh",
-    "deploy-dev": "WALLET_JSON=\"$(cat ../.secret/deploy_dev2.json)\" aoform apply",
-    "aos-dev": "func() { aos ${1} --wallet ../.secret/deploy_dev2.json ; }; func"
+    "deploy-dev": "WALLET_JSON=\"$(cat ../.secret/deploy_dev.json)\" aoform apply",
+    "aos-dev": "func() { aos ${1} --wallet ../.secret/deploy_dev.json ; }; func"
   },
   "keywords": [],
   "author": "",

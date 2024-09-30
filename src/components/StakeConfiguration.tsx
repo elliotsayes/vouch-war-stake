@@ -22,7 +22,7 @@ export interface StakeConfigurationProps {
   bonusValue: number;
   setBonusValue: (value: number) => void;
   projectedMeetsTarget?: boolean;
-  onConfirmDeposit: (depositParameters: DepositParameters) => void;
+  onSubmitDeposit: (depositParameters: DepositParameters) => void;
 }
 
 const WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
@@ -40,7 +40,7 @@ export const StakeConfiguration = ({
   bonusValue,
   setBonusValue,
   projectedMeetsTarget,
-  onConfirmDeposit,
+  onSubmitDeposit,
 }: StakeConfigurationProps) => {
   const [quantity, setQuantity] = useState(0);
   const [stakeTime, setStakeTime] = useState(0);
@@ -184,7 +184,7 @@ export const StakeConfiguration = ({
             <Button
               disabled={isLoading}
               onClick={() => {
-                onConfirmDeposit({
+                onSubmitDeposit({
                   tokenId: WAR_TOKEN_PROCESS_ID,
                   quantity: (quantity * WAR_MULTIPLIER).toString(),
                   stakeDurationMs: stakeTime,

@@ -32,8 +32,8 @@ export const custodyCreatorGetWalletQuery = (walletId: string) => ({
     }
     return {
       status: getTagValue(res.Messages[0].Tags, "Status")!,
-      walletId: getTagValue(res.Messages[0].Tags, "WalletId")!,
-      processId: getTagValue(res.Messages[0].Tags, "ProcessId"),
+      walletId: getTagValue(res.Messages[0].Tags, "Wallet-Id")!,
+      processId: getTagValue(res.Messages[0].Tags, "Process-Id"),
     };
   },
 });

@@ -5,7 +5,7 @@ import { ConnectButton, useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "../VouchBreakdown";
 import { useQuery } from "@tanstack/react-query";
 import { VouchButtons } from "../VouchButtons";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -39,7 +39,7 @@ export const VouchProgress = ({
   onConfirmDeposit,
 }: VouchProgressProps) => {
   const [showStakeSheet, setShowStakeSheet] = useState(false);
-  const [showConfirmQuitDialog, setShowConfirmQuitDialog] = useState(false);
+  const [showConfirmSubmitDialog, setShowConfirmSubmitDialog] = useState(false);
 
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
@@ -51,11 +51,25 @@ export const VouchProgress = ({
   const projectedValue = (vouchData.data?.total ?? 0) + bonusValue;
   const projectedMeetsTarget = projectedValue >= targetValue.value;
 
+  const [depositParameters, setDepositParameters] =
+    useState<DepositParameters | null>(null);
+  const onSubmitDeposit = useCallback(
+    (depositParameters: DepositParameters) => {
+      setDepositParameters(depositParameters);
+      if (projectedMeetsTarget) {
+        onConfirmDeposit(depositParameters);
+      } else {
+        setShowConfirmSubmitDialog(true);
+      }
+    },
+    [onConfirmDeposit, projectedMeetsTarget],
+  );
+
   return (
     <Sheet open={showStakeSheet} onOpenChange={setShowStakeSheet}>
       <AlertDialog
-        open={showConfirmQuitDialog}
-        onOpenChange={setShowConfirmQuitDialog}
+        open={showConfirmSubmitDialog}
+        onOpenChange={setShowConfirmSubmitDialog}
       >
         <div className="flex flex-col h-screen relative">
           <div className="absolute top-0 right-0 p-2">
@@ -94,17 +108,7 @@ export const VouchProgress = ({
             />
           </div>
         </div>
-        <SheetContent
-          onInteractOutside={(e) => {
-            // e.preventDefault();
-            // setShowConfirmQuitDialog(true);
-          }}
-          onEscapeKeyDown={(e) => {
-            // e.preventDefault();
-            // setShowConfirmQuitDialog(true);
-          }}
-          side={"bottom"}
-        >
+        <SheetContent side={"bottom"}>
           <SheetHeader className="md:w-[80%] max-w-md mx-auto">
             <SheetTitle className="text-center">
               Earn vouch points by staking wrapped Arweave
@@ -115,20 +119,24 @@ export const VouchProgress = ({
             bonusValue={bonusValue}
             setBonusValue={setBonusValue}
             projectedMeetsTarget={projectedMeetsTarget}
-            onConfirmDeposit={onConfirmDeposit}
+            onSubmitDeposit={onSubmitDeposit}
           />
         </SheetContent>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Staking?</AlertDialogTitle>
+            <AlertDialogTitle>Confirm Staking?</AlertDialogTitle>
             <AlertDialogDescription>
-              Form data will be cleared.
+              Deposit amount is insufficient for the goal.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => setShowStakeSheet(false)}>
-              Continue
+            <AlertDialogAction
+              onClick={() => {
+                onConfirmDeposit(depositParameters!);
+              }}
+            >
+              Confirm
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

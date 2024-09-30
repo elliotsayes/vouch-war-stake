@@ -49,7 +49,7 @@ if not VOUCH_DB_INIT then
   VOUCH_DB_INIT = true
 end
 
-CUSTODY_CREATOR_PROCESS = "cn9WpPF47c_ppKH4La0zlXFbiTYxk_TJbbrTWfp1Kk0" -- "<CUSTODY_CREATOR_PROCESS>"
+CUSTODY_CREATOR_PROCESS = "Eo7UwoFBOokKRtXknv3nNa6MIZPppYv770_0CbxTmlM" -- "<CUSTODY_CREATOR_PROCESS>"
 VOUCH_PROCESS = directory["vouchdao-dev"]                               -- "mIXsPDpV3ITGrXjowrTlAfjuFWmHd7ixBglJazDvfTs"
 PRICE_PROCESS = directory["arweave-price"]
 
@@ -292,10 +292,9 @@ function QueryCustodyProcess(walletId)
     return nil
   end
 
-  local data = json.decode(res.Data)
-  local processId = data.ProcessId
+  local processId = res.Tags['Process-Id']
   if processId == nil then
-    local status = data.Status or "<No Status>"
+    local status = res.Tags.Status or "<No Status>"
     print("No custody process found: " .. status)
     return nil
   end
