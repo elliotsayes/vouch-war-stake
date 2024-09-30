@@ -63,7 +63,7 @@ export const VouchProgress = ({
           </div>
           {/* Centered box */}
           <div className="flex flex-col items-center justify-center h-full text-center gap-4">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pb-4">
+            <h1 className="text-5xl md:text-6xl font-bold pb-4">
               Get Vouched <br />
               on the Permaweb
             </h1>
@@ -80,7 +80,7 @@ export const VouchProgress = ({
               />
             </div>
             <div
-              className={`transition-opacity duration-500 ${showStakeSheet ? "opacity-20" : ""}`}
+              className={`transition-opacity duration-500 ${showStakeSheet ? "opacity-50" : ""}`}
             >
               <h1 className="text-lg mb-4 text-muted-foreground">
                 Increase your vouch score with these services
@@ -96,12 +96,12 @@ export const VouchProgress = ({
         </div>
         <SheetContent
           onInteractOutside={(e) => {
-            e.preventDefault();
-            setShowConfirmQuitDialog(true);
+            // e.preventDefault();
+            // setShowConfirmQuitDialog(true);
           }}
           onEscapeKeyDown={(e) => {
-            e.preventDefault();
-            setShowConfirmQuitDialog(true);
+            // e.preventDefault();
+            // setShowConfirmQuitDialog(true);
           }}
           side={"bottom"}
         >

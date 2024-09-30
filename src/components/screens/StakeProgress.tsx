@@ -1,6 +1,5 @@
 import { DepositParameters } from "@/contract/custody";
-import useAoSigner, { AoSigner } from "@/hooks/useAoSigner";
-import { useActiveAddress } from "arweave-wallet-kit";
+import { AoSigner } from "@/hooks/useAoSigner";
 import { useMachine } from "@xstate/react";
 import { custodyDepositMachine } from "@/machines/custodyDeposit";
 
@@ -17,9 +16,11 @@ export const StakeProgress = ({
 }: StakeProgressProps) => {
   const [state, send] = useMachine(custodyDepositMachine, {
     input: {
-      walletId,
-      aoSigner,
-      depositParameters,
+      context: {
+        walletId,
+        aoSigner,
+        depositParameters,
+      },
     },
   });
 

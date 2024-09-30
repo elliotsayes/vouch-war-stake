@@ -33,7 +33,7 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
                     target="_blank"
                     className="underline items-center pl-2 text-wrap"
                   >
-                    {voucher.name}
+                    {voucher.name.replace(/-/g, " ")}
                   </a>
                   <ExternalLinkIcon className="ml-1 inline" width={12} />
                 </span>
@@ -53,7 +53,7 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
                   onClick={onActionVoucherClick}
                   className="cursor-pointer underline items-center pl-2 text-wrap"
                 >
-                  {actionVoucher.name}
+                  {actionVoucher.name.replace(/-/g, " ")}
                 </a>
                 <CaretDownIcon className="inline" width={20} />
               </span>

@@ -1,12 +1,11 @@
 import { dryrun, message } from "@permaweb/aoconnect";
 import { getTagValue } from "../lib/arweave";
 import { AoSigner } from "../hooks/useAoSigner";
-import { queryOptions } from "@tanstack/react-query";
 
 const CUSTODY_CREATOR_PROCESS_ID = import.meta.env
   .VITE_CUSTODY_CREATOR_PROCESS_ID!;
 
-export const getWalletQuery = (walletId: string) => ({
+export const custodyCreatorGetWalletQuery = (walletId: string) => ({
   queryKey: [
     "Custody-Creator",
     CUSTODY_CREATOR_PROCESS_ID,
@@ -39,7 +38,7 @@ export const getWalletQuery = (walletId: string) => ({
   },
 });
 
-export const createCustody = async (aoSigner: AoSigner) => {
+export const custodyCreatorCreateCustody = async (aoSigner: AoSigner) => {
   const messageId = await message({
     process: CUSTODY_CREATOR_PROCESS_ID,
     tags: [

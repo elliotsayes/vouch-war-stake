@@ -28,6 +28,13 @@ export interface StakeConfigurationProps {
 const WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
 const WAR_MULTIPLIER = 10 ** 12;
 
+function warStats(infoData: any) {
+  return {
+    price: infoData.TokenWhitelist[WAR_TOKEN_PROCESS_ID].ValueUsd,
+    interestRate: infoData.TokenWhitelist[WAR_TOKEN_PROCESS_ID].InterestRate,
+  };
+}
+
 export const StakeConfiguration = ({
   targetValue,
   bonusValue,
@@ -66,8 +73,7 @@ export const StakeConfiguration = ({
     if (requiredToMeetTarget <= 0) {
       setQuantity(0);
     } else {
-      const price = 20;
-      const interestRate = 0.1;
+      const { price, interestRate } = warStats(vouchCustodyInfo.data);
 
       const quantity =
         (requiredToMeetTarget * yearMs) /
@@ -82,8 +88,7 @@ export const StakeConfiguration = ({
   useEffect(() => {
     if (!vouchCustodyInfo.data) return;
 
-    const interestRate = 0.1;
-    const price = 20;
+    const { price, interestRate } = warStats(vouchCustodyInfo.data);
 
     const bonus = (quantity * price * interestRate * stakeTime) / yearMs;
 

@@ -1,6 +1,9 @@
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { useActiveAddress } from "arweave-wallet-kit";
-import { createCustody, getWalletQuery } from "../contract/custodyCreator";
+import {
+  custodyCreatorCreateCustody,
+  custodyCreatorGetWalletQuery,
+} from "../contract/custodyCreator";
 import { vouchCustodyInfoQuery } from "../contract/vouchCustody";
 import { useState } from "react";
 import useAoSigner from "../hooks/useAoSigner";
@@ -18,7 +21,9 @@ export function VouchState() {
 
   const vouchDaoVouches = useQuery(vouchDaoVouchesQuery(activeAddress!));
 
-  const custodyCreatorInfo = useQuery(getWalletQuery(activeAddress!));
+  const custodyCreatorInfo = useQuery(
+    custodyCreatorGetWalletQuery(activeAddress!),
+  );
 
   const voucherState = useQuery(vouchCustodyInfoQuery());
   // const voucherConfidence = useQuery(

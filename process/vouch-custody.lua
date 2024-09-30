@@ -55,7 +55,7 @@ PRICE_PROCESS = directory["arweave-price"]
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
 
-TokenWhitelist = {
+TokenWhitelist = TokenWhitelist or {
   [WAR_TOKEN_PROCESS] = {
     Name = 'WAR',
     Ticker = 'AR',
@@ -325,6 +325,56 @@ function SubscribeToCustodyProcess(custodyProcessId)
 end
 
 Handlers.add(
+  "Vouch-Custody.Get-Custody-Process",
+  Handlers.utils.hasMatchingTag("Action", "Vouch-Custody.Get-Custody-Process"),
+  function(msg)
+    local walletId = msg.From
+    if not WalletRecorded(walletId) then
+      msg.reply({
+        Tags = {
+          ['Status'] = "Not Found"
+        }
+      })
+      return
+    end
+
+    local stmt = VOUCH_DB:prepare([[
+    SELECT CustodyProcessId
+    FROM CustodyProcess
+    WHERE WalletId = ?;
+  ]])
+    stmt:bind_values(walletId)
+    local res = stmt:step()
+    if res ~= sqlite3.ROW then
+      msg.reply({
+        Tags = {
+          ['Status'] = "Not Found"
+        }
+      })
+      return
+    end
+    local custodyProcessId = stmt:get_value(0)
+    stmt:finalize()
+
+    if custodyProcessId == nil then
+      msg.reply({
+        Tags = {
+          ['Status'] = "Not Found"
+        }
+      })
+      return
+    end
+
+    msg.reply({
+      Tags = {
+        ['Status'] = "Success",
+        ['Custody-Process-Id'] = custodyProcessId
+      }
+    })
+  end
+)
+
+Handlers.add(
   "Vouch-Custody.Register-Custody",
   Handlers.utils.hasMatchingTag("Action", "Vouch-Custody.Register-Custody"),
   function(msg)
@@ -449,7 +499,7 @@ Handlers.add(
   function(msg)
     local custodyOwner = GetCustodyProcessWalletId(msg.From)
     if custodyOwner == nil then
-      print("Notify-On-Topic not from child process, ignoring")
+      print("Notify-On-Topic not from custody process, ignoring")
       return
     end
 
