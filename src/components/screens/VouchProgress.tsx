@@ -124,9 +124,9 @@ export const VouchProgress = ({
         </SheetContent>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Staking?</AlertDialogTitle>
+            <AlertDialogTitle>Confirm Deposit?</AlertDialogTitle>
             <AlertDialogDescription>
-              Deposit amount is insufficient for the goal.
+              Deposit quantity is insufficient for the goal. Deposit anyway?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -136,7 +136,7 @@ export const VouchProgress = ({
                 onConfirmDeposit(depositParameters!);
               }}
             >
-              Confirm
+              Continue
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

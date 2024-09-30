@@ -17,6 +17,16 @@ export const VouchBreakdown = () => {
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
 
+  if ((vouchData.data?.history?.length ?? 0) === 0) {
+    return (
+      <Card className="px-2 pb-1">
+        <div className="text-primary/60 px-2 py-1 w-56 text-sm">
+          No vouches found. Use a vouch service to get V Points.
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="px-2 pb-1">
       <Table>

@@ -66,7 +66,7 @@ export const GoalProgress = ({
             <span
               className={`${hasBonus ? `animate-pulse ${projectedMeetsTarget ? "text-green-800" : "text-red-800"}` : ""}`}
             >
-              {vouchData.data?.total
+              {vouchData.data?.total !== undefined
                 ? Math.floor((vouchData.data.total + (bonusValue ?? 0)) * 100) /
                   100
                 : "..."}

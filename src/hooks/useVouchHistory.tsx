@@ -22,9 +22,11 @@ export const useWhitelistedVouchData = (walletId: string) => {
             history: history,
           };
         }
-        return {};
       }
-      return {};
+      return {
+        total: 0,
+        history: [],
+      };
     },
     enabled: vouchesRaw.isSuccess,
     refetchInterval: false,

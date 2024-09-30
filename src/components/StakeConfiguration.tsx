@@ -12,6 +12,7 @@ import { Tooltip, TooltipTrigger } from "./ui/tooltip";
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Card } from "./ui/card";
 import { DepositParameters } from "@/contract/custody";
+import { DepositInfo } from "./DepositInfo";
 
 const dayMs = 24 * 60 * 60 * 1000;
 const yearMs = 365 * dayMs;
@@ -111,128 +112,133 @@ export const StakeConfiguration = ({
 
   return (
     <TooltipProvider>
-      <div className="md:w-[80%] max-w-sm mx-auto my-4 py-4 relative">
-        <Button
-          disabled={isAuto || isLoading}
-          variant={"outline"}
-          size={"sm"}
-          onClick={calculateAuto}
-          className="absolute right-0 top-0"
-        >
-          Auto
-        </Button>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row items-center">
-              Quantity{" "}
-              <Input
-                disabled={isLoading}
-                type="number"
-                className="ml-2 mr-1 w-24"
-                step={0.1}
-                max={100}
-                value={quantity}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  if (isNaN(val)) return;
-                  const unsignedValue = Math.max(0, val);
-                  setQuantity(Math.min(unsignedValue, 100));
-                  setIsAuto(false);
-                }}
-              />
-              $wAR
-            </div>
-            <Slider
-              disabled={isLoading}
-              min={0}
-              max={100}
-              step={0.1}
-              value={[quantity]}
-              onValueChange={(value) => {
-                setQuantity(value[0]);
-                setIsAuto(false);
-              }}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row items-center">
-              Stake time
-              <Input
-                disabled={isLoading}
-                type="number"
-                className="ml-2 mr-1 w-24"
-                value={Math.ceil((100 * stakeTime) / dayMs) / 100}
-                max={maxStakeTimeMs / dayMs}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  if (isNaN(val)) return;
-                  const valueDays = Math.max(0, val);
-                  setStakeTime(Math.min(maxStakeTimeMs, valueDays * dayMs));
-                  setIsAuto(false);
-                }}
-              />
-              days
-            </div>
-            <Slider
-              disabled={isLoading}
-              min={0}
-              max={maxStakeTimeMs}
-              step={1}
-              value={[stakeTime]}
-              onValueChange={(value) => {
-                setStakeTime(value[0]);
-                setIsAuto(false);
-              }}
-            />
-          </div>
+      <div className="md:w-[80%] max-w-sm mx-auto py-4 ">
+        <div>
+          <DepositInfo />
         </div>
-        <div className="mt-6 mb-4 flex flex-col items-center">
-          {hasSufficientBalance ? (
-            <Button
-              disabled={isLoading || !hasBonusAboveMinimum}
-              onClick={() => {
-                onSubmitDeposit({
-                  tokenId: WAR_TOKEN_PROCESS_ID,
-                  quantity: quantityMinor.toString(),
-                  stakeDurationMs: stakeTime,
-                });
-              }}
-            >
-              Stake $wAR
-            </Button>
-          ) : (
-            <Tooltip>
-              <TooltipTrigger className="cursor-help">
-                <Button disabled={!hasSufficientBalance || isLoading}>
-                  Insufficient $wAR...
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <Card className="text-center px-2 my-1">
-                  Wrap your $AR at{" "}
-                  <a
-                    href="https://aox.xyz/"
-                    target="_blank"
-                    className="underline text-blue-800"
-                    rel="noreferrer"
-                  >
-                    aox.xyz
-                  </a>{" "}
-                  or trade for
-                  <br />
-                  ETH/USDC at{" "}
-                  <a
-                    href="https://wardepot.arweave.net/"
-                    target="_blank"
-                    className="underline text-blue-800"
-                    rel="noreferrer"
-                  >
-                    wardepot.arweave.net
-                  </a>
-                </Card>
-              </TooltipContent>
-            </Tooltip>
-          )}
+        <div className="my-4 relative">
+          <Button
+            disabled={isAuto || isLoading}
+            variant={"outline"}
+            size={"sm"}
+            onClick={calculateAuto}
+            className="absolute right-0 top-0"
+          >
+            Auto
+          </Button>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row items-center">
+                Quantity{" "}
+                <Input
+                  disabled={isLoading}
+                  type="number"
+                  className="ml-2 mr-1 w-24"
+                  step={0.1}
+                  max={100}
+                  value={quantity}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (isNaN(val)) return;
+                    const unsignedValue = Math.max(0, val);
+                    setQuantity(Math.min(unsignedValue, 100));
+                    setIsAuto(false);
+                  }}
+                />
+                $wAR
+              </div>
+              <Slider
+                disabled={isLoading}
+                min={0}
+                max={100}
+                step={0.1}
+                value={[quantity]}
+                onValueChange={(value) => {
+                  setQuantity(value[0]);
+                  setIsAuto(false);
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row items-center">
+                Stake time
+                <Input
+                  disabled={isLoading}
+                  type="number"
+                  className="ml-2 mr-1 w-24"
+                  value={Math.ceil((100 * stakeTime) / dayMs) / 100}
+                  max={maxStakeTimeMs / dayMs}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (isNaN(val)) return;
+                    const valueDays = Math.max(0, val);
+                    setStakeTime(Math.min(maxStakeTimeMs, valueDays * dayMs));
+                    setIsAuto(false);
+                  }}
+                />
+                days
+              </div>
+              <Slider
+                disabled={isLoading}
+                min={0}
+                max={maxStakeTimeMs}
+                step={1}
+                value={[stakeTime]}
+                onValueChange={(value) => {
+                  setStakeTime(value[0]);
+                  setIsAuto(false);
+                }}
+              />
+            </div>
+          </div>
+          <div className="mt-6 mb-4 flex flex-col items-center">
+            {hasSufficientBalance ? (
+              <Button
+                disabled={isLoading || !hasBonusAboveMinimum}
+                onClick={() => {
+                  onSubmitDeposit({
+                    tokenId: WAR_TOKEN_PROCESS_ID,
+                    quantity: quantityMinor.toString(),
+                    stakeDurationMs: stakeTime,
+                  });
+                }}
+              >
+                Stake $wAR
+              </Button>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger className="cursor-help">
+                  <Button disabled={!hasSufficientBalance || isLoading}>
+                    Insufficient $wAR...
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <Card className="text-center px-2 my-1">
+                    Wrap your $AR at{" "}
+                    <a
+                      href="https://aox.xyz/"
+                      target="_blank"
+                      className="underline text-blue-800"
+                      rel="noreferrer"
+                    >
+                      aox.xyz
+                    </a>{" "}
+                    or trade for
+                    <br />
+                    ETH/USDC at{" "}
+                    <a
+                      href="https://wardepot.arweave.net/"
+                      target="_blank"
+                      className="underline text-blue-800"
+                      rel="noreferrer"
+                    >
+                      wardepot.arweave.net
+                    </a>
+                  </Card>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
         </div>
       </div>
     </TooltipProvider>
