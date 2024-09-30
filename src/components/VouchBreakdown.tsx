@@ -10,18 +10,34 @@ import {
 } from "@/components/ui/table";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { vouchLookupByAddress } from "@/lib/vouchers";
-import { useActiveAddress } from "arweave-wallet-kit";
+import { useActiveAddress, useConnection } from "arweave-wallet-kit";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
+import { Button } from "./ui/button";
 
 export const VouchBreakdown = () => {
+  const { connected, connect } = useConnection();
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
 
   if ((vouchData.data?.history?.length ?? 0) === 0) {
     return (
       <Card className="px-2 pb-1">
-        <div className="text-primary/60 px-2 py-1 w-56 text-sm">
-          No vouches found. Use a vouch service to get V Points.
+        <div className="text-primary/60 px-1 py-1 w-56 text-sm">
+          {connected ? (
+            "No vouches found. Use a vouch service to get V Points."
+          ) : (
+            <>
+              <Button
+                onClick={connect}
+                size={"sm"}
+                variant={"outline"}
+                className="px-1"
+              >
+                Connect
+              </Button>{" "}
+              to see your V Points.
+            </>
+          )}
         </div>
       </Card>
     );

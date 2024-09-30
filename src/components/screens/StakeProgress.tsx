@@ -51,7 +51,8 @@ export const StakeProgress = ({
   const primaryState = (
     isSingleState ? state.value : Object.keys(state.value)[0]
   ) as string;
-  const isDoubleState = typeof Object.values(state.value)[0] === "string";
+  const isDoubleState =
+    !isSingleState && typeof Object.values(state.value)[0] === "string";
   const secondaryState = isSingleState
     ? undefined
     : isDoubleState
@@ -73,7 +74,7 @@ export const StakeProgress = ({
             <>
               <p>
                 This will lock {quantityWhole.toFixed(4)} $wAR for{" "}
-                {stakeDurationDays.toFixed(2)} days
+                {stakeDurationDays.toFixed(1)} days
                 <br />
                 in your personal secure{" "}
                 <a

@@ -1,7 +1,11 @@
 import ProfileButton from "@/features/profile/components/ProfileButton";
 import { GoalProgress } from "../GoalProgress";
 import { vouchDaoVouchesQuery, VouchValue } from "@/contract/vouchDao";
-import { ConnectButton, useActiveAddress } from "arweave-wallet-kit";
+import {
+  ConnectButton,
+  useActiveAddress,
+  useConnection,
+} from "arweave-wallet-kit";
 import { VouchBreakdown } from "../VouchBreakdown";
 import { useQuery } from "@tanstack/react-query";
 import { VouchButtons } from "../VouchButtons";
@@ -26,6 +30,7 @@ import {
 import { StakeConfiguration } from "../StakeConfiguration";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { DepositParameters } from "@/contract/custody";
+import { ConnectWalletBlocker } from "./ConnectWalletBlocker";
 
 export interface VouchProgressProps {
   targetValue: VouchValue;
@@ -38,6 +43,8 @@ export const VouchProgress = ({
   profileId,
   onConfirmDeposit,
 }: VouchProgressProps) => {
+  const { connected, connect } = useConnection();
+
   const [showStakeSheet, setShowStakeSheet] = useState(false);
   const [showConfirmSubmitDialog, setShowConfirmSubmitDialog] = useState(false);
 
@@ -100,7 +107,13 @@ export const VouchProgress = ({
                 Increase your vouch score with these services
               </h1>
               <VouchButtons
-                onActionVoucherClick={() => setShowStakeSheet(true)}
+                onActionVoucherClick={() => {
+                  if (connected) {
+                    setShowStakeSheet(true);
+                  } else {
+                    connect();
+                  }
+                }}
               />
             </div>
             <div
@@ -114,13 +127,17 @@ export const VouchProgress = ({
               Earn vouch points by staking wrapped Arweave
             </SheetTitle>
           </SheetHeader>
-          <StakeConfiguration
-            targetValue={targetValue}
-            bonusValue={bonusValue}
-            setBonusValue={setBonusValue}
-            projectedMeetsTarget={projectedMeetsTarget}
-            onSubmitDeposit={onSubmitDeposit}
-          />
+          <ConnectWalletBlocker>
+            {() => (
+              <StakeConfiguration
+                targetValue={targetValue}
+                bonusValue={bonusValue}
+                setBonusValue={setBonusValue}
+                projectedMeetsTarget={projectedMeetsTarget}
+                onSubmitDeposit={onSubmitDeposit}
+              />
+            )}
+          </ConnectWalletBlocker>
         </SheetContent>
         <AlertDialogContent>
           <AlertDialogHeader>
