@@ -132,7 +132,9 @@ export const StakeConfiguration = ({
                 max={100}
                 value={quantity}
                 onChange={(e) => {
-                  const unsignedValue = Math.max(0, parseFloat(e.target.value));
+                  const val = parseFloat(e.target.value);
+                  if (isNaN(val)) return;
+                  const unsignedValue = Math.max(0, val);
                   setQuantity(Math.min(unsignedValue, 100));
                   setIsAuto(false);
                 }}
@@ -161,7 +163,9 @@ export const StakeConfiguration = ({
                 value={Math.ceil((100 * stakeTime) / dayMs) / 100}
                 max={maxStakeTimeMs / dayMs}
                 onChange={(e) => {
-                  const valueDays = Math.max(0, parseFloat(e.target.value));
+                  const val = parseFloat(e.target.value);
+                  if (isNaN(val)) return;
+                  const valueDays = Math.max(0, val);
                   setStakeTime(Math.min(maxStakeTimeMs, valueDays * dayMs));
                   setIsAuto(false);
                 }}
