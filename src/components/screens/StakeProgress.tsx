@@ -103,7 +103,7 @@ export const StakeProgress = ({
             </>
           ) : (
             <>
-              <TextTransition className="text-muted-foreground">
+              <TextTransition className="text-muted-foreground animate-pulse">
                 {secondaryState}
               </TextTransition>
             </>
