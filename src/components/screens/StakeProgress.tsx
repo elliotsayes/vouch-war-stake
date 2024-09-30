@@ -4,6 +4,7 @@ import { useMachine } from "@xstate/react";
 import { custodyDepositMachine } from "@/machines/custodyDeposit";
 import { Button } from "../ui/button";
 import { useEffect } from "react";
+import TextTransition, { presets } from "react-text-transition";
 
 interface StakeProgressProps {
   walletId: string;
@@ -50,9 +51,12 @@ export const StakeProgress = ({
   const primaryState = (
     isSingleState ? state.value : Object.keys(state.value)[0]
   ) as string;
+  const isDoubleState = typeof Object.values(state.value)[0] === "string";
   const secondaryState = isSingleState
     ? undefined
-    : Object.values(state.value)[0];
+    : isDoubleState
+      ? Object.values(state.value)[0]
+      : Object.keys(Object.values(state.value)[0])[0];
 
   const isConfirmation = state.matches({ Depositing: "Showing Confirmation" });
 
@@ -60,11 +64,11 @@ export const StakeProgress = ({
     <div className="flex flex-col h-screen relative items-center justify-center">
       <div className="text-center">
         <div
-          className={`flex flex-col gap-2 min-h-8 transition-all duration-500 ${isConfirmation ? "h-32" : "h-12"}`}
+          className={`flex flex-col items-center gap-2 min-h-8 transition-all duration-500 ${isConfirmation ? "h-32" : "h-24"}`}
         >
-          <h1 className="text-2xl">
+          <TextTransition springConfig={presets.wobbly} className="text-2xl">
             {isConfirmation ? "Proceed with Deposit?" : primaryState}
-          </h1>
+          </TextTransition>
           {isConfirmation ? (
             <>
               <p>
@@ -98,7 +102,9 @@ export const StakeProgress = ({
             </>
           ) : (
             <>
-              <p className="text-muted-foreground">{secondaryState}</p>
+              <TextTransition className="text-muted-foreground">
+                {secondaryState}
+              </TextTransition>
             </>
           )}
         </div>
