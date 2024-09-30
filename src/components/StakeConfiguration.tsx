@@ -53,6 +53,7 @@ export const StakeConfiguration = ({
     tokenBalanceQuery(WAR_TOKEN_PROCESS_ID, walletId),
   );
 
+  const hasBonusAboveMinimum = bonusValue > 0.01;
   const quantityMinor = BigInt(Math.ceil(quantity * WAR_MULTIPLIER));
   const hasSufficientBalance =
     warBalance.isSuccess && BigInt(warBalance.data) >= quantityMinor;
@@ -92,7 +93,7 @@ export const StakeConfiguration = ({
 
     const { price, interestRate } = warStats(vouchCustodyInfo.data);
 
-    const bonus = (quantity * price * interestRate * stakeTime) / yearMs;
+    const bonus = quantity * price * interestRate * (stakeTime / yearMs);
 
     setBonusValue(bonus);
   }, [vouchCustodyInfo.data, quantity, setBonusValue, stakeTime]);
@@ -188,7 +189,7 @@ export const StakeConfiguration = ({
         <div className="mt-6 mb-4 flex flex-col items-center">
           {hasSufficientBalance ? (
             <Button
-              disabled={isLoading || quantity === 0}
+              disabled={isLoading || !hasBonusAboveMinimum}
               onClick={() => {
                 onSubmitDeposit({
                   tokenId: WAR_TOKEN_PROCESS_ID,

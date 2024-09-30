@@ -49,7 +49,7 @@ if not VOUCH_DB_INIT then
   VOUCH_DB_INIT = true
 end
 
-CUSTODY_CREATOR_PROCESS = "Eo7UwoFBOokKRtXknv3nNa6MIZPppYv770_0CbxTmlM" -- "<CUSTODY_CREATOR_PROCESS>"
+CUSTODY_CREATOR_PROCESS = "zYBcGWB4KJeB4pc04XiNOKrD0DQBPelvNBbfDnqiunQ" -- "<CUSTODY_CREATOR_PROCESS>"
 VOUCH_PROCESS = directory["vouchdao-dev"]                               -- "mIXsPDpV3ITGrXjowrTlAfjuFWmHd7ixBglJazDvfTs"
 PRICE_PROCESS = directory["arweave-price"]
 
@@ -62,7 +62,7 @@ TokenWhitelist = TokenWhitelist or {
     Denomination = 12,
     QuantityMin = 10 ^ 9,
     QuantityMax = 10 ^ 15,
-    DurationMin = 1 * 24 * 60 * 60 * 1000,
+    DurationMin = 5 * 60 * 1000,
     DurationMax = 365 * 24 * 60 * 60 * 1000,
     InterestRate = 0.1,
     ValueUsd = nil,
@@ -466,7 +466,7 @@ function SendVouch(walletId, confidence)
   ao.send({
     Target = VOUCH_PROCESS,
     Tags = {
-      ['Data-Protocol'] = 'Vouch',
+      ['Action'] = 'Vouch',
       ['Vouch-For'] = walletId,
       ['Method'] = 'Custody',
       ['Confidence-Value'] = confidenceStr,

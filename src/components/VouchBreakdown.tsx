@@ -32,7 +32,7 @@ export const VouchBreakdown = () => {
             vouchData.data.history?.map(([voucherName, vouchData]) => {
               const vouchMeta = vouchLookupByAddress.get(voucherName);
               return (
-                <TableRow>
+                <TableRow key={voucherName}>
                   <TableCell className="font-medium">
                     <a
                       href={vouchMeta?.url}

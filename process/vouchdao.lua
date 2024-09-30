@@ -18,14 +18,14 @@ end
 
 -- Schemas
 
-VoucherConfidence = [[
-  CREATE TABLE IF NOT EXISTS VoucherConfidence (
-    ID INT PRIMARY KEY,
-    Voucher TEXT,
-    Staker TEXT,
-    ConfidenceScore INTEGER CHECK (ConfidenceScore BETWEEN 0 AND 100)
-  );
-]]
+-- VoucherConfidence = [[
+--   CREATE TABLE IF NOT EXISTS VoucherConfidence (
+--     ID INT PRIMARY KEY,
+--     Voucher TEXT,
+--     Staker TEXT,
+--     ConfidenceScore INTEGER CHECK (ConfidenceScore BETWEEN 0 AND 100)
+--   );
+-- ]]
 
 Vouched = [[
   CREATE TABLE IF NOT EXISTS Vouched (
@@ -58,7 +58,7 @@ db = db or sqlite3.open_memory()
 
 -- initialize tables
 function InitDB()
-  db:exec(VoucherConfidence)
+  -- db:exec(VoucherConfidence)
   db:exec(Vouched)
   db:exec(SubIDs)
   return "OK"
@@ -122,6 +122,38 @@ local function insertVouched(vouchFor, voucher, method, identifier, country, upd
 
     -- Finalize the prepared statement
     stmt:finalize()
+  else
+    print("Error preparing statement: " .. db:errmsg())
+  end
+  return result
+end
+
+local function updateVouched(vouchFor, voucher, method, identifier, country, updated, confidenceValue)
+  local sql = [[
+      UPDATE Vouched
+      SET VouchMethod = ?, Identifier = ?, Country = ?, Updated = ?, ConfidenceValue = ?
+      WHERE VouchFor = ? AND Voucher = ?
+  ]]
+  local stmt = db:prepare(sql)
+  local result = false
+
+  if stmt then
+    -- Bind the values to the placeholders
+    stmt:bind_values(method, identifier, country, updated, confidenceValue, vouchFor, voucher)
+
+    -- Execute the insert statement
+    local res = stmt:step()
+    if res == sqlite3.DONE then
+      result = true
+    else
+      print("Error Inserting record: " .. db:errmsg())
+      result = false
+    end
+
+    -- Finalize the prepared statement
+    stmt:finalize()
+  else
+    print("Error preparing statement: " .. db:errmsg())
   end
   return result
 end
@@ -149,6 +181,8 @@ local function insertSubID(subID, account, updated)
 
     -- Finalize the prepared statement
     stmt:finalize()
+  else
+    print("Error preparing statement: " .. db:errmsg())
   end
   return result
 end
@@ -232,13 +266,8 @@ VoteLength = 30 * 24
 -- Vouch Logic
 Vouch = {
   isVouchFor = function(Msg)
-    local v = Utils.find(
-      function(tag)
-        return tag.name == "Data-Protocol" and tag.value == "Vouch"
-      end,
-      Msg.TagArray
-    ) or false
-    return v and v.value == "Vouch"
+    return Handlers.utils.hasMatchingTag("Data-Protocol", "Vouch")(Msg) or
+        Handlers.utils.hasMatchingTag("Action", "Vouch")(Msg)
   end,
   doVouchFor = function(Msg)
     -- check to see if already vouched
@@ -255,13 +284,32 @@ Vouch = {
         Msg.Timestamp,
         Msg['Confidence-Value']
       )
+      if res ~= true then
+        Send({ Target = Msg.From, Data = "Error Vouching" })
+        return
+      end
       insertSubID(Msg['Vouch-For'], Msg['Vouch-For'], Msg.Timestamp)
       Send({ Target = Msg.From, Action = "Vouch-Notice", Data = Msg['Vouch-For'] .. " has been vouched." })
       Send({ Target = Msg['Vouch-For'], Action = "Vouch-Notice", Data = "Successfully Vouched" })
       print(Msg['Vouch-For'] .. ' vouched by ' .. Msg.From)
     else
-      Send({ Target = Msg['Vouch-For'], Action = "Vouch-Notice", Data = "Already Vouched" })
-      print(Msg['Vouch-For'] .. ' already vouched by ' .. Msg.From)
+      -- if already vouched then update the record
+      local res = updateVouched(
+        Msg['Vouch-For'],
+        Msg.From,
+        Msg.Method,
+        Msg.Identifier or '',
+        Msg.Country or '',
+        Msg.Timestamp,
+        Msg['Confidence-Value']
+      )
+      if res ~= true then
+        Send({ Target = Msg.From, Data = "Error Updating Vouch" })
+        return
+      end
+      Send({ Target = Msg.From, Action = "Vouch-Notice", Data = Msg['Vouch-For'] .. " had vouch updated." })
+      Send({ Target = Msg['Vouch-For'], Action = "Vouch-Notice", Data = "Successfully Updated Vouch" })
+      print(Msg['Vouch-For'] .. ' vouch updated by ' .. Msg.From)
     end
   end,
   isSubID = function(Msg)

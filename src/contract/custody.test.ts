@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getInfoQuery, depositMutation, getActiveStakesQuery } from "./custody";
+import { getInfoQuery, getActiveStakesQuery } from "./custody";
 import { queryClient } from "../lib/query";
 
 const testContractId = "48Bg_s9zmZzLKlvpeXPs15qID2uL1xNzJ89sPz5VPhM";

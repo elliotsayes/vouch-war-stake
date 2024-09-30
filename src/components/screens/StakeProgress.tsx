@@ -2,6 +2,7 @@ import { DepositParameters } from "@/contract/custody";
 import { AoSigner } from "@/hooks/useAoSigner";
 import { useMachine } from "@xstate/react";
 import { custodyDepositMachine } from "@/machines/custodyDeposit";
+import { Button } from "../ui/button";
 
 interface StakeProgressProps {
   walletId: string;
@@ -24,5 +25,19 @@ export const StakeProgress = ({
     },
   });
 
-  return <div>{JSON.stringify(state.value)}</div>;
+  return (
+    <div>
+      {state.matches({ Depositing: "Showing Confirmation" }) && (
+        <div>
+          <Button onClick={() => send({ type: "Cancel Deposit" })}>
+            Cancel
+          </Button>
+          <Button onClick={() => send({ type: "Confirm Deposit" })}>
+            Confirm
+          </Button>
+        </div>
+      )}
+      <pre>{JSON.stringify(state.value)}</pre>
+    </div>
+  );
 };

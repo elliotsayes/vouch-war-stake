@@ -1,9 +1,9 @@
 vouch-custody:
   processId: 3y0YE11i21hpP8UY0Z1AVhtPoJD4V_AbEBx-g0j9wRc
-  hash: b8c5685fe0cacb4e038e8f30255cc3dbfc3f04e0e68e5eb0e647251d4051bd5a
+  hash: 891a25fa2924175e55b98d6969110cc9eb086bcb845a60190c604601de7d74da
 vouchdao-dev:
   processId: ni3eZKuihDmqybkWski6dlBg_7coC8Jyg_KF7Nat8ak
-  hash: 3d403dd91a75e1189f6b4e1038c167241758f9402e89c2f299afb56a84519387
+  hash: c9a1a5c978d30f952add6f74b0d01b2ce77f36f12266128924f8d59e53401a09
 arweave-price:
   processId: ASIt-MwzWEkGXmu66rQgenVRrOGcoERTLDXaHFpEnVg
   hash: 3c447132f594c1d5226e04c8754c7194705fcfcad97a0948dd2cba9bae1722cd
