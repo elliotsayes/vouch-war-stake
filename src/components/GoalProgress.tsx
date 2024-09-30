@@ -74,7 +74,13 @@ export const GoalProgress = ({
             {" ⟋ "}
             {targetValue.value}{" "}
             <span className="text-primary/80 text-sm">
-              {targetValue.currency}
+              {/* TODO: VouchDAO logo SVG */}V Points
+              {targetValue.currency === "USD" ? undefined : (
+                <span className=" text-muted-foreground">
+                  {" "}
+                  ({targetValue.currency})
+                </span>
+              )}
             </span>
           </div>
         </Card>
