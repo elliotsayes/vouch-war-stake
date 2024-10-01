@@ -63,12 +63,13 @@ export const VouchBreakdown = () => {
         {/* <TableCaption className="mt-1">Allowed Vouch methods</TableCaption> */}
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Method</TableHead>
+            <TableHead className="w-32">Method</TableHead>
             <TableHead className="text-right">
+              Value
               <Button
                 variant="outline"
                 size={"icon"}
-                className="mr-1"
+                className="ml-1 p-0"
                 onClick={() => vouchData.refetch()}
                 disabled={vouchData.isFetching}
               >
@@ -76,7 +77,6 @@ export const VouchBreakdown = () => {
                   className={`${vouchData.isFetching ? "animate-spin" : ""}`}
                 />
               </Button>
-              Value
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -86,20 +86,8 @@ export const VouchBreakdown = () => {
               const vouchMeta = vouchLookupByAddress.get(voucherName);
               return (
                 <TableRow key={voucherName}>
-                  <TableCell className="font-medium">
-                    {vouchMeta?.name === "Vouch-wAR-Stake" ? (
-                      <span>{vouchMeta?.name}</span>
-                    ) : (
-                      <a
-                        href={vouchMeta?.url}
-                        target="_blank"
-                        className="underline flex items-center gap-0.5"
-                        rel="noreferrer"
-                      >
-                        {vouchMeta?.name}
-                        <ExternalLinkIcon width={12} />
-                      </a>
-                    )}
+                  <TableCell className="font-medium text-left">
+                    <span>{vouchMeta?.name.split("-").slice(1).join(" ")}</span>
                   </TableCell>
                   <TableCell className="text-right">
                     {vouchData.Value}

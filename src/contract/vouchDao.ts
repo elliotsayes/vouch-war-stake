@@ -27,7 +27,7 @@ type VouchDaoGetVouchesResponse =
       >;
     };
 
-export const vouchDaoVouchesQuery = (walletId: string) =>
+export const vouchDaoVouchesQuery = (walletId?: string) =>
   queryOptions({
     queryKey: ["vouchDao", VOUCHDAO_PROCESS_ID, "Get-Vouches", walletId],
     queryFn: async () => {
@@ -40,7 +40,7 @@ export const vouchDaoVouchesQuery = (walletId: string) =>
           },
           {
             name: "ID",
-            value: walletId,
+            value: walletId!,
           },
         ],
       });
@@ -51,4 +51,5 @@ export const vouchDaoVouchesQuery = (walletId: string) =>
       console.log(replyDataParsed);
       return replyDataParsed;
     },
+    enabled: !!walletId,
   });

@@ -1,11 +1,17 @@
 import { whitelistedVouchers } from "@/lib/vouchers";
-import { CaretDownIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
+import {
+  CaretDownIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+} from "@radix-ui/react-icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
+import { useActiveAddress } from "arweave-wallet-kit";
 
 const linkedVouchers = whitelistedVouchers.filter(
   (voucher) => voucher.name != "Vouch-wAR-Stake",
@@ -19,32 +25,47 @@ export interface VouchLinksProps {
 }
 
 export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
+  const walletId = useActiveAddress();
+  const vouchData = useWhitelistedVouchData(walletId);
+
   return (
     <TooltipProvider>
       <div className="flex flex-row flex-grow-0 max-w-screen-lg justify-evenly gap-4">
-        {linkedVouchers.map((voucher) => (
-          <div className="flex flex-col items-center gap-2 max-w-28">
-            <div>{voucher.icon}</div>
-            <Tooltip>
-              <TooltipTrigger>
-                <span>
-                  <a
-                    href={voucher.url}
-                    target="_blank"
-                    className="underline items-center pl-2 text-wrap"
-                    rel="noreferrer"
-                  >
-                    {voucher.name.replace(/-/g, " ")}
-                  </a>
-                  <ExternalLinkIcon className="ml-1 inline" width={12} />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-60">
-                {voucher.description}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        ))}
+        {linkedVouchers.map((voucher) => {
+          const alreadyDone = vouchData.data?.history.find(
+            (x) => x[0] === voucher.address,
+          );
+          return (
+            <div className="flex flex-col items-center gap-2 max-w-28">
+              <div className="relative">
+                <div
+                  className={`absolute bottom-0 right-0 rounded-full bg-primary/10 ${alreadyDone ? "opacity-100" : "opacity-0"}`}
+                >
+                  <CheckIcon className="text-green-600 w-4 h-4 transition-opacity duration-500" />
+                </div>
+                {voucher.icon}
+              </div>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span>
+                    <a
+                      href={voucher.url}
+                      target="_blank"
+                      className="underline items-center pl-2 text-wrap"
+                      rel="noreferrer"
+                    >
+                      {voucher.name.replace(/-/g, " ")}
+                    </a>
+                    <ExternalLinkIcon className="ml-1 inline" width={12} />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-60">
+                  {voucher.description}
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          );
+        })}
         <div className="flex flex-col items-center gap-2 max-w-28">
           <div>{actionVoucher.icon}</div>
           <Tooltip>

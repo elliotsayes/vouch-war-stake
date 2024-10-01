@@ -2,7 +2,7 @@ import { vouchDaoVouchesQuery } from "@/contract/vouchDao";
 import { vouchLookupByAddress } from "@/lib/vouchers";
 import { useQuery } from "@tanstack/react-query";
 
-export const useWhitelistedVouchData = (walletId: string) => {
+export const useWhitelistedVouchData = (walletId?: string) => {
   const vouchesRaw = useQuery(vouchDaoVouchesQuery(walletId));
 
   const vouchesHistory = useQuery({
@@ -10,8 +10,8 @@ export const useWhitelistedVouchData = (walletId: string) => {
     queryFn: async () => {
       if (vouchesRaw.isSuccess) {
         if ("Vouches-For" in vouchesRaw.data) {
-          const history = Object.entries(vouchesRaw.data.Vouchers).filter(
-            ([voucher]) => vouchLookupByAddress.get(voucher),
+          const history = Object.entries(vouchesRaw.data["Vouchers"]).filter(
+            ([voucher]) => vouchLookupByAddress.get(voucher) !== undefined,
           );
           const total = history.reduce((acc, [, vouchData]) => {
             const [value] = vouchData.Value.split("-");

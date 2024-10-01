@@ -23,7 +23,7 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
       <svg
         width="32"
         height="32"
-        className="p-0.5"
+        className="p-1 mx-1"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -40,13 +40,13 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
     description:
       "Earn vouch points from your Ethereum wallet via Gitcoin Passport",
     // TODO: Real address
-    address: "ghi789",
+    address: "k6p1MtqYhQQOuTSfN8gH7sQ78zlHavt8dCDL88btn9s",
     url: "https://vouch-gitcoin-passport.arweave.net/",
     icon: (
       <svg
         width="32"
         height="32"
-        className="p-0.5"
+        className="p-0.5 mx-1.5"
         viewBox="0 0 128 146"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -68,12 +68,13 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
     name: "Vouch-AO-Balance",
     description: "Earn vouch points for the AO tokens locked in your wallet.",
     // TODO: Real address
-    address: "def456",
+    address: "QeXDjjxcui7W2xU08zOlnFwBlbiID4sACpi0tSS3VgY",
     url: "https://vouch-ao-balance.arweave.net/",
     icon: (
       <svg
         width="32"
         height="32"
+        className="mx-2"
         viewBox="0 0 429 214"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

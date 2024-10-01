@@ -10,6 +10,7 @@ import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "./VouchBreakdown";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { VPoints } from "./VPoints";
 
 export type GoalProgressProps = {
   targetValue: VouchValue;
@@ -51,7 +52,7 @@ export const GoalProgress = ({
             "Permaweb App"
           )}
         </div>
-        <Card className="bg-primary/10 flex flex-col justify-center py-3 relative min-w-48 sm:min-w-64 md:min-w-72">
+        <Card className="bg-primary/5 flex flex-col justify-center py-3 relative min-w-48 sm:min-w-64 md:min-w-72">
           <div className="absolute top-0 right-0 pr-2 pt-1">
             <HoverCard>
               <HoverCardTrigger>
@@ -62,26 +63,21 @@ export const GoalProgress = ({
               </HoverCardContent>
             </HoverCard>
           </div>
-          <div className="text-center text-lg">
-            <span
-              className={`${hasBonus ? `${projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
-            >
-              {vouchData.data?.total !== undefined
-                ? Math.floor((vouchData.data.total + (bonusValue ?? 0)) * 100) /
-                  100
-                : "..."}
-            </span>
-            {" ⟋ "}
-            {targetValue.value}{" "}
-            <span className="text-primary/80 text-sm">
-              {/* TODO: VouchDAO logo SVG */}V Points
-              {targetValue.currency === "USD" ? undefined : (
-                <span className=" text-muted-foreground">
-                  {" "}
-                  ({targetValue.currency})
-                </span>
-              )}
-            </span>
+          <div className="text-center text-lg flex flex-row justify-center items-center gap-2">
+            <div>
+              <span
+                className={`${hasBonus ? `${projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
+              >
+                {vouchData.data?.total !== undefined
+                  ? Math.floor(
+                      (vouchData.data.total + (bonusValue ?? 0)) * 100,
+                    ) / 100
+                  : "..."}
+              </span>
+              {" ⟋ "}
+              {targetValue.value}{" "}
+            </div>
+            <VPoints />
           </div>
         </Card>
       </div>
