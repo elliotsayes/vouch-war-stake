@@ -18,7 +18,7 @@ const profiles: Array<Profile> = [
     name: "Llama Land",
     imageTxId: "7Sp4jk77OrK8qxdVe8RissGbp0-0w32vhR0SuPGSlPU",
     search: {
-      value: 10,
+      value: 5,
       currency: "USD",
       profileId: "QIi6XZQOJlCnT_Vf-xKdcYqrBk-Y94QT8eiuBDLsMq8",
     },
@@ -27,7 +27,7 @@ const profiles: Array<Profile> = [
     name: "Permaverse",
     imageTxId: "NNkDHUrCOnMAP7xh90K_-I41FpMugdnayTytA5VYmdM",
     search: {
-      value: 15,
+      value: 4.2,
       currency: "USD",
       profileId: "QszM8HySK5XGw-tTLNVnG7WOIBIHJ_Mnth7Pa22I_iw",
     },
