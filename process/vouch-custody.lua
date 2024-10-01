@@ -50,7 +50,7 @@ if not VOUCH_DB_INIT then
 end
 
 CUSTODY_CREATOR_PROCESS = "zYBcGWB4KJeB4pc04XiNOKrD0DQBPelvNBbfDnqiunQ" -- "<CUSTODY_CREATOR_PROCESS>"
-VOUCH_PROCESS = directory["vouchdao-dev"]                               -- "mIXsPDpV3ITGrXjowrTlAfjuFWmHd7ixBglJazDvfTs"
+VOUCH_PROCESS = "ZTTO02BL2P-lseTLUgiIPD9d0CF1sc4LbMA2AQ7e9jo"
 PRICE_PROCESS = directory["arweave-price"]
 
 WAR_TOKEN_PROCESS = "xU9zFkq3X2ZQ6olwNVvr1vUWIjc3kXTWr7xKQD6dh10"
