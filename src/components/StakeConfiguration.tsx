@@ -44,7 +44,7 @@ export const StakeConfiguration = ({
   onSubmitDeposit,
 }: StakeConfigurationProps) => {
   const [quantity, setQuantity] = useState(0);
-  const [stakeTime, setStakeTime] = useState(0);
+  const [stakeTime, setStakeTime] = useState(maxStakeTimeMs);
   const [isAuto, setIsAuto] = useState(false);
 
   const vouchCustodyInfo = useQuery(vouchCustodyInfoQuery());
@@ -69,7 +69,6 @@ export const StakeConfiguration = ({
     if (!vouchCustodyInfo.data) {
       return false;
     }
-    setStakeTime(maxStakeTimeMs);
 
     // Calculate required to meet target
     const requiredToMeetTarget = targetValue.value - vouchData.data.total;
@@ -80,14 +79,18 @@ export const StakeConfiguration = ({
       const { price, interestRate } = warStats(vouchCustodyInfo.data);
 
       const quantity =
-        (requiredToMeetTarget * yearMs) /
-        (price * interestRate * maxStakeTimeMs);
+        (requiredToMeetTarget * yearMs) / (price * interestRate * stakeTime);
 
       setQuantity(quantity);
     }
     setIsAuto(true);
     return true;
-  }, [targetValue.value, vouchCustodyInfo.data, vouchData.data?.total]);
+  }, [
+    stakeTime,
+    targetValue.value,
+    vouchCustodyInfo.data,
+    vouchData.data?.total,
+  ]);
 
   useEffect(() => {
     if (!vouchCustodyInfo.data) return;
