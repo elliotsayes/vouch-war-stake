@@ -39,9 +39,18 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
             <div className="flex flex-col items-center gap-2 max-w-28">
               <div className="relative">
                 <div
-                  className={`absolute bottom-0 right-0 rounded-full bg-primary/10 ${alreadyDone ? "opacity-100" : "opacity-0"}`}
+                  className={`absolute bottom-0 right-0 w-4 h-4 rounded-full bg-green-500/10 transition-opacity duration-500 ${alreadyDone ? "opacity-100" : "opacity-0"}`}
                 >
-                  <CheckIcon className="text-green-600 w-4 h-4 transition-opacity duration-500" />
+                  <Tooltip>
+                    <TooltipTrigger disabled={!alreadyDone}>
+                      <CheckIcon className="text-green-600 w-4 h-4 mb-1 mr-1" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Vouch method
+                      <br />
+                      already complete
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 {voucher.icon}
               </div>
