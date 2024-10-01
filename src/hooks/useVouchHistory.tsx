@@ -33,5 +33,5 @@ export const useWhitelistedVouchData = (walletId: string) => {
     retry: false,
   });
 
-  return vouchesHistory;
+  return { ...vouchesRaw, data: vouchesHistory.data };
 };

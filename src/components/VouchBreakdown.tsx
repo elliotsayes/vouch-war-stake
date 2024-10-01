@@ -2,7 +2,6 @@ import { Card } from "./ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -11,7 +10,7 @@ import {
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { vouchLookupByAddress } from "@/lib/vouchers";
 import { useActiveAddress, useConnection } from "arweave-wallet-kit";
-import { ExternalLinkIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 
 export const VouchBreakdown = () => {
@@ -24,7 +23,22 @@ export const VouchBreakdown = () => {
       <Card className="px-2 pb-1">
         <div className="text-primary/60 px-1 py-1 w-56 text-sm">
           {connected ? (
-            "No vouches found. Use a vouch service to get V Points."
+            <>
+              <span>
+                No vouches found, use a vouch service to earn V Points
+              </span>
+              <Button
+                variant="outline"
+                size={"icon"}
+                className="ml-2"
+                onClick={() => vouchData.refetch()}
+                disabled={vouchData.isFetching}
+              >
+                <ReloadIcon
+                  className={`${vouchData.isFetching ? "animate-spin" : ""}`}
+                />
+              </Button>
+            </>
           ) : (
             <>
               <Button
@@ -44,17 +58,30 @@ export const VouchBreakdown = () => {
   }
 
   return (
-    <Card className="px-2 pb-1">
-      <Table>
+    <Card>
+      <Table className="px-2 pb-1">
         {/* <TableCaption className="mt-1">Allowed Vouch methods</TableCaption> */}
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Method</TableHead>
-            <TableHead className="text-right">Value</TableHead>
+            <TableHead className="text-right">
+              <Button
+                variant="outline"
+                size={"icon"}
+                className="mr-1"
+                onClick={() => vouchData.refetch()}
+                disabled={vouchData.isFetching}
+              >
+                <ReloadIcon
+                  className={`${vouchData.isFetching ? "animate-spin" : ""}`}
+                />
+              </Button>
+              Value
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {vouchData.isSuccess &&
+          {vouchData.data &&
             vouchData.data.history?.map(([voucherName, vouchData]) => {
               const vouchMeta = vouchLookupByAddress.get(voucherName);
               return (
