@@ -34,24 +34,24 @@ export const GoalProgress = ({
 
   return (
     <div className="flex flex-row gap-4 items-stretch">
-      <Avatar className="w-24 h-24">
+      <Avatar
+        className={`w-24 h-24 ${profileInfo.isLoading && "animate-pulse"}`}
+      >
         {profileImage && <AvatarImage src={fetchUrl(profileImage)} />}
-        <AvatarFallback
-          className={`${profileInfo.isLoading && "animate-pulse"}`}
-        />
+        <AvatarFallback />
       </Avatar>
       <div className="flex flex-col flex-grow-0 justify-center gap-1">
         <div className="text-lg text-primary/80 flex flex-row items-center">
           Goal for access to{" "}
           {profileInfo.isLoading ? (
-            <Skeleton className="ml-2 h-4 w-12 animate-pulse" />
+            <Skeleton className="ml-2 h-4 w-24 animate-pulse" />
           ) : profileInfo.data ? (
             profileInfo.data.DisplayName
           ) : (
             "Permaweb App"
           )}
         </div>
-        <Card className="bg-primary/10 flex flex-col flex-grow-0 justify-center py-3 relative">
+        <Card className="bg-primary/10 flex flex-col justify-center py-3 relative min-w-48 sm:min-w-64 md:min-w-72">
           <div className="absolute top-0 right-0 pr-2 pt-1">
             <HoverCard>
               <HoverCardTrigger>
