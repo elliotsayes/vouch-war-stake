@@ -9,7 +9,7 @@ import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "./VouchBreakdown";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { VPoints } from "./VPoints";
 
 export type GoalProgressProps = {
@@ -17,6 +17,7 @@ export type GoalProgressProps = {
   bonusValue?: number;
   projectedMeetsTarget?: boolean;
   profileId?: string;
+  appLink?: string;
 };
 
 export const GoalProgress = ({
@@ -24,6 +25,7 @@ export const GoalProgress = ({
   bonusValue,
   projectedMeetsTarget,
   profileId,
+  appLink,
 }: GoalProgressProps) => {
   const hasBonus = bonusValue && bonusValue !== 0;
 
@@ -32,6 +34,9 @@ export const GoalProgress = ({
 
   const profileInfo = useProfileInfo({ profileId });
   const profileImage = profileInfo.data?.ProfileImage;
+  const profileName = profileInfo.data
+    ? profileInfo.data.DisplayName
+    : "Permaweb App";
 
   return (
     <div className="flex flex-row gap-4 items-stretch">
@@ -42,14 +47,22 @@ export const GoalProgress = ({
         <AvatarFallback />
       </Avatar>
       <div className="flex flex-col flex-grow-0 justify-center gap-1">
-        <div className="text-lg text-primary/80 flex flex-row items-center">
-          Goal for access to{" "}
+        <div className="text-md text-primary/80 flex flex-row items-center px-1">
+          Goal for access to
           {profileInfo.isLoading ? (
             <Skeleton className="ml-2 h-4 w-24 animate-pulse" />
-          ) : profileInfo.data ? (
-            profileInfo.data.DisplayName
+          ) : appLink !== undefined ? (
+            <a
+              href={appLink}
+              target="_blank"
+              rel="noreferrer"
+              className="underline block ml-1"
+            >
+              {profileName}
+              <ExternalLinkIcon className="w-3 h-3 inline-block" />
+            </a>
           ) : (
-            "Permaweb App"
+            <> {profileName}</>
           )}
         </div>
         <Card className="bg-primary/5 flex flex-col justify-center py-3 relative min-w-48 sm:min-w-64 md:min-w-72">

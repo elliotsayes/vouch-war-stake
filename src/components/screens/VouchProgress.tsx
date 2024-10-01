@@ -44,12 +44,14 @@ import {
 export interface VouchProgressProps {
   targetValue: VouchValue;
   profileId?: string;
+  appLink?: string;
   onConfirmDeposit: (depositParameters: DepositParameters) => void;
 }
 
 export const VouchProgress = ({
   targetValue,
   profileId,
+  appLink,
   onConfirmDeposit,
 }: VouchProgressProps) => {
   const { connected, connect } = useConnection();
@@ -124,6 +126,7 @@ export const VouchProgress = ({
                       }
                     : {})}
                   profileId={profileId}
+                  appLink={appLink}
                 />
               </div>
               <div

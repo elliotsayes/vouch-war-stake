@@ -12,6 +12,7 @@ export type VouchGoalSearch = {
   value: number;
   currency: string;
   profileId?: string;
+  appLink?: string;
 };
 
 export const Route = createFileRoute("/intent/vouch-goal")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/intent/vouch-goal")({
       value: Number(search.value),
       currency: (search.currency as string) || "USD",
       profileId: (search.profileId as string) || undefined,
+      appLink: (search.appLink as string) || undefined,
     };
   },
 
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/intent/vouch-goal")({
 });
 
 function VouchGoal() {
-  const { currency, value, profileId } = Route.useSearch();
+  const { currency, value, profileId, appLink } = Route.useSearch();
   const targetValue: VouchValue = {
     value,
     currency,
@@ -54,6 +56,7 @@ function VouchGoal() {
     <VouchProgress
       targetValue={targetValue}
       profileId={profileId}
+      appLink={appLink}
       onConfirmDeposit={setDepositParameters}
     />
   ) : (

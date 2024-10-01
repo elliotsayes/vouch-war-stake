@@ -21,6 +21,7 @@ const profiles: Array<Profile> = [
       value: 5,
       currency: "USD",
       profileId: "QIi6XZQOJlCnT_Vf-xKdcYqrBk-Y94QT8eiuBDLsMq8",
+      appLink: "https://llamaland.arweave.net/",
     },
   },
   {
@@ -30,6 +31,7 @@ const profiles: Array<Profile> = [
       value: 4.2,
       currency: "USD",
       profileId: "QszM8HySK5XGw-tTLNVnG7WOIBIHJ_Mnth7Pa22I_iw",
+      appLink: "https://dumdum.arweave.net/",
     },
   },
 ];
