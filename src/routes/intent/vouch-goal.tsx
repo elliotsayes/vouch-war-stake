@@ -8,7 +8,7 @@ import { StakeProgress } from "@/components/screens/StakeProgress";
 import { toast } from "sonner";
 import { useActiveAddress } from "arweave-wallet-kit";
 
-type VouchGoalSearch = {
+export type VouchGoalSearch = {
   value: number;
   currency: string;
   profileId?: string;

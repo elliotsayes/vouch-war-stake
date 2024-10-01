@@ -51,6 +51,26 @@ export default {
           5: "hsl(var(--chart-5))",
         },
       },
+      keyframes: {
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        pulse: {
+          "0%": { boxShadow: "0 0 0 0 rgba(0,0,0,0.2)" },
+          "70%": { boxShadow: "0 0 0 10px rgba(0,0,0,0)" },
+          "100%": { boxShadow: "0 0 0 0 rgba(0,0,0,0)" },
+        },
+        reveal: {
+          "0%": { clipPath: "circle(0% at 50% 50%)" },
+          "100%": { clipPath: "circle(75% at 50% 50%)" },
+        },
+      },
+      animation: {
+        float: "float 6s ease-in-out infinite",
+        pulse: "pulse 1.5s infinite",
+        reveal: "reveal 1s ease-out forwards",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
