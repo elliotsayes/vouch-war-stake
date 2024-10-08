@@ -474,6 +474,19 @@ function SendVouch(walletId, confidence)
   })
 end
 
+function ResendAllVouches()
+  local stmt = VOUCH_DB:prepare([[
+  SELECT WalletId, TotalConfidenceValue
+  FROM Wallet;
+]])
+  while stmt:step() == sqlite3.ROW do
+    local walletId = stmt:get_value(0)
+    local confidenceValue = stmt:get_value(1)
+    SendVouch(walletId, confidenceValue)
+  end
+  stmt:finalize()
+end
+
 function GetCustodyProcessWalletId(processId)
   -- check the wallet table
   local stmt = VOUCH_DB:prepare([[
