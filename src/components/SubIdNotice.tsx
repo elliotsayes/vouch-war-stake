@@ -36,20 +36,20 @@ export const SubIdNotice = ({ mainAddress }: SubIdNoticeProps) => {
         {connected ? (
           <>
             <span>
-              Your wallet is a registered as a SubID for{" "}
+              Your wallet is a registered as a Sub-ID for{" "}
               <span className="font-mono text-xs break-all">{mainAddress}</span>
               .<br />
             </span>
             <Button
               variant="outline"
               size={"sm"}
-              className="mt-1 ml-auto mr-2"
+              className="mt-1 mx-2"
               disabled={promote.isPending || vouchesRaw.isRefetching}
               onClick={() => promote.mutate()}
             >
               Promote
               <ChevronUpIcon
-                className={`${promote.isPending || vouchesRaw.isRefetching ? "animate-spin" : ""}`}
+                className={`ml-1 ${promote.isPending || vouchesRaw.isRefetching ? "animate-spin" : ""}`}
               />
             </Button>
           </>
