@@ -18,12 +18,14 @@ export const useWhitelistedVouchData = (walletId?: string) => {
             return acc + parseFloat(value);
           }, 0);
           return {
+            for: vouchesRaw.data["Vouches-For"],
             total: total,
             history: history,
           };
         }
       }
       return {
+        for: undefined,
         total: 0,
         history: [],
       };

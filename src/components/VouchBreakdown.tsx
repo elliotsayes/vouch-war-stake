@@ -10,7 +10,7 @@ import {
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { vouchLookupByAddress } from "@/lib/vouchers";
 import { useActiveAddress, useConnection } from "arweave-wallet-kit";
-import { ExternalLinkIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 
 export const VouchBreakdown = () => {

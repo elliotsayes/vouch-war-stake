@@ -1,5 +1,6 @@
 import { ArweaveId } from "@/features/arweave/lib/model";
-import { dryrun } from "@permaweb/aoconnect";
+import { AoSigner } from "@/hooks/useAoSigner";
+import { dryrun, message } from "@permaweb/aoconnect";
 import { queryOptions } from "@tanstack/react-query";
 
 const VOUCHDAO_PROCESS_ID = import.meta.env.VITE_VOUCHDAO_PROCESS_ID!;
@@ -53,3 +54,17 @@ export const vouchDaoVouchesQuery = (walletId?: string) =>
     },
     enabled: !!walletId,
   });
+
+export const vouchDaoPromote = async (signer: AoSigner) => {
+  const msgId = await message({
+    process: VOUCHDAO_PROCESS_ID,
+    tags: [
+      {
+        name: "Action",
+        value: "Promote-ID",
+      },
+    ],
+    signer,
+  });
+  return msgId;
+};

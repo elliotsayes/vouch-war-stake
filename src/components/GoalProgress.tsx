@@ -9,8 +9,10 @@ import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "./VouchBreakdown";
-import { ExternalLinkIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { VPoints } from "./VPoints";
+import { AlertCircleIcon, InfoIcon } from "lucide-react";
+import { SubIdNotice } from "./SubIdNotice";
 
 export type GoalProgressProps = {
   targetValue: VouchValue;
@@ -31,6 +33,8 @@ export const GoalProgress = ({
 
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
+  const isVouched = vouchData.data?.for !== undefined;
+  const isSubId = isVouched && vouchData.data?.for !== walletId;
 
   const profileInfo = useProfileInfo({ profileId });
   const profileImage = profileInfo.data?.ProfileImage;
@@ -66,14 +70,28 @@ export const GoalProgress = ({
           )}
         </div>
         <Card className="bg-primary/5 flex flex-col justify-center py-3 relative min-w-48 sm:min-w-64 md:min-w-72">
-          <div className="absolute top-0 right-0 pr-2 pt-1">
+          <div className="absolute top-0 right-0 pr-1 pt-0">
             <HoverCard>
-              <HoverCardTrigger>
-                <InfoCircledIcon />
-              </HoverCardTrigger>
-              <HoverCardContent side="top" align="end">
-                <VouchBreakdown />
-              </HoverCardContent>
+              {isSubId ? (
+                <>
+                  <HoverCardTrigger className="relative">
+                    <AlertCircleIcon className="w-4 text-red-600/60 duration-1000" />
+                    <AlertCircleIcon className="absolute top-0 right-0 w-4 text-red-500/20 animate-ping" />
+                  </HoverCardTrigger>
+                  <HoverCardContent side="top" align="end">
+                    <SubIdNotice mainAddress={vouchData.data!.for!} />
+                  </HoverCardContent>
+                </>
+              ) : (
+                <>
+                  <HoverCardTrigger>
+                    <InfoIcon className="w-4" />
+                  </HoverCardTrigger>
+                  <HoverCardContent side="top" align="end">
+                    <VouchBreakdown />
+                  </HoverCardContent>
+                </>
+              )}
             </HoverCard>
           </div>
           <div className="text-center text-lg flex flex-row justify-center items-center gap-2">
@@ -81,7 +99,7 @@ export const GoalProgress = ({
               <span
                 className={`${hasBonus ? `${projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
               >
-                {vouchData.data?.total !== undefined
+                {vouchData.data?.total !== undefined && !isSubId
                   ? Math.floor(
                       (vouchData.data.total + (bonusValue ?? 0)) * 100,
                     ) / 100
