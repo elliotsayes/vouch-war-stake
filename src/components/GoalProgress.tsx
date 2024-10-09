@@ -74,7 +74,7 @@ export const GoalProgress = ({
             <HoverCard>
               {isSubId ? (
                 <>
-                  <HoverCardTrigger className="relative">
+                  <HoverCardTrigger className="relative cursor-pointer">
                     <AlertCircleIcon className="w-4 text-red-600/60 duration-1000" />
                     <AlertCircleIcon className="absolute top-0 right-0 w-4 text-red-500/20 animate-ping" />
                   </HoverCardTrigger>
@@ -84,7 +84,7 @@ export const GoalProgress = ({
                 </>
               ) : (
                 <>
-                  <HoverCardTrigger>
+                  <HoverCardTrigger className="cursor-pointer">
                     <InfoIcon className="w-4" />
                   </HoverCardTrigger>
                   <HoverCardContent side="top" align="end">
