@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { vouchDaoPromote, vouchDaoVouchesQuery } from "@/contract/vouchDao";
 import useAoSigner from "@/hooks/useAoSigner";
 import { toast } from "sonner";
+import { ConnectText } from "./ConnectText";
 
 interface SubIdNoticeProps {
   mainAddress: string;
@@ -54,17 +55,7 @@ export const SubIdNotice = ({ mainAddress }: SubIdNoticeProps) => {
             </Button>
           </>
         ) : (
-          <>
-            <Button
-              onClick={connect}
-              size={"sm"}
-              variant={"outline"}
-              className="px-1"
-            >
-              Connect
-            </Button>{" "}
-            to see your V Points.
-          </>
+          <ConnectText />
         )}
       </div>
     </Card>
