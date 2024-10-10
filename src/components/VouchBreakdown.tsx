@@ -50,8 +50,8 @@ export const VouchBreakdown = () => {
   }
 
   return (
-    <Card>
-      <Table className="px-2 pb-1">
+    <Card className="py-0.5">
+      <Table className="">
         {/* <TableCaption className="mt-1">Allowed Vouch methods</TableCaption> */}
         <TableHeader>
           <TableRow>
@@ -82,7 +82,7 @@ export const VouchBreakdown = () => {
                     <span>{vouchMeta?.name.split("-").slice(1).join(" ")}</span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {vouchData.Value}
+                    {parseFloat(vouchData.Value.split("-")[0]).toFixed(2)}
                   </TableCell>
                 </TableRow>
               );
