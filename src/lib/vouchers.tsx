@@ -15,8 +15,7 @@ export type VoucherInfo = {
 export const whitelistedVouchers: Array<VoucherInfo> = [
   {
     name: "Vouch-X",
-    description:
-      "Earn vouch points based on the credibility of your X account.",
+    description: "Earn vouch points based on the credibility of your X account",
     address: "Ax_uXyLQBPZSQ15movzv9-O1mDo30khslqN64qD27Z8",
     url: "https://vouch-twitter.arweave.net/",
     icon: (
@@ -65,7 +64,7 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
   },
   {
     name: "Vouch-AO-Balance",
-    description: "Earn vouch points for the AO tokens locked in your wallet.",
+    description: "Earn vouch points for the AO tokens locked in your wallet",
     address: "QeXDjjxcui7W2xU08zOlnFwBlbiID4sACpi0tSS3VgY",
     url: "https://vouch-ao-balance.arweave.net/",
     icon: (
@@ -96,7 +95,7 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
   },
   {
     name: "Vouch-wAR-Stake",
-    description: "Earn vouch points by staking wrapped Arweave tokens.",
+    description: "Earn vouch points by staking wrapped Arweave tokens",
     address: "3y0YE11i21hpP8UY0Z1AVhtPoJD4V_AbEBx-g0j9wRc",
     url: "https://vouch-portal.arweave.net/",
     icon: (
