@@ -78,10 +78,10 @@ export const VouchBreakdown = () => {
               const vouchMeta = vouchLookupByAddress.get(voucherName);
               return (
                 <TableRow key={voucherName}>
-                  <TableCell className="font-medium text-left">
+                  <TableCell className="font-medium text-left text-primary/80">
                     <span>{vouchMeta?.name.split("-").slice(1).join(" ")}</span>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-mono text-xs">
                     {parseFloat(vouchData.Value.split("-")[0]).toFixed(2)}
                   </TableCell>
                 </TableRow>
