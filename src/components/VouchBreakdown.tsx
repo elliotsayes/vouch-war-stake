@@ -14,11 +14,25 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 import { VPoints } from "./VPoints";
 import { ConnectText } from "./ConnectText";
+import { useMemo } from "react";
+
+const showCount = 6;
 
 export const VouchBreakdown = () => {
   const { connected } = useConnection();
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
+
+  const vouchHistorySorted = useMemo(() => {
+    return vouchData.data?.history?.sort(
+      ([, a], [, b]) =>
+        parseFloat(b.Value.split("-")[0]) - parseFloat(a.Value.split("-")[0]),
+    );
+  }, [vouchData.data?.history]);
+  const additionalVouches = Math.max(
+    0,
+    (vouchHistorySorted?.length ?? 0) - showCount,
+  );
 
   if ((vouchData.data?.history?.length ?? 0) === 0) {
     return (
@@ -73,20 +87,46 @@ export const VouchBreakdown = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {vouchData.data &&
-            vouchData.data.history?.map(([voucherName, vouchData]) => {
-              const vouchMeta = vouchLookupByAddress.get(voucherName);
-              return (
-                <TableRow key={voucherName}>
-                  <TableCell className="font-medium text-left text-primary/80">
-                    <span>{vouchMeta?.name.split("-").slice(1).join(" ")}</span>
+          {vouchHistorySorted && (
+            <>
+              {vouchHistorySorted
+                .slice(0, showCount)
+                .map(([voucherAddress, vouchData]) => {
+                  const vouchMeta = vouchLookupByAddress.get(voucherAddress);
+
+                  const voucherName = vouchMeta?.name
+                    .split("-")
+                    .slice(1)
+                    .join(" ");
+                  const vouchValue = parseFloat(vouchData.Value.split("-")[0]);
+
+                  return (
+                    <TableRow key={voucherAddress}>
+                      <TableCell className="font-medium text-left text-primary/80">
+                        <span>
+                          {voucherName ?? `${voucherAddress.slice(0, 4)}...`}
+                        </span>
+                      </TableCell>
+                      <TableCell
+                        className={`text-right tabular-nums text-sm ${vouchValue < 0.01 ? "text-primary/60" : ""}`}
+                      >
+                        {vouchValue.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {additionalVouches > 0 && (
+                <TableRow>
+                  <TableCell className="text-primary/60 text-left pl-2">
+                    <span>...plus {additionalVouches} more</span>
                   </TableCell>
-                  <TableCell className="text-right font-mono text-xs">
-                    {parseFloat(vouchData.Value.split("-")[0]).toFixed(2)}
+                  <TableCell className="text-right text-primary/60">
+                    <span></span>
                   </TableCell>
                 </TableRow>
-              );
-            })}
+              )}
+            </>
+          )}
         </TableBody>
       </Table>
     </Card>
