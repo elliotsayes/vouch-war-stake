@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { useActiveAddress } from "arweave-wallet-kit";
+import { TriangleAlertIcon } from "lucide-react";
 
 const linkedVouchers = whitelistedVouchers.filter(
   (voucher) => voucher.name != "Vouch-wAR-Stake",
@@ -35,20 +36,35 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
           const alreadyDone = vouchData.data?.history.find(
             (x) => x[0] === voucher.address,
           );
+          const zeroValue = alreadyDone?.[1].Value.startsWith("0") ?? false;
           return (
             <div className="flex flex-col items-center gap-2 max-w-28">
               <div className="relative">
                 <div
-                  className={`absolute bottom-0 right-0 w-4 h-4 rounded-full bg-green-500/10 transition-opacity duration-500 ${alreadyDone ? "opacity-100" : "opacity-0"}`}
+                  className={`absolute bottom-0 right-0 w-4 h-4 rounded-full transition-opacity duration-500 ${alreadyDone ? "opacity-100" : "opacity-0"} ${zeroValue ? "bg-orange-500/10" : "bg-green-500/10"}`}
                 >
                   <Tooltip>
                     <TooltipTrigger disabled={!alreadyDone}>
-                      <CheckIcon className="text-green-600 w-4 h-4 mb-1 mr-1" />
+                      {zeroValue ? (
+                        <TriangleAlertIcon className="text-orange-400 w-3 h-3 mb-1 mr-0" />
+                      ) : (
+                        <CheckIcon className="text-green-600 w-4 h-4 mb-1 mr-1" />
+                      )}
                     </TooltipTrigger>
                     <TooltipContent>
-                      Vouch method
-                      <br />
-                      already complete
+                      {zeroValue ? (
+                        <>
+                          Vouch value
+                          <br />
+                          is zero
+                        </>
+                      ) : (
+                        <>
+                          Vouch method
+                          <br />
+                          already complete
+                        </>
+                      )}
                     </TooltipContent>
                   </Tooltip>
                 </div>
