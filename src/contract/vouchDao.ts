@@ -22,8 +22,12 @@ type VouchDaoGetVouchesResponse =
       "Total-Value": VouchValueStr; // "0-USD";
       Vouchers: Record<
         string,
-        Record<string, unknown> & {
+        {
+          "Vouch-For": string;
           Value: VouchValueStr; // "0-USD";
+          Method: string;
+          Identifier: string;
+          Country: string;
         }
       >;
     };

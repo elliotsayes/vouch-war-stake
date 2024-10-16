@@ -10,17 +10,21 @@ export const useWhitelistedVouchData = (walletId?: string) => {
     queryFn: async () => {
       if (vouchesRaw.isSuccess) {
         if ("Vouches-For" in vouchesRaw.data) {
-          const history = Object.entries(vouchesRaw.data["Vouchers"]).filter(
-            ([voucher]) => vouchLookupByAddress.get(voucher) !== undefined,
+          const historyWhitelisted = Object.entries(
+            vouchesRaw.data["Vouchers"],
+          ).filter(
+            ([voucher, vouch]) =>
+              vouchLookupByAddress.get(voucher) !== undefined &&
+              vouch["Vouch-For"] === walletId,
           );
-          const total = history.reduce((acc, [, vouchData]) => {
+          const total = historyWhitelisted.reduce((acc, [, vouchData]) => {
             const [value] = vouchData.Value.split("-");
             return acc + parseFloat(value);
           }, 0);
           return {
             for: vouchesRaw.data["Vouches-For"],
             total: total,
-            history: history,
+            history: historyWhitelisted,
           };
         }
       }
