@@ -66,7 +66,7 @@ Handlers.add(
 )
 
 LAST_UPDATE = 0
-UPDATE_INTERVAL = 60 * 60 * 1000 -- 1 hour
+UPDATE_INTERVAL = 24 * 60 * 60 * 1000 -- 1 day
 
 Handlers.add(
   "CronTick",
