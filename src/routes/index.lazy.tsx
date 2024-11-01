@@ -18,7 +18,7 @@ const profiles: Array<Profile> = [
     name: "Llama Land",
     imageTxId: "7Sp4jk77OrK8qxdVe8RissGbp0-0w32vhR0SuPGSlPU",
     search: {
-      value: 2,
+      value: 5,
       currency: "USD",
       profileId: "QIi6XZQOJlCnT_Vf-xKdcYqrBk-Y94QT8eiuBDLsMq8",
       appLink: "https://llamaland.arweave.net/",
