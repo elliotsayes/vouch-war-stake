@@ -8,7 +8,7 @@ import {
 import { CodeIcon } from "@radix-ui/react-icons";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, PlusIcon } from "lucide-react";
 
 export const Route = createLazyFileRoute("/developers")({
   component: Developers,
@@ -37,14 +37,38 @@ function Developers() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center px-4 mb-4">
           Developer Guide
         </h1>
-        <div className="flex flex-col wrap justify-center gap-4 mt-8">
+        <div className="flex flex-col wrap justify-center gap-6 mt-8 max-w-screen-md">
+          <span className="flex gap-4 items-center">
+            <Tooltip>
+              <TooltipTrigger>
+                <PlusIcon className="w-8 h-8 opacity-80" />
+              </TooltipTrigger>
+              <TooltipContent>Integrate your app</TooltipContent>
+            </Tooltip>
+            <span className="text-muted-foreground text-lg">
+              Set the search params in this <br />
+              <Link
+                to="/intent/vouch-goal"
+                search={{
+                  currency: "USD",
+                  value: 1,
+                  profileId: "",
+                  appLink: "",
+                }}
+                className="text-muted-foreground font-semibold"
+              >
+                URL
+              </Link>{" "}
+              and link it from your app
+            </span>
+          </span>
           <a
             href="https://github.com/elliotsayes/vouch-war-stake/blob/main/process/vouch-scorer.lua"
             target="_blank"
             className="flex gap-4 items-center"
           >
             <CodeIcon className="w-8 h-8 opacity-80" />
-            <span className="text-muted-foreground text-lg">
+            <span className="text-muted-foreground text-lg font-semibold">
               Scoring Lua Code
             </span>
           </a>
@@ -58,7 +82,7 @@ function Developers() {
               alt="GitHub"
               className="w-8 h-8 opacity-80"
             />
-            <span className="text-muted-foreground text-lg">
+            <span className="text-muted-foreground text-lg font-semibold">
               Portal Website Code
             </span>
           </a>
