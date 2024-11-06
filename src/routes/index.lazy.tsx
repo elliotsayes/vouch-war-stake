@@ -84,6 +84,9 @@ function Index() {
           </Link>
         ))}
       </div>
+      <div className="absolute mx-auto bottom-4 sm:text-lg font-mono text-muted-foreground">
+        <Link to="/developers">&lt;developers&gt;</Link>
+      </div>
     </div>
   );
 }
