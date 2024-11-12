@@ -78,7 +78,7 @@ function Developers() {
             className="flex gap-4 items-center"
           >
             <img
-              src="./public/images/github-mark.svg"
+              src="./images/github-mark.svg"
               alt="GitHub"
               className="w-8 h-8 opacity-80"
             />
