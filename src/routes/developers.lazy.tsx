@@ -8,7 +8,7 @@ import {
 import { CodeIcon } from "@radix-ui/react-icons";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeftIcon, PlusIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowLeftRight } from "lucide-react";
 
 export const Route = createLazyFileRoute("/developers")({
   component: Developers,
@@ -37,11 +37,11 @@ function Developers() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center px-4 mb-4">
           Developer Guide
         </h1>
-        <div className="flex flex-col wrap justify-center gap-6 mt-8 max-w-screen-md">
+        <div className="flex flex-col wrap justify-center mt-8 max-w-screen-md">
           <span className="flex gap-4 items-center">
             <Tooltip>
-              <TooltipTrigger>
-                <PlusIcon className="w-8 h-8 opacity-80" />
+              <TooltipTrigger className="cursor-help">
+                <ArrowLeftRight className="w-8 h-8 opacity-80 my-4" />
               </TooltipTrigger>
               <TooltipContent>Integrate your app</TooltipContent>
             </Tooltip>
@@ -67,7 +67,7 @@ function Developers() {
             target="_blank"
             className="flex gap-4 items-center"
           >
-            <CodeIcon className="w-8 h-8 opacity-80" />
+            <CodeIcon className="w-8 h-8 opacity-80 my-4" />
             <span className="text-muted-foreground text-lg font-semibold">
               Scoring Lua Code
             </span>
@@ -80,7 +80,7 @@ function Developers() {
             <img
               src="./images/github-mark.svg"
               alt="GitHub"
-              className="w-8 h-8 opacity-80"
+              className="w-8 h-8 opacity-80 my-4"
             />
             <span className="text-muted-foreground text-lg font-semibold">
               Portal Website Code
