@@ -38,7 +38,7 @@ const profiles: Array<Profile> = [
     name: "Bazar",
     imageTxId: "2btiARcMnhkdy5H-OK_T0dd-Zf-ga9Shm2ttV699Zjg",
     search: {
-      value: 5,
+      value: 2,
       currency: "USD",
       profileId: "CUITkl8BV4xJX_ylXtf6oG7cGDpJ_4CPCbS5rz-20I4",
       appLink: "https://bazar.arweave.net/",
