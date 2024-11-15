@@ -415,8 +415,9 @@ Handlers.add(
       if custodyProcess.CustodyProcessId then
         return print("Custody Process already recorded")
       end
-      if (custodyProcess.TimestampModified + MESSAGE_RETRY_TIMEOUT) < msg.Timestamp then
-        return print("Custody Process already queried")
+      local timeAgo = msg.Timestamp - custodyProcess.TimestampModified
+      if not (timeAgo > MESSAGE_RETRY_TIMEOUT) then
+        return print("Custody Process queried: " .. timeAgo .. "ms ago, waiting")
       end
       print("Custody Process query timed out, retrying")
       BumpCustodyProcessTimestamp(walletId, msg.Timestamp)
