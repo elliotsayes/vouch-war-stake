@@ -69,6 +69,8 @@ TokenWhitelist = TokenWhitelist or {
   },
 }
 
+MESSAGE_RETRY_TIMEOUT = 60 * 1000
+
 function ParsePrice(msg)
   if msg.Tags.Currency ~= "USD" then
     print("Not USD")
@@ -220,17 +222,28 @@ function CreateWallet(walletId, timestamp)
   end
 end
 
-function CustodyProcessRecorded(walletId)
+function CustodyProcess(walletId)
   local stmt = VOUCH_DB:prepare([[
-  SELECT WalletId
+  SELECT *
   FROM CustodyProcess
   WHERE WalletId = ?;
 ]])
   stmt:bind_values(walletId)
   local res = stmt:step()
+  if res ~= sqlite3.ROW then
+    stmt:finalize()
+    return nil
+  end
+
+  local custodyProcess = {
+    WalletId = stmt:get_value(0),
+    TimestampCreated = stmt:get_value(1),
+    TimestampModified = stmt:get_value(2),
+    CustodyProcessId = stmt:get_value(3),
+  }
   stmt:finalize()
 
-  return res == sqlite3.ROW
+  return custodyProcess
 end
 
 function RecordCustodyProcessPrototype(walletId, timestamp)
@@ -244,6 +257,21 @@ VALUES (?, ?, ?)
 
   if res ~= sqlite3.OK then
     error("Error creating Wallet: " .. VOUCH_DB:errmsg())
+  end
+end
+
+function BumpCustodyProcessTimestamp(walletId, timestamp)
+  local stmt = VOUCH_DB:prepare([[
+UPDATE CustodyProcess
+SET TimestampModified = ?
+WHERE WalletId = ?;
+]])
+  stmt:bind_values(timestamp, walletId)
+  stmt:step()
+  local res = stmt:finalize()
+
+  if res ~= sqlite3.OK then
+    error("Error updating Wallet: " .. VOUCH_DB:errmsg())
   end
 end
 
@@ -382,13 +410,20 @@ Handlers.add(
       CreateWallet(walletId, msg.Timestamp)
     end
 
-    if CustodyProcessRecorded(walletId) then
-      return print("Process already recorded")
+    local custodyProcess = CustodyProcess(walletId)
+    if custodyProcess ~= nil then
+      if custodyProcess.CustodyProcessId then
+        return print("Custody Process already recorded")
+      end
+      if (custodyProcess.TimestampModified + MESSAGE_RETRY_TIMEOUT) < msg.Timestamp then
+        return print("Custody Process already queried")
+      end
+      print("Custody Process query timed out, retrying")
+      BumpCustodyProcessTimestamp(walletId, msg.Timestamp)
+    else
+      RecordCustodyProcessPrototype(walletId, msg.Timestamp)
     end
 
-    -- We insert already, because `QueryCustodyProcess` will suspend the process,
-    -- and we want to make sure it isn't queried multiple times at once
-    RecordCustodyProcessPrototype(walletId, msg.Timestamp)
     local custodyProcessId = QueryCustodyProcess(walletId)
     if custodyProcessId == nil then
       print("No custody process in ")
