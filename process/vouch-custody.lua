@@ -304,7 +304,7 @@ WHERE WalletId = ?;
   end
 end
 
-function QueryCustodyProcess(walletId)
+function FetchCustodyProcess(walletId)
   local req = ao.send({
     Target = CUSTODY_CREATOR_PROCESS,
     Tags = {
@@ -424,7 +424,7 @@ Handlers.add(
       RecordCustodyProcessPrototype(walletId, msg.Timestamp)
     end
 
-    local custodyProcessId = QueryCustodyProcess(walletId)
+    local custodyProcessId = FetchCustodyProcess(walletId)
     if custodyProcessId == nil then
       print("No custody process in ")
       RemoveCustodyProcessPrototype(walletId)
