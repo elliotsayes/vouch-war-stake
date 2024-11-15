@@ -33,6 +33,10 @@ local function mockedRequire(moduleName)
     return originalRequire("lsqlite3complete")
   end
 
+  if moduleName == "aoform.directory" then
+    return {}
+  end
+
   return originalRequire(moduleName)
 end
 
