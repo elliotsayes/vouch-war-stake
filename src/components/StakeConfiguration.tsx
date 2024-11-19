@@ -68,7 +68,7 @@ export const StakeConfiguration = ({
     if (!hasTarget) {
       return false;
     }
-    if (vouchData.data?.total === undefined) {
+    if (vouchData.data?.score === undefined) {
       return false;
     }
     if (!vouchCustodyInfo.data) {
@@ -77,7 +77,7 @@ export const StakeConfiguration = ({
 
     // Calculate required to meet target
     const requiredToMeetTarget = hasTarget
-      ? targetValue.value - vouchData.data.total
+      ? targetValue.value - vouchData.data.score
       : 0;
 
     if (requiredToMeetTarget <= 0) {
@@ -97,7 +97,7 @@ export const StakeConfiguration = ({
     stakeTime,
     targetValue?.value,
     vouchCustodyInfo.data,
-    vouchData.data?.total,
+    vouchData.data?.score,
   ]);
 
   useEffect(() => {
@@ -111,9 +111,15 @@ export const StakeConfiguration = ({
   }, [vouchCustodyInfo.data, quantity, setBonusValue, stakeTime]);
 
   useEffect(() => {
+    if (!hasTarget) return;
     if (fired.current) return;
     if (setParametersAuto()) fired.current = true;
-  }, [vouchData.isSuccess, vouchCustodyInfo.isSuccess, setParametersAuto]);
+  }, [
+    hasTarget,
+    vouchData.isSuccess,
+    vouchCustodyInfo.isSuccess,
+    setParametersAuto,
+  ]);
 
   const isLoading = vouchData.isLoading || vouchCustodyInfo.isLoading;
 
@@ -128,15 +134,17 @@ export const StakeConfiguration = ({
           <DepositInfo />
         </div>
         <div className="my-4 relative">
-          <Button
-            disabled={isAuto || isLoading}
-            variant={"outline"}
-            size={"sm"}
-            onClick={setParametersAuto}
-            className="absolute right-0 top-0"
-          >
-            Auto
-          </Button>
+          {hasTarget && (
+            <Button
+              disabled={isAuto || isLoading}
+              variant={"outline"}
+              size={"sm"}
+              onClick={setParametersAuto}
+              className="absolute right-0 top-0"
+            >
+              Auto
+            </Button>
+          )}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <div className="flex flex-row items-center">
@@ -204,7 +212,7 @@ export const StakeConfiguration = ({
             </div>
           </div>
           <div className="mt-6 mb-4 flex flex-col items-center">
-            {hasSufficientBalance && (!hasTarget || hasBonusAboveMinimum) ? (
+            {hasSufficientBalance && hasBonusAboveMinimum ? (
               <Button
                 disabled={isLoading}
                 onClick={() => {

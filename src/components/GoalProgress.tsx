@@ -51,7 +51,9 @@ export const GoalProgress = ({
       >
         {profileImage && <AvatarImage src={fetchUrl(profileImage)} />}
         <AvatarFallback>
-          <img src={"../images/user.svg"} className="w-24 h-24" />
+          {!hasTarget && (
+            <img src={"../images/user.svg"} className="w-24 h-24" />
+          )}
         </AvatarFallback>
       </Avatar>
       <div className="flex flex-col flex-grow-0 justify-center gap-1">
@@ -118,9 +120,9 @@ export const GoalProgress = ({
               <span
                 className={`${hasBonus ? `${!hasTarget || projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
               >
-                {vouchData.data?.total !== undefined && !isSubId
+                {vouchData.data?.score !== undefined && !isSubId
                   ? Math.floor(
-                      (vouchData.data.total + (bonusValue ?? 0)) * 100,
+                      (vouchData.data.score + (bonusValue ?? 0)) * 100,
                     ) / 100
                   : "..."}
               </span>

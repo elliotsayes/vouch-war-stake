@@ -64,7 +64,7 @@ export const VouchProgress = ({
   const [bonusValue, setBonusValue] = useState(0);
 
   const hasTarget = targetValue !== undefined;
-  const projectedValue = (vouchData.data?.total ?? 0) + bonusValue;
+  const projectedValue = (vouchData.data?.score ?? 0) + bonusValue;
   const projectedMeetsTarget = hasTarget && projectedValue >= targetValue.value;
 
   const [depositParameters, setDepositParameters] =

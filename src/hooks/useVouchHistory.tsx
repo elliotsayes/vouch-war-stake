@@ -1,6 +1,27 @@
-import { vouchDaoVouchesQuery } from "@/contract/vouchDao";
+import {
+  VouchDaoGetVouchesResponseIsVouched,
+  vouchDaoVouchesQuery,
+} from "@/contract/vouchDao";
 import { vouchLookupByAddress } from "@/lib/vouchers";
 import { useQuery } from "@tanstack/react-query";
+
+export type GetVouchesProcessed =
+  | {
+      for: string;
+      score: number;
+      history: Record<
+        string,
+        VouchDaoGetVouchesResponseIsVouched["Vouchers"][string]
+      >;
+    }
+  | {
+      for: undefined;
+      score: 0;
+      history: Record<
+        string,
+        VouchDaoGetVouchesResponseIsVouched["Vouchers"][string]
+      >;
+    };
 
 export const useWhitelistedVouchData = (walletId?: string) => {
   const vouchesRaw = useQuery(vouchDaoVouchesQuery(walletId));
@@ -9,30 +30,35 @@ export const useWhitelistedVouchData = (walletId?: string) => {
     queryKey: ["vouchesHistory", vouchesRaw.data],
     queryFn: async () => {
       if (vouchesRaw.isSuccess) {
-        if ("Vouches-For" in vouchesRaw.data) {
-          const historyWhitelisted = Object.entries(
-            vouchesRaw.data["Vouchers"],
-          ).filter(
+        const vouches = vouchesRaw.data;
+        if ("Vouches-For" in vouches) {
+          const historyWhitelisted = Object.entries(vouches["Vouchers"]).filter(
             ([voucher, vouch]) =>
               vouchLookupByAddress.get(voucher) !== undefined &&
               vouch["Vouch-For"] === walletId,
           );
-          const total = historyWhitelisted.reduce((acc, [, vouchData]) => {
+          const score = historyWhitelisted.reduce((acc, [, vouchData]) => {
             const [value] = vouchData.Value.split("-");
             return acc + parseFloat(value);
           }, 0);
           return {
-            for: vouchesRaw.data["Vouches-For"],
-            total: total,
-            history: historyWhitelisted,
-          };
+            for: vouches["Vouches-For"],
+            score,
+            history: historyWhitelisted.reduce(
+              (acc, [voucher, vouchData]) => ({
+                ...acc,
+                [voucher]: vouchData,
+              }),
+              {},
+            ),
+          } as GetVouchesProcessed;
         }
+        return {
+          for: undefined,
+          score: 0,
+          history: {},
+        } as GetVouchesProcessed;
       }
-      return {
-        for: undefined,
-        total: 0,
-        history: [],
-      };
     },
     enabled: vouchesRaw.isSuccess,
     refetchInterval: false,

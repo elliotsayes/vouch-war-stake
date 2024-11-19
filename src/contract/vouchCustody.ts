@@ -1,10 +1,9 @@
 import { dryrun, message } from "@permaweb/aoconnect";
-import { MutationOptions, queryOptions } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import { getTagValue } from "../lib/arweave";
 import { AoSigner } from "../hooks/useAoSigner";
 
 const VOUCH_CUSTODY_PROCESS_ID = import.meta.env.VITE_VOUCH_CUSTODY_PROCESS_ID!;
-const WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
 
 export const vouchCustodyInfoQuery = () =>
   queryOptions({

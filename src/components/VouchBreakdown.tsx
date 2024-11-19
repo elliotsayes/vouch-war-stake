@@ -24,17 +24,18 @@ export const VouchBreakdown = () => {
   const vouchData = useWhitelistedVouchData(walletId!);
 
   const vouchHistorySorted = useMemo(() => {
-    return vouchData.data?.history?.sort(
+    if (!vouchData.data?.history) return undefined;
+    return Object.entries(vouchData.data!.history).sort(
       ([, a], [, b]) =>
         parseFloat(b.Value.split("-")[0]) - parseFloat(a.Value.split("-")[0]),
     );
-  }, [vouchData.data?.history]);
+  }, [vouchData.data]);
   const additionalVouches = Math.max(
     0,
     (vouchHistorySorted?.length ?? 0) - showCount,
   );
 
-  if ((vouchData.data?.history?.length ?? 0) === 0) {
+  if ((Object.keys(vouchData.data?.history ?? {}).length ?? 0) === 0) {
     return (
       <Card className="px-2 pb-1">
         <div className="text-primary/60 px-1 py-1 w-56 text-sm">

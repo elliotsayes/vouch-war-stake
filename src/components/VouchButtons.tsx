@@ -33,9 +33,11 @@ export const VouchButtons = ({ onActionVoucherClick }: VouchLinksProps) => {
     <TooltipProvider>
       <div className="flex flex-row flex-grow-0 max-w-screen-lg justify-evenly gap-4">
         {linkedVouchers.map((voucher) => {
-          const alreadyDone = vouchData.data?.history.find(
-            (x) => x[0] === voucher.address,
-          );
+          const alreadyDone = vouchData.data?.history
+            ? Object.entries(vouchData.data.history).find(
+                (x) => x[0] === voucher.address,
+              )
+            : undefined;
           const zeroValue = alreadyDone?.[1].Value.startsWith("0") ?? false;
           return (
             <div className="flex flex-col items-center gap-2 max-w-28">

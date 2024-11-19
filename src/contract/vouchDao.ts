@@ -12,25 +12,29 @@ export type VouchValue = {
 };
 export type VouchHistory = Record<ArweaveId, VouchValue>;
 
-type VouchDaoGetVouchesResponse =
-  | {
-      ID: string;
-      Status: "NOT_VOUCHED";
+export type VouchDaoGetVouchesResponseNotVouched = {
+  ID: string;
+  Status: "NOT_VOUCHED";
+};
+
+export type VouchDaoGetVouchesResponseIsVouched = {
+  "Vouches-For": string;
+  "Total-Value": VouchValueStr; // "0-USD";
+  Vouchers: Record<
+    string,
+    {
+      "Vouch-For": string;
+      Value: VouchValueStr; // "0-USD";
+      Method: string;
+      Identifier: string;
+      Country: string;
     }
-  | {
-      "Vouches-For": string;
-      "Total-Value": VouchValueStr; // "0-USD";
-      Vouchers: Record<
-        string,
-        {
-          "Vouch-For": string;
-          Value: VouchValueStr; // "0-USD";
-          Method: string;
-          Identifier: string;
-          Country: string;
-        }
-      >;
-    };
+  >;
+};
+
+export type VouchDaoGetVouchesResponse =
+  | VouchDaoGetVouchesResponseNotVouched
+  | VouchDaoGetVouchesResponseIsVouched;
 
 export const vouchDaoVouchesQuery = (walletId?: string) =>
   queryOptions({
@@ -50,11 +54,7 @@ export const vouchDaoVouchesQuery = (walletId?: string) =>
         ],
       });
       const replyData = res.Messages[0].Data;
-      const replyDataParsed = JSON.parse(
-        replyData,
-      ) as VouchDaoGetVouchesResponse;
-      console.log(replyDataParsed);
-      return replyDataParsed;
+      return JSON.parse(replyData) as VouchDaoGetVouchesResponse;
     },
     enabled: !!walletId,
   });
