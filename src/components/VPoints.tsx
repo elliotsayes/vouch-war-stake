@@ -21,7 +21,11 @@ export const VPoints = () => {
             </span>
           </div>
         </TooltipTrigger>
-        <TooltipContent>Vouch Points</TooltipContent>
+        <TooltipContent>
+          Your <b>Vouch Points</b> prove your credibility
+          <br />
+          across all participating permaweb apps
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
