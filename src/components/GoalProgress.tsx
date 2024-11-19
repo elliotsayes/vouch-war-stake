@@ -143,7 +143,7 @@ export const GoalProgress = ({
           <div className="text-center text-lg flex flex-row justify-center items-center gap-2">
             <div>
               <span
-                className={`${currentMeetsTarget ? "text-green-800" : ""} ${hasBonus && !currentMeetsTarget ? `${hasTarget && projectedMeetsTarget ? "text-green-800 shadow-green-900 animate-pulse" : "text-red-800"}` : ""}`}
+                className={`${currentMeetsTarget ? "text-green-800" : ""} ${hasTarget && hasBonus && !currentMeetsTarget ? `${projectedMeetsTarget ? "text-green-800 shadow-green-900 animate-pulse" : "text-red-800"}` : ""}`}
               >
                 {vouchData.data?.score !== undefined && !isSubId
                   ? Math.floor(

@@ -46,7 +46,10 @@ export const StakeConfiguration = ({
   // projectedMeetsTarget,
   onSubmitDeposit,
 }: StakeConfigurationProps) => {
-  const [quantity, setQuantity] = useState(0);
+  const hasTarget = targetValue !== undefined;
+  const useAuto = hasTarget && !currentMeetsTarget;
+
+  const [quantity, setQuantity] = useState(useAuto ? 0 : 0.01);
   const [stakeTime, setStakeTime] = useState(maxStakeTimeMs);
   const [isAuto, setIsAuto] = useState(false);
 
@@ -57,7 +60,6 @@ export const StakeConfiguration = ({
     tokenBalanceQuery(WAR_TOKEN_PROCESS_ID, walletId),
   );
 
-  const hasTarget = targetValue !== undefined;
   const hasBonusAboveMinimum = bonusValue > 0.01;
   const quantityMinor = BigInt(Math.ceil(quantity * WAR_MULTIPLIER));
   const hasSufficientBalance =
@@ -65,7 +67,7 @@ export const StakeConfiguration = ({
 
   const vouchData = useWhitelistedVouchData(walletId);
 
-  const fired = useRef(false);
+  const firedInitialAuto = useRef(false);
   const setParametersAuto = useCallback(() => {
     if (!hasTarget) {
       return false;
@@ -113,15 +115,10 @@ export const StakeConfiguration = ({
   }, [vouchCustodyInfo.data, quantity, setBonusValue, stakeTime]);
 
   useEffect(() => {
-    if (!hasTarget) return;
-    if (fired.current) return;
-    if (setParametersAuto()) fired.current = true;
-  }, [
-    hasTarget,
-    vouchData.isSuccess,
-    vouchCustodyInfo.isSuccess,
-    setParametersAuto,
-  ]);
+    if (!useAuto) return;
+    if (firedInitialAuto.current) return;
+    if (setParametersAuto()) firedInitialAuto.current = true;
+  }, [useAuto, setParametersAuto]);
 
   const isLoading = vouchData.isLoading || vouchCustodyInfo.isLoading;
 
@@ -137,7 +134,7 @@ export const StakeConfiguration = ({
         </div>
         <div className="my-4 relative">
           <Button
-            disabled={isAuto || isLoading || !hasTarget || currentMeetsTarget}
+            disabled={!useAuto || isAuto || isLoading}
             variant={"outline"}
             size={"sm"}
             onClick={setParametersAuto}
