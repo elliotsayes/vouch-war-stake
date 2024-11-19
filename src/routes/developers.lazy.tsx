@@ -160,7 +160,7 @@ function Developers() {
                   target="_blank"
                   className="underline"
                 >
-                  Staking vouch service source
+                  Vouch-wAR-Stake service source
                 </a>
               </li>
             </ul>
