@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { VPoints } from "@/components/VPoints";
+import { AppTitle } from "@/components/AppTitle";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -65,20 +66,17 @@ function Index() {
   return (
     <TooltipProvider>
       <div className="flex flex-col h-screen relative items-center justify-center text-center">
-        <h1 className="text-6xl md:text-7xl font-bold">Vouch Portal</h1>
-        <h2 className="text-xl md:text-2xl text-muted-foreground">
-          Your Passport to the Permaweb
-        </h2>
+        <AppTitle />
         <div className="flex flex-col items-center">
           <Button
             variant={"default"}
             size={"lg"}
-            className="mt-6 mb-2 px-6 py-6 md:px-8 md:py-8 bg-orange-400 hover:bg-orange-500/90 text-xl md:text-2xl"
+            className="mt-6 mb-2 px-6 py-6 md:px-7 md:py-7 bg-orange-500 hover:bg-orange-400 text-xl md:text-2xl tracking-wide"
             asChild
           >
             <Link to="/intent/vouch-status">Get Vouched!</Link>
           </Button>
-          <p className="mt-6 px-8">
+          <p className="mt-6 px-8 text-foreground/80">
             Earn <VPoints noTooltip={true} /> to prove your credibility
             <br />
             across all your favorite permaweb apps

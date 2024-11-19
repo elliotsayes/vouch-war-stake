@@ -37,6 +37,7 @@ import {
   TooltipContent,
 } from "../ui/tooltip";
 import { ConnectWalletSuggestion } from "./ConnectWalletSuggestion";
+import { AppTitle } from "../AppTitle";
 
 export interface VouchProgressProps {
   targetValue?: VouchValue;
@@ -111,12 +112,7 @@ export const VouchProgress = ({
             </div>
             {/* Centered box */}
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
-              <div>
-                <h1 className="text-6xl md:text-7xl font-bold">Vouch Portal</h1>
-                <h2 className="text-xl md:text-2xl text-muted-foreground">
-                  Your Passport to the Permaweb
-                </h2>
-              </div>
+              <AppTitle />
               <div className="py-4">
                 <ConnectWalletSuggestion>
                   <GoalProgress
