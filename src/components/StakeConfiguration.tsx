@@ -22,6 +22,7 @@ export interface StakeConfigurationProps {
   targetValue?: VouchValue;
   bonusValue: number;
   setBonusValue: (value: number) => void;
+  currentMeetsTarget?: boolean;
   projectedMeetsTarget?: boolean;
   onSubmitDeposit: (depositParameters: DepositParameters) => void;
 }
@@ -41,6 +42,7 @@ export const StakeConfiguration = ({
   targetValue,
   bonusValue,
   setBonusValue,
+  currentMeetsTarget,
   // projectedMeetsTarget,
   onSubmitDeposit,
 }: StakeConfigurationProps) => {
@@ -134,17 +136,15 @@ export const StakeConfiguration = ({
           <DepositInfo />
         </div>
         <div className="my-4 relative">
-          {hasTarget && (
-            <Button
-              disabled={isAuto || isLoading}
-              variant={"outline"}
-              size={"sm"}
-              onClick={setParametersAuto}
-              className="absolute right-0 top-0"
-            >
-              Auto
-            </Button>
-          )}
+          <Button
+            disabled={isAuto || isLoading || !hasTarget || currentMeetsTarget}
+            variant={"outline"}
+            size={"sm"}
+            onClick={setParametersAuto}
+            className="absolute right-0 top-0"
+          >
+            Auto
+          </Button>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <div className="flex flex-row items-center">

@@ -78,7 +78,7 @@ function Index() {
           >
             <Link to="/intent/vouch-status">Get Vouched!</Link>
           </Button>
-          <p className="my-2 px-8">
+          <p className="mb-2 px-8">
             Earn <VPoints noTooltip={true} /> to prove your credibility
             <br />
             across your favorite permaweb apps

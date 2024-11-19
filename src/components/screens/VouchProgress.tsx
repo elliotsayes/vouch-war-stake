@@ -59,11 +59,12 @@ export const VouchProgress = ({
   const walletId = useActiveAddress();
   const vouchData = useWhitelistedVouchData(walletId!);
 
-  // const requiredToMeetTarget = targetValue.value - (vouchData.data?.total ?? 0);
-
   const [bonusValue, setBonusValue] = useState(0);
 
   const hasTarget = targetValue !== undefined;
+  const currentMeetsTarget =
+    hasTarget && vouchData.data && vouchData.data?.score >= targetValue.value;
+
   const projectedValue = (vouchData.data?.score ?? 0) + bonusValue;
   const projectedMeetsTarget = hasTarget && projectedValue >= targetValue.value;
 
@@ -164,6 +165,7 @@ export const VouchProgress = ({
                   targetValue={targetValue}
                   bonusValue={bonusValue}
                   setBonusValue={setBonusValue}
+                  currentMeetsTarget={currentMeetsTarget}
                   projectedMeetsTarget={projectedMeetsTarget}
                   onSubmitDeposit={onSubmitDeposit}
                 />
