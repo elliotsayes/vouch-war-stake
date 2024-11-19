@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as IntentVouchStatusImport } from './routes/intent/vouch-status'
 import { Route as IntentVouchGoalImport } from './routes/intent/vouch-goal'
 
 // Create Virtual Routes
@@ -31,6 +32,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const IntentVouchStatusRoute = IntentVouchStatusImport.update({
+  path: '/intent/vouch-status',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IntentVouchGoalRoute = IntentVouchGoalImport.update({
   path: '/intent/vouch-goal',
@@ -62,6 +68,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntentVouchGoalImport
       parentRoute: typeof rootRoute
     }
+    '/intent/vouch-status': {
+      id: '/intent/vouch-status'
+      path: '/intent/vouch-status'
+      fullPath: '/intent/vouch-status'
+      preLoaderRoute: typeof IntentVouchStatusImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -71,12 +84,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/developers': typeof DevelopersLazyRoute
   '/intent/vouch-goal': typeof IntentVouchGoalRoute
+  '/intent/vouch-status': typeof IntentVouchStatusRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/developers': typeof DevelopersLazyRoute
   '/intent/vouch-goal': typeof IntentVouchGoalRoute
+  '/intent/vouch-status': typeof IntentVouchStatusRoute
 }
 
 export interface FileRoutesById {
@@ -84,14 +99,20 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/developers': typeof DevelopersLazyRoute
   '/intent/vouch-goal': typeof IntentVouchGoalRoute
+  '/intent/vouch-status': typeof IntentVouchStatusRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/developers' | '/intent/vouch-goal'
+  fullPaths: '/' | '/developers' | '/intent/vouch-goal' | '/intent/vouch-status'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/developers' | '/intent/vouch-goal'
-  id: '__root__' | '/' | '/developers' | '/intent/vouch-goal'
+  to: '/' | '/developers' | '/intent/vouch-goal' | '/intent/vouch-status'
+  id:
+    | '__root__'
+    | '/'
+    | '/developers'
+    | '/intent/vouch-goal'
+    | '/intent/vouch-status'
   fileRoutesById: FileRoutesById
 }
 
@@ -99,12 +120,14 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   DevelopersLazyRoute: typeof DevelopersLazyRoute
   IntentVouchGoalRoute: typeof IntentVouchGoalRoute
+  IntentVouchStatusRoute: typeof IntentVouchStatusRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   DevelopersLazyRoute: DevelopersLazyRoute,
   IntentVouchGoalRoute: IntentVouchGoalRoute,
+  IntentVouchStatusRoute: IntentVouchStatusRoute,
 }
 
 export const routeTree = rootRoute
@@ -121,7 +144,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/developers",
-        "/intent/vouch-goal"
+        "/intent/vouch-goal",
+        "/intent/vouch-status"
       ]
     },
     "/": {
@@ -132,6 +156,9 @@ export const routeTree = rootRoute
     },
     "/intent/vouch-goal": {
       "filePath": "intent/vouch-goal.tsx"
+    },
+    "/intent/vouch-status": {
+      "filePath": "intent/vouch-status.tsx"
     }
   }
 }

@@ -42,7 +42,7 @@ import {
 } from "../ui/tooltip";
 
 export interface VouchProgressProps {
-  targetValue: VouchValue;
+  targetValue?: VouchValue;
   profileId?: string;
   appLink?: string;
   onConfirmDeposit: (depositParameters: DepositParameters) => void;
@@ -66,21 +66,22 @@ export const VouchProgress = ({
 
   const [bonusValue, setBonusValue] = useState(0);
 
+  const hasTarget = targetValue !== undefined;
   const projectedValue = (vouchData.data?.total ?? 0) + bonusValue;
-  const projectedMeetsTarget = projectedValue >= targetValue.value;
+  const projectedMeetsTarget = hasTarget && projectedValue >= targetValue.value;
 
   const [depositParameters, setDepositParameters] =
     useState<DepositParameters | null>(null);
   const onSubmitDeposit = useCallback(
     (depositParameters: DepositParameters) => {
       setDepositParameters(depositParameters);
-      if (projectedMeetsTarget) {
+      if (!hasTarget || projectedMeetsTarget) {
         onConfirmDeposit(depositParameters);
       } else {
         setShowConfirmSubmitDialog(true);
       }
     },
-    [onConfirmDeposit, projectedMeetsTarget],
+    [hasTarget, onConfirmDeposit, projectedMeetsTarget],
   );
 
   return (
@@ -112,11 +113,13 @@ export const VouchProgress = ({
             </div>
             {/* Centered box */}
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
-              <h1 className="text-5xl md:text-6xl font-bold pb-4">
-                Get Vouched <br />
-                on the Permaweb
-              </h1>
-              <div className="pb-4">
+              <div>
+                <h1 className="text-5xl md:text-6xl font-bold">Vouch Portal</h1>
+                <h2 className="text-xl md:text-2xl text-muted-foreground">
+                  Your Passport to the Permaweb
+                </h2>
+              </div>
+              <div className="py-4">
                 <GoalProgress
                   targetValue={targetValue}
                   {...(showStakeSheet

@@ -6,7 +6,7 @@ import {
 import { custodyCreatorGetWalletQuery } from "@/contract/custodyCreator";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useActiveAddress } from "arweave-wallet-kit";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import {
   TooltipProvider,
   TooltipContent,
@@ -14,13 +14,11 @@ import {
   Tooltip,
 } from "./ui/tooltip";
 import {
-  CircleIcon,
-  DotIcon,
   DownloadIcon,
   InfoCircledIcon,
   LockClosedIcon,
 } from "@radix-ui/react-icons";
-import { Card, CardContent } from "./ui/card";
+import { Card } from "./ui/card";
 import { HoverCard } from "./ui/hover-card";
 import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { Button } from "./ui/button";

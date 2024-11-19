@@ -13,7 +13,7 @@ interface SubIdNoticeProps {
 }
 
 export const SubIdNotice = ({ mainAddress }: SubIdNoticeProps) => {
-  const { connected, connect } = useConnection();
+  const { connected } = useConnection();
   const walletId = useActiveAddress();
   const { aoSigner } = useAoSigner();
 

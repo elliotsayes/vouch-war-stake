@@ -15,7 +15,7 @@ export const ConnectText = () => {
       >
         Connect
       </Button>{" "}
-      to see your <VPoints />
+      to see your <VPoints noTooltip={true} />
     </div>
   );
 };

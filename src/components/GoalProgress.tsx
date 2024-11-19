@@ -15,7 +15,7 @@ import { AlertCircleIcon, InfoIcon } from "lucide-react";
 import { SubIdNotice } from "./SubIdNotice";
 
 export type GoalProgressProps = {
-  targetValue: VouchValue;
+  targetValue?: VouchValue;
   bonusValue?: number;
   projectedMeetsTarget?: boolean;
   profileId?: string;
@@ -29,6 +29,7 @@ export const GoalProgress = ({
   profileId,
   appLink,
 }: GoalProgressProps) => {
+  const hasTarget = targetValue !== undefined;
   const hasBonus = bonusValue && bonusValue !== 0;
 
   const walletId = useActiveAddress();
@@ -36,40 +37,58 @@ export const GoalProgress = ({
   const isVouched = vouchData.data?.for !== undefined;
   const isSubId = isVouched && vouchData.data?.for !== walletId;
 
-  const profileInfo = useProfileInfo({ profileId });
+  const profileInfo = useProfileInfo({
+    profileId,
+    walletId: hasTarget ? undefined : walletId,
+  });
   const profileImage = profileInfo.data?.ProfileImage;
-  const profileName = profileInfo.data
-    ? profileInfo.data.DisplayName
-    : "Permaweb App";
+  const profileName = profileInfo.data?.DisplayName;
 
   return (
     <div className="flex flex-row gap-4 items-stretch">
       <Avatar
-        className={`w-24 h-24 ${profileInfo.isLoading && "animate-pulse"}`}
+        className={`w-24 h-24 text-gray-600 ${profileInfo.isLoading && "animate-pulse"}`}
       >
         {profileImage && <AvatarImage src={fetchUrl(profileImage)} />}
-        <AvatarFallback />
+        <AvatarFallback>
+          <img src={"../images/user.svg"} className="w-24 h-24" />
+        </AvatarFallback>
       </Avatar>
       <div className="flex flex-col flex-grow-0 justify-center gap-1">
         <div className="text-md text-primary/80 flex flex-row items-center px-1">
-          Goal for access to
-          {profileInfo.isLoading ? (
-            <Skeleton className="ml-2 h-4 w-24 animate-pulse" />
-          ) : appLink !== undefined ? (
-            <a
-              href={appLink}
-              target="_blank"
-              rel="noreferrer"
-              className="underline block ml-1"
-            >
-              {profileName}
-              <ExternalLinkIcon className="w-3 h-3 inline-block" />
-            </a>
+          {hasTarget ? (
+            <>
+              Goal for access to
+              {profileInfo.isLoading ? (
+                <Skeleton className="ml-2 h-4 w-24 animate-pulse" />
+              ) : appLink !== undefined ? (
+                <a
+                  href={appLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline block ml-1"
+                >
+                  {profileName ?? "Permaweb App"}
+                  <ExternalLinkIcon className="w-3 h-3 inline-block" />
+                </a>
+              ) : (
+                <> {profileName ?? "Permaweb App"}</>
+              )}
+            </>
           ) : (
-            <> {profileName}</>
+            <span>
+              {profileName ? (
+                <span className=" text-gray-800/80">{profileName}'s</span>
+              ) : (
+                "Your"
+              )}{" "}
+              Vouch Status
+            </span>
           )}
         </div>
-        <Card className="bg-primary/5 flex flex-col justify-center py-3 relative min-w-48 sm:min-w-64 md:min-w-72">
+        <Card
+          className={`bg-primary/5 flex flex-col justify-center py-3 relative ${hasTarget ? "min-w-48 sm:min-w-64 md:min-w-72" : "min-w-48"}`}
+        >
           <div className="absolute top-0 right-0 pr-1 pt-0">
             <HoverCard>
               {isSubId ? (
@@ -97,7 +116,7 @@ export const GoalProgress = ({
           <div className="text-center text-lg flex flex-row justify-center items-center gap-2">
             <div>
               <span
-                className={`${hasBonus ? `${projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
+                className={`${hasBonus ? `${!hasTarget || projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
               >
                 {vouchData.data?.total !== undefined && !isSubId
                   ? Math.floor(
@@ -105,8 +124,12 @@ export const GoalProgress = ({
                     ) / 100
                   : "..."}
               </span>
-              {" ⟋ "}
-              {targetValue.value}{" "}
+              {hasTarget && (
+                <>
+                  {" ⟋ "}
+                  {targetValue.value}{" "}
+                </>
+              )}
             </div>
             <VPoints />
           </div>

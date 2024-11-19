@@ -50,7 +50,7 @@ export const profileInfoBatcherWallet = create({
         const profile = profileInfos.find((x) => x.ProfileId === profileId);
         return { walletId, profile };
       })
-      .filter((x) => x.profile !== undefined) as Array<{
+      .filter((x) => x != undefined && x.profile !== undefined) as Array<{
       walletId: ArweaveAddress;
       profile: ProfileInfo;
     }>;

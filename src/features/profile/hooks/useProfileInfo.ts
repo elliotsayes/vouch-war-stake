@@ -31,7 +31,11 @@ export const useProfileInfo = (opts: WalletIdOrProfileId) => {
       queryFn: async () => {
         const walletIdAndProfileInfo =
           await profileInfoBatcherWallet.fetch(walletId);
-        return walletIdAndProfileInfo.profile as ProfileInfo | undefined;
+        if (walletIdAndProfileInfo && walletIdAndProfileInfo.profile) {
+          return walletIdAndProfileInfo.profile as ProfileInfo;
+        } else {
+          return undefined;
+        }
       },
     });
   }

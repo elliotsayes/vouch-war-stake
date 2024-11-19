@@ -34,9 +34,18 @@ function Developers() {
             <TooltipContent align="start">Back to home</TooltipContent>
           </Tooltip>
         </div>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center px-4 mb-4">
-          Developer Guide
-        </h1>
+        <h1 className="text-5xl md:text-6xl font-bold">Developer Guide</h1>
+        <h2 className="text-xl md:text-2xl text-muted-foreground pt-1">
+          Add{" "}
+          <a
+            href="https://hackmd.io/@ao-docs/r13cgYWlC"
+            target="_blank"
+            className="underline text-muted-foreground/80"
+          >
+            Vouch Protocol
+          </a>{" "}
+          to your App
+        </h2>
         <div className="flex flex-col wrap justify-center mt-8 max-w-screen-md">
           <span className="flex gap-4 items-center">
             <Tooltip>

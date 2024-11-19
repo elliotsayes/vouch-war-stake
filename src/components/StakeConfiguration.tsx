@@ -19,7 +19,7 @@ const yearMs = 365 * dayMs;
 const maxStakeTimeMs = yearMs;
 
 export interface StakeConfigurationProps {
-  targetValue: VouchValue;
+  targetValue?: VouchValue;
   bonusValue: number;
   setBonusValue: (value: number) => void;
   projectedMeetsTarget?: boolean;
@@ -40,7 +40,7 @@ export const StakeConfiguration = ({
   targetValue,
   bonusValue,
   setBonusValue,
-  projectedMeetsTarget,
+  // projectedMeetsTarget,
   onSubmitDeposit,
 }: StakeConfigurationProps) => {
   const [quantity, setQuantity] = useState(0);
@@ -54,6 +54,7 @@ export const StakeConfiguration = ({
     tokenBalanceQuery(WAR_TOKEN_PROCESS_ID, walletId),
   );
 
+  const hasTarget = targetValue !== undefined;
   const hasBonusAboveMinimum = bonusValue > 0.01;
   const quantityMinor = BigInt(Math.ceil(quantity * WAR_MULTIPLIER));
   const hasSufficientBalance =
@@ -63,6 +64,9 @@ export const StakeConfiguration = ({
 
   const fired = useRef(false);
   const setParametersAuto = useCallback(() => {
+    if (!hasTarget) {
+      return false;
+    }
     if (vouchData.data?.total === undefined) {
       return false;
     }
@@ -71,7 +75,9 @@ export const StakeConfiguration = ({
     }
 
     // Calculate required to meet target
-    const requiredToMeetTarget = targetValue.value - vouchData.data.total;
+    const requiredToMeetTarget = hasTarget
+      ? targetValue.value - vouchData.data.total
+      : 0;
 
     if (requiredToMeetTarget <= 0) {
       setQuantity(0);
@@ -86,8 +92,9 @@ export const StakeConfiguration = ({
     setIsAuto(true);
     return true;
   }, [
+    hasTarget,
     stakeTime,
-    targetValue.value,
+    targetValue?.value,
     vouchCustodyInfo.data,
     vouchData.data?.total,
   ]);
@@ -196,7 +203,7 @@ export const StakeConfiguration = ({
             </div>
           </div>
           <div className="mt-6 mb-4 flex flex-col items-center">
-            {hasSufficientBalance && hasBonusAboveMinimum ? (
+            {hasSufficientBalance && (!hasTarget || hasBonusAboveMinimum) ? (
               <Button
                 disabled={isLoading}
                 onClick={() => {
