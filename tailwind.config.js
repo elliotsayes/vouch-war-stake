@@ -57,7 +57,9 @@ export default {
           "50%": { transform: "translateY(-10px)" },
         },
         pulse: {
-          "0%": { boxShadow: "0 0 0 0 rgba(0,0,0,0.2)" },
+          "0%": {
+            boxShadow: "0 0 0 0 var(--tw-shadow-color, rgba(0,0,0,0.1))",
+          },
           "70%": { boxShadow: "0 0 0 10px rgba(0,0,0,0)" },
           "100%": { boxShadow: "0 0 0 0 rgba(0,0,0,0)" },
         },

@@ -11,12 +11,14 @@ import { useActiveAddress } from "arweave-wallet-kit";
 import { VouchBreakdown } from "./VouchBreakdown";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { VPoints } from "./VPoints";
-import { AlertCircleIcon, InfoIcon } from "lucide-react";
+import { AlertCircleIcon, CheckIcon, InfoIcon } from "lucide-react";
 import { SubIdNotice } from "./SubIdNotice";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export type GoalProgressProps = {
   targetValue?: VouchValue;
   bonusValue?: number;
+  currentMeetsTarget?: boolean;
   projectedMeetsTarget?: boolean;
   profileId?: string;
   appLink?: string;
@@ -25,6 +27,7 @@ export type GoalProgressProps = {
 export const GoalProgress = ({
   targetValue,
   bonusValue,
+  currentMeetsTarget,
   projectedMeetsTarget,
   profileId,
   appLink,
@@ -46,16 +49,38 @@ export const GoalProgress = ({
 
   return (
     <div className="flex flex-row gap-4 items-stretch">
-      <Avatar
-        className={`w-24 h-24 text-gray-600 ${profileInfo.isLoading && "animate-pulse"}`}
-      >
-        {profileImage && <AvatarImage src={fetchUrl(profileImage)} />}
-        <AvatarFallback>
-          {!hasTarget && (
-            <img src={"../images/user.svg"} className="w-24 h-24" />
-          )}
-        </AvatarFallback>
-      </Avatar>
+      <div className="relative">
+        <Avatar
+          className={` w-24 h-24 text-gray-600 ${profileInfo.isLoading && "animate-pulse"}`}
+        >
+          {profileImage && <AvatarImage src={fetchUrl(profileImage)} />}
+          <AvatarFallback>
+            {!hasTarget && (
+              <img src={"../images/user.svg"} className="w-24 h-24" />
+            )}
+          </AvatarFallback>
+        </Avatar>
+        <div
+          className={`absolute -bottom-0.5 -right-0.5 w-1/4 h-1/4 rounded-full transition-opacity duration-500 bg-green-500/20 ${currentMeetsTarget ? "opacity-100" : "opacity-0"}`}
+        >
+          <Tooltip>
+            <TooltipTrigger
+              disabled={!currentMeetsTarget}
+              className="w-full h-full"
+            >
+              <div
+                className={`w-full h-full flex flex-col justify-center rounded-full shadow-green-500 ${currentMeetsTarget ? "animate-pulse" : ""}`}
+              >
+                <CheckIcon
+                  className="text-green-600 w-full h-full m-0.5 mt-1 mx-auto"
+                  strokeWidth={3}
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>Vouch goal met!</TooltipContent>
+          </Tooltip>
+        </div>
+      </div>
       <div className="flex flex-col flex-grow-0 justify-center gap-1">
         <div className="text-md text-primary/80 flex flex-row items-center px-1">
           {hasTarget ? (
@@ -118,7 +143,7 @@ export const GoalProgress = ({
           <div className="text-center text-lg flex flex-row justify-center items-center gap-2">
             <div>
               <span
-                className={`${hasBonus ? `${!hasTarget || projectedMeetsTarget ? "text-green-800 animate-pulse" : "text-red-800"}` : ""}`}
+                className={`${currentMeetsTarget ? "text-green-800" : ""} ${hasBonus && !currentMeetsTarget ? `${hasTarget && projectedMeetsTarget ? "text-green-800 shadow-green-900 animate-pulse" : "text-red-800"}` : ""}`}
               >
                 {vouchData.data?.score !== undefined && !isSubId
                   ? Math.floor(

@@ -73,7 +73,7 @@ function Index() {
           <Button
             variant={"default"}
             size={"lg"}
-            className="my-4 px-4 py-4 md:px-6 md:py-6 bg-orange-600/80 hover:bg-orange-600 text-lg md:text-xl"
+            className="mt-6 mb-2 px-4 py-4 md:px-6 md:py-6 bg-orange-400 hover:bg-orange-500/90 text-lg md:text-xl"
             asChild
           >
             <Link to="/intent/vouch-status">Get Vouched!</Link>

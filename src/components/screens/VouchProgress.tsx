@@ -121,6 +121,7 @@ export const VouchProgress = ({
                 <ConnectWalletSuggestion>
                   <GoalProgress
                     targetValue={targetValue}
+                    currentMeetsTarget={currentMeetsTarget}
                     {...(showStakeSheet
                       ? {
                           bonusValue,
