@@ -1,19 +1,15 @@
-import ProfileButton from "@/features/profile/components/ProfileButton";
 import { GoalProgress } from "../GoalProgress";
-import { vouchDaoVouchesQuery, VouchValue } from "@/contract/vouchDao";
+import { VouchValue } from "@/contract/vouchDao";
 import {
   ConnectButton,
   useActiveAddress,
   useConnection,
 } from "arweave-wallet-kit";
-import { VouchBreakdown } from "../VouchBreakdown";
-import { useQuery } from "@tanstack/react-query";
 import { VouchButtons } from "../VouchButtons";
 import { useCallback, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";

@@ -29,6 +29,7 @@ export interface StakeConfigurationProps {
 const WAR_TOKEN_PROCESS_ID = import.meta.env.VITE_WAR_TOKEN_PROCESS_ID!;
 const WAR_MULTIPLIER = 10 ** 12;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function warStats(infoData: any) {
   return {
     price: infoData.TokenWhitelist[WAR_TOKEN_PROCESS_ID].ValueUsd,
