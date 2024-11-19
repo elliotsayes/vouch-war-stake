@@ -4,7 +4,7 @@ import { VouchFlow } from "@/components/screens/VouchFlow";
 
 export type VouchGoalSearch = {
   value: number;
-  currency: string;
+  currency?: string;
   profileId?: string;
   appLink?: string;
 };
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/intent/vouch-goal")({
   validateSearch: (search): VouchGoalSearch => {
     return {
       value: Number(search.value),
-      currency: (search.currency as string) || "USD",
+      currency: (search.currency as string) || undefined,
       profileId: (search.profileId as string) || undefined,
       appLink: (search.appLink as string) || undefined,
     };
@@ -26,7 +26,7 @@ function VouchGoal() {
   const { currency, value, profileId, appLink } = Route.useSearch();
   const targetValue: VouchValue = {
     value,
-    currency,
+    currency: currency || "USD",
   };
 
   return (

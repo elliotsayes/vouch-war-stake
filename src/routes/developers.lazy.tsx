@@ -9,7 +9,7 @@ import {
 import { CodeIcon } from "@radix-ui/react-icons";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeftIcon, ArrowLeftRight } from "lucide-react";
+import { ArrowLeftIcon, ArrowLeftRight, DotIcon } from "lucide-react";
 
 export const Route = createLazyFileRoute("/developers")({
   component: Developers,
@@ -43,7 +43,7 @@ function Developers() {
               <a
                 href="https://hackmd.io/@ao-docs/r13cgYWlC"
                 target="_blank"
-                className="underline text-muted-foreground/80"
+                className="text-muted-foreground/70 underline decoration-dashed decoration-muted-foreground/40"
               >
                 Vouch Protocol
               </a>{" "}
@@ -51,55 +51,154 @@ function Developers() {
             </>
           }
         />
-        <div className="flex flex-col wrap justify-center mt-8 max-w-screen-md">
-          <span className="flex gap-4 items-center">
-            <Tooltip>
-              <TooltipTrigger className="cursor-help">
-                <ArrowLeftRight className="w-8 h-8 opacity-80 my-4" />
-              </TooltipTrigger>
-              <TooltipContent>Integrate your app</TooltipContent>
-            </Tooltip>
-            <span className="text-muted-foreground text-lg">
-              Set the search params in this <br />
-              <Link
-                to="/intent/vouch-goal"
-                search={{
-                  currency: "USD",
-                  value: 1,
-                  profileId: "",
-                  appLink: "",
-                }}
-                className="text-muted-foreground font-semibold"
-              >
-                URL
-              </Link>{" "}
-              and link it from your app
+        <div className="flex flex-col wrap justify-center mt-4 max-w-screen-md gap-4 p-2">
+          <div className="flex flex-col items-start">
+            <div className="flex flex-row items-center gap-2">
+              <CodeIcon className="w-8 h-8 opacity-80 m-1" />
+              <span className="text-xl text-muted-foreground">
+                Scoring a walletʼs Vouch Points
+              </span>
+            </div>
+            <ul className="text-muted-foreground text-md">
+              <li>
+                <DotIcon className="inline mb-1" strokeWidth={4} />
+                <a
+                  href="https://github.com/elliotsayes/vouch-war-stake/blob/main/process/vouch-scorer.lua"
+                  target="_blank"
+                  className="underline"
+                >
+                  AOS Lua Code
+                </a>
+              </li>
+              <li>
+                <DotIcon className="inline mb-1" strokeWidth={4} />
+                <a
+                  href="https://github.com/elliotsayes/vouch-war-stake/blob/main/src/lib/vouchScorer.ts"
+                  target="_blank"
+                  className="underline"
+                >
+                  Typescript Code
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="flex flex-col items-start">
+            <div className="flex flex-row items-center gap-2">
+              <ArrowLeftRight className="w-6 h-6 opacity-80 m-2" />
+              <span className="text-xl text-muted-foreground">
+                Integrating with Vouch Portal
+              </span>
+            </div>
+            <span className="text-muted-foreground text-md">
+              <p className="mb-1 pl-2">
+                Set the search params in this{" "}
+                <Link
+                  to="/intent/vouch-goal"
+                  search={{
+                    value: 1,
+                    profileId: "",
+                    appLink: "",
+                  }}
+                  className="text-muted-foreground underline"
+                >
+                  URL
+                </Link>{" "}
+                and link it from your app
+              </p>
+              <ul className="text-muted-foreground text-md">
+                <li>
+                  <DotIcon className="inline mb-1" strokeWidth={4} />
+                  <code className="text-xs">value</code> - the required vouch
+                  points for your app
+                </li>
+                <li>
+                  <DotIcon className="inline mb-1" strokeWidth={4} />
+                  <code className="text-xs">profileId</code> - your app's
+                  ao-profile id on{" "}
+                  <a
+                    href="https://bazar.arweave.dev/"
+                    target="_blank"
+                    className="underline"
+                  >
+                    bazar
+                  </a>
+                </li>
+                <li>
+                  <DotIcon className="inline mb-1" strokeWidth={4} />
+                  <code className="text-xs">appLink</code> - a link to your app
+                  homepage
+                </li>
+              </ul>
             </span>
-          </span>
-          <a
-            href="https://github.com/elliotsayes/vouch-war-stake/blob/main/process/vouch-scorer.lua"
-            target="_blank"
-            className="flex gap-4 items-center"
-          >
-            <CodeIcon className="w-8 h-8 opacity-80 my-4" />
-            <span className="text-muted-foreground text-lg font-semibold">
-              Scoring Lua Code
-            </span>
-          </a>
-          <a
-            href="https://github.com/elliotsayes/vouch-war-stake"
-            target="_blank"
-            className="flex gap-4 items-center"
-          >
-            <img
-              src="./images/github-mark.svg"
-              alt="GitHub"
-              className="w-8 h-8 opacity-80 my-4"
-            />
-            <span className="text-muted-foreground text-lg font-semibold">
-              Portal Website Code
-            </span>
-          </a>
+          </div>
+          <div className="flex flex-col items-start">
+            <div className="flex flex-row items-center gap-2">
+              <img
+                src="./images/github-mark.svg"
+                alt="GitHub"
+                className="w-6 h-6 opacity-80 m-2"
+              />
+              <span className="text-xl text-muted-foreground">
+                Vouch Portal code
+              </span>
+            </div>
+            <ul className="text-muted-foreground text-md">
+              <li>
+                <DotIcon className="inline mb-1" strokeWidth={4} />
+                <a
+                  href="https://github.com/elliotsayes/vouch-war-stake"
+                  target="_blank"
+                  className="underline"
+                >
+                  Vouch Portal main repo
+                </a>
+              </li>
+              <li>
+                <DotIcon className="inline mb-1" strokeWidth={4} />
+                <a
+                  href="https://github.com/elliotsayes/vouch-war-stake/blob/main/process/vouch-custody.lua"
+                  target="_blank"
+                  className="underline"
+                >
+                  Staking vouch service source
+                </a>
+              </li>
+            </ul>
+          </div>
+          {/* <div className="flex flex-col items-start">
+            <div className="flex flex-row items-center gap-2">
+              <img
+                src="./images/github-mark.svg"
+                alt="GitHub"
+                className="w-6 h-6 opacity-80 m-2"
+              />
+              <span className="text-xl text-muted-foreground">
+                Vouch contracts
+              </span>
+            </div>
+            <ul className="text-muted-foreground text-md">
+              <li>
+                <DotIcon className="inline mb-1" strokeWidth={4} />
+                <a
+                  href="https://www.ao.link/#/entity/3y0YE11i21hpP8UY0Z1AVhtPoJD4V_AbEBx-g0j9wRc"
+                  target="_blank"
+                  className="underline"
+                >
+                  Staking vouch service contract
+                </a>
+              </li>
+              <li>
+                <DotIcon className="inline mb-1" strokeWidth={4} />
+                <a
+                  href="https://www.ao.link/#/entity/zYBcGWB4KJeB4pc04XiNOKrD0DQBPelvNBbfDnqiunQ"
+                  target="_blank"
+                  className="underline"
+                >
+                  Custody contract
+                </a>
+              </li>
+            </ul>
+          </div> */}
         </div>
       </div>
     </TooltipProvider>
