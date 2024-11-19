@@ -24,6 +24,16 @@ type Profile = {
 
 const profiles: Array<Profile> = [
   {
+    name: "Bazar",
+    imageTxId: "2btiARcMnhkdy5H-OK_T0dd-Zf-ga9Shm2ttV699Zjg",
+    search: {
+      value: 2,
+      currency: "USD",
+      profileId: "CUITkl8BV4xJX_ylXtf6oG7cGDpJ_4CPCbS5rz-20I4",
+      appLink: "https://bazar.arweave.net/",
+    },
+  },
+  {
     name: "Llama Land",
     imageTxId: "7Sp4jk77OrK8qxdVe8RissGbp0-0w32vhR0SuPGSlPU",
     search: {
@@ -43,16 +53,6 @@ const profiles: Array<Profile> = [
       appLink: "https://dumdum.arweave.net/",
     },
   },
-  {
-    name: "Bazar",
-    imageTxId: "2btiARcMnhkdy5H-OK_T0dd-Zf-ga9Shm2ttV699Zjg",
-    search: {
-      value: 2,
-      currency: "USD",
-      profileId: "CUITkl8BV4xJX_ylXtf6oG7cGDpJ_4CPCbS5rz-20I4",
-      appLink: "https://bazar.arweave.net/",
-    },
-  },
 ];
 
 function Index() {
@@ -65,7 +65,7 @@ function Index() {
   return (
     <TooltipProvider>
       <div className="flex flex-col h-screen relative items-center justify-center text-center">
-        <h1 className="text-5xl md:text-6xl font-bold">Vouch Portal</h1>
+        <h1 className="text-6xl md:text-7xl font-bold">Vouch Portal</h1>
         <h2 className="text-xl md:text-2xl text-muted-foreground">
           Your Passport to the Permaweb
         </h2>
@@ -73,15 +73,15 @@ function Index() {
           <Button
             variant={"default"}
             size={"lg"}
-            className="mt-6 mb-2 px-4 py-4 md:px-6 md:py-6 bg-orange-400 hover:bg-orange-500/90 text-lg md:text-xl"
+            className="mt-6 mb-2 px-6 py-6 md:px-8 md:py-8 bg-orange-400 hover:bg-orange-500/90 text-xl md:text-2xl"
             asChild
           >
             <Link to="/intent/vouch-status">Get Vouched!</Link>
           </Button>
-          <p className="mb-2 px-8">
+          <p className="mt-6 px-8">
             Earn <VPoints noTooltip={true} /> to prove your credibility
             <br />
-            across your favorite permaweb apps
+            across all your favorite permaweb apps
           </p>
           <div className="flex flex-wrap justify-center gap-4 px-8">
             {profiles.map((profile) => (

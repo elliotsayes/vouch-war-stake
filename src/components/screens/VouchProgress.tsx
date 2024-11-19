@@ -112,7 +112,7 @@ export const VouchProgress = ({
             {/* Centered box */}
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
               <div>
-                <h1 className="text-5xl md:text-6xl font-bold">Vouch Portal</h1>
+                <h1 className="text-6xl md:text-7xl font-bold">Vouch Portal</h1>
                 <h2 className="text-xl md:text-2xl text-muted-foreground">
                   Your Passport to the Permaweb
                 </h2>
