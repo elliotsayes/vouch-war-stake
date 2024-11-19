@@ -40,6 +40,7 @@ import {
   Tooltip,
   TooltipContent,
 } from "../ui/tooltip";
+import { ConnectWalletSuggestion } from "./ConnectWalletSuggestion";
 
 export interface VouchProgressProps {
   targetValue?: VouchValue;
@@ -120,17 +121,19 @@ export const VouchProgress = ({
                 </h2>
               </div>
               <div className="py-4">
-                <GoalProgress
-                  targetValue={targetValue}
-                  {...(showStakeSheet
-                    ? {
-                        bonusValue,
-                        projectedMeetsTarget,
-                      }
-                    : {})}
-                  profileId={profileId}
-                  appLink={appLink}
-                />
+                <ConnectWalletSuggestion>
+                  <GoalProgress
+                    targetValue={targetValue}
+                    {...(showStakeSheet
+                      ? {
+                          bonusValue,
+                          projectedMeetsTarget,
+                        }
+                      : {})}
+                    profileId={profileId}
+                    appLink={appLink}
+                  />
+                </ConnectWalletSuggestion>
               </div>
               <div
                 className={`transition-opacity duration-500 ${showStakeSheet ? "opacity-50" : ""}`}
