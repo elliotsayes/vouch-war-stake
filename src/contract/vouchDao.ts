@@ -2,6 +2,7 @@ import { ArweaveId } from "@/features/arweave/lib/model";
 import { AoSigner } from "@/hooks/useAoSigner";
 import { dryrun, message } from "@permaweb/aoconnect";
 import { queryOptions } from "@tanstack/react-query";
+import { DryRunResult } from "node_modules/@permaweb/aoconnect/dist/lib/dryrun";
 
 const VOUCHDAO_PROCESS_ID = import.meta.env.VITE_VOUCHDAO_PROCESS_ID!;
 
@@ -40,7 +41,11 @@ export const vouchDaoVouchesQuery = (walletId?: string) =>
   queryOptions({
     queryKey: ["vouchDao", VOUCHDAO_PROCESS_ID, "Get-Vouches", walletId],
     queryFn: async () => {
-      const res = await dryrun({
+      // Abort after 5 seconds
+      const timeoutPromise = new Promise((resolve) =>
+        setTimeout(() => resolve(false), 10_000),
+      );
+      const runPromise = dryrun({
         process: VOUCHDAO_PROCESS_ID,
         tags: [
           {
@@ -53,10 +58,17 @@ export const vouchDaoVouchesQuery = (walletId?: string) =>
           },
         ],
       });
+      const maybeRes = await Promise.race([timeoutPromise, runPromise]);
+      if (!maybeRes) {
+        throw new Error("Timeout");
+      }
+      const res = maybeRes as DryRunResult;
       const replyData = res.Messages[0].Data;
       return JSON.parse(replyData) as VouchDaoGetVouchesResponse;
     },
     enabled: !!walletId,
+    retry: false,
+    retryOnMount: false,
   });
 
 export const vouchDaoPromote = async (signer: AoSigner) => {

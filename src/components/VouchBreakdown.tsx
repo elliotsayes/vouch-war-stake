@@ -15,6 +15,7 @@ import { Button } from "./ui/button";
 import { VPoints } from "./VPoints";
 import { ConnectText } from "./ConnectText";
 import { useMemo } from "react";
+import { AlertCircleIcon } from "lucide-react";
 
 const showCount = 6;
 
@@ -41,9 +42,16 @@ export const VouchBreakdown = () => {
         <div className="text-primary/60 px-1 py-1 w-56 text-sm">
           {connected ? (
             <>
-              <span>
-                No vouches found, use a vouch service to earn <VPoints />
-              </span>
+              {vouchData.isError ? (
+                <span className="align-middle">
+                  <AlertCircleIcon className="w-4 h-4 inline-block mr-1" />
+                  Error loading vouches
+                </span>
+              ) : (
+                <span>
+                  No vouches found, use a vouch service to earn <VPoints />
+                </span>
+              )}
               <Button
                 variant="outline"
                 size={"icon"}

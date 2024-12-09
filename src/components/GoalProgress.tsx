@@ -114,7 +114,7 @@ export const GoalProgress = ({
           )}
         </div>
         <Card
-          className={`bg-primary/5 flex flex-col justify-center py-3 relative ${hasTarget ? "min-w-48 sm:min-w-64 md:min-w-72" : "min-w-48"}`}
+          className={`${vouchData.isLoading ? "animate-pulse" : ""} bg-primary/5 flex flex-col justify-center py-3 relative ${hasTarget ? "min-w-48 sm:min-w-64 md:min-w-72" : "min-w-48"}`}
         >
           <div className="absolute top-0 right-0 pr-1 pt-0">
             <HoverCard>
@@ -145,11 +145,23 @@ export const GoalProgress = ({
               <span
                 className={`${currentMeetsTarget ? "text-green-800" : ""} ${hasTarget && hasBonus && !currentMeetsTarget ? `${projectedMeetsTarget ? "text-green-800 shadow-green-900 animate-pulse" : "text-red-800"}` : ""}`}
               >
-                {vouchData.data?.score !== undefined && !isSubId
-                  ? Math.floor(
-                      (vouchData.data.score + (bonusValue ?? 0)) * 100,
-                    ) / 100
-                  : "..."}
+                {vouchData.data?.score !== undefined && !isSubId ? (
+                  Math.floor((vouchData.data.score + (bonusValue ?? 0)) * 100) /
+                  100
+                ) : vouchData.isError ? (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span className="text-red-800 text-xs p-0.5 opacity-75 cursor-help">
+                        ❌
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Error loading contract, please try again later.
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  "…"
+                )}
               </span>
               {hasTarget && (
                 <>
