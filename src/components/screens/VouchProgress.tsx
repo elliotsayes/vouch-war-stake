@@ -23,6 +23,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { StakeConfiguration } from "../StakeConfiguration";
 import { useWhitelistedVouchData } from "@/hooks/useVouchHistory";
 import { DepositParameters } from "@/contract/custody";
@@ -30,14 +35,10 @@ import { ConnectWalletBlocker } from "./ConnectWalletBlocker";
 import { ArrowLeftIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "../ui/button";
-import {
-  TooltipProvider,
-  TooltipTrigger,
-  Tooltip,
-  TooltipContent,
-} from "../ui/tooltip";
+import { TooltipProvider } from "../ui/tooltip";
 import { ConnectWalletSuggestion } from "./ConnectWalletSuggestion";
 import { AppTitle } from "../AppTitle";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 export interface VouchProgressProps {
   targetValue?: VouchValue;
@@ -120,9 +121,9 @@ export const VouchProgress = ({
                     currentMeetsTarget={currentMeetsTarget}
                     {...(showStakeSheet
                       ? {
-                          bonusValue,
-                          projectedMeetsTarget,
-                        }
+                        bonusValue,
+                        projectedMeetsTarget,
+                      }
                       : {})}
                     profileId={profileId}
                     appLink={appLink}
@@ -152,9 +153,20 @@ export const VouchProgress = ({
           </div>
           <SheetContent side={"bottom"}>
             <SheetHeader className="md:w-[80%] max-w-md mx-auto">
-              <SheetTitle className="text-center">
-                Earn vouch points by staking wrapped Arweave
-              </SheetTitle>
+              <Tooltip>
+                <div className="text-center flex flex-row justify-center">
+                  <SheetTitle>
+                    Earn vouch points by staking wrapped Arweave
+                  </SheetTitle>
+                  <TooltipTrigger className="relative cursor-help">
+                    <InfoCircledIcon className="absolute top-0 left-0 w-4 h-4 ml-1" />
+                    <InfoCircledIcon className="absolute top-0 left-0 w-4 h-4 ml-1 text-primary/40 animate-ping" />
+                  </TooltipTrigger>
+                </div>
+                <TooltipContent className="max-w-sm">
+                  Earned vouch points are calulated dynamically based on the value of $wAR at the time of staking. The $wAR is stored in a personal secure process, and any $AO earned by your process will be automatically distributed back to your wallet.
+                </TooltipContent>
+              </Tooltip>
             </SheetHeader>
             <ConnectWalletBlocker>
               {() => (
