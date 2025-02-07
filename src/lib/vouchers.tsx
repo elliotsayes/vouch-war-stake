@@ -93,6 +93,7 @@ export const whitelistedVouchers: Array<VoucherInfo> = [
         />
       </svg>
     ),
+    enabled: false,
   },
   {
     name: "Vouch-wAR-Stake",
