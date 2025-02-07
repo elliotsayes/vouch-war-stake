@@ -10,6 +10,7 @@ export type VoucherInfo = {
   address: string;
   url: string;
   icon: JSX.Element;
+  enabled?: boolean;
 };
 
 export const whitelistedVouchers: Array<VoucherInfo> = [
